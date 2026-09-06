@@ -1,0 +1,1370 @@
+[
+  {
+    "id": 1,
+    "nameArabic": "الفاتحة",
+    "nameTranslation": {
+      "ru": "Открывающая",
+      "uz": "Fotiha"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 7,
+    "juzStart": 1,
+    "pageStart": 1
+  },
+  {
+    "id": 2,
+    "nameArabic": "البقرة",
+    "nameTranslation": {
+      "ru": "Корова",
+      "uz": "Baqara"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 286,
+    "juzStart": 1,
+    "pageStart": 2
+  },
+  {
+    "id": 3,
+    "nameArabic": "آل عمران",
+    "nameTranslation": {
+      "ru": "Семейство Имрана",
+      "uz": "Oli Imron"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 200,
+    "juzStart": 3,
+    "pageStart": 50
+  },
+  {
+    "id": 4,
+    "nameArabic": "النساء",
+    "nameTranslation": {
+      "ru": "Женщины",
+      "uz": "Niso"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 176,
+    "juzStart": 4,
+    "pageStart": 77
+  },
+  {
+    "id": 5,
+    "nameArabic": "المائدة",
+    "nameTranslation": {
+      "ru": "Трапеза",
+      "uz": "Moida"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 120,
+    "juzStart": 6,
+    "pageStart": 106
+  },
+  {
+    "id": 6,
+    "nameArabic": "الأنعام",
+    "nameTranslation": {
+      "ru": "Скот",
+      "uz": "An'om"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 165,
+    "juzStart": 7,
+    "pageStart": 128
+  },
+  {
+    "id": 7,
+    "nameArabic": "الأعراف",
+    "nameTranslation": {
+      "ru": "Ограды",
+      "uz": "A'rof"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 206,
+    "juzStart": 8,
+    "pageStart": 151
+  },
+  {
+    "id": 8,
+    "nameArabic": "الأنفال",
+    "nameTranslation": {
+      "ru": "Трофеи",
+      "uz": "Anfol"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 75,
+    "juzStart": 9,
+    "pageStart": 177
+  },
+  {
+    "id": 9,
+    "nameArabic": "التوبة",
+    "nameTranslation": {
+      "ru": "Покаяние",
+      "uz": "Tavba"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 129,
+    "juzStart": 10,
+    "pageStart": 187
+  },
+  {
+    "id": 10,
+    "nameArabic": "يونس",
+    "nameTranslation": {
+      "ru": "Юнус",
+      "uz": "Yunus"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 109,
+    "juzStart": 11,
+    "pageStart": 208
+  },
+  {
+    "id": 11,
+    "nameArabic": "هود",
+    "nameTranslation": {
+      "ru": "Худ",
+      "uz": "Hud"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 123,
+    "juzStart": 11,
+    "pageStart": 221
+  },
+  {
+    "id": 12,
+    "nameArabic": "يوسف",
+    "nameTranslation": {
+      "ru": "Юсуф",
+      "uz": "Yusuf"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 111,
+    "juzStart": 12,
+    "pageStart": 235
+  },
+  {
+    "id": 13,
+    "nameArabic": "الرعد",
+    "nameTranslation": {
+      "ru": "Гром",
+      "uz": "Ra'd"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 43,
+    "juzStart": 13,
+    "pageStart": 249
+  },
+  {
+    "id": 14,
+    "nameArabic": "ابراهيم",
+    "nameTranslation": {
+      "ru": "Ибрахим",
+      "uz": "Ibrohim"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 52,
+    "juzStart": 13,
+    "pageStart": 255
+  },
+  {
+    "id": 15,
+    "nameArabic": "الحجر",
+    "nameTranslation": {
+      "ru": "Хиджр",
+      "uz": "Hijr"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 99,
+    "juzStart": 14,
+    "pageStart": 262
+  },
+  {
+    "id": 16,
+    "nameArabic": "النحل",
+    "nameTranslation": {
+      "ru": "Пчёлы",
+      "uz": "Nahl"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 128,
+    "juzStart": 14,
+    "pageStart": 267
+  },
+  {
+    "id": 17,
+    "nameArabic": "الإسراء",
+    "nameTranslation": {
+      "ru": "Ночной перенос",
+      "uz": "Isro"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 111,
+    "juzStart": 15,
+    "pageStart": 282
+  },
+  {
+    "id": 18,
+    "nameArabic": "الكهف",
+    "nameTranslation": {
+      "ru": "Пещера",
+      "uz": "Kahf"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 110,
+    "juzStart": 15,
+    "pageStart": 293
+  },
+  {
+    "id": 19,
+    "nameArabic": "مريم",
+    "nameTranslation": {
+      "ru": "Марьям",
+      "uz": "Maryam"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 98,
+    "juzStart": 16,
+    "pageStart": 305
+  },
+  {
+    "id": 20,
+    "nameArabic": "طه",
+    "nameTranslation": {
+      "ru": "Та Ха",
+      "uz": "Toha"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 135,
+    "juzStart": 16,
+    "pageStart": 312
+  },
+  {
+    "id": 21,
+    "nameArabic": "الأنبياء",
+    "nameTranslation": {
+      "ru": "Пророки",
+      "uz": "Anbiyo"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 112,
+    "juzStart": 17,
+    "pageStart": 322
+  },
+  {
+    "id": 22,
+    "nameArabic": "الحج",
+    "nameTranslation": {
+      "ru": "Паломничество",
+      "uz": "Haj"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 78,
+    "juzStart": 17,
+    "pageStart": 332
+  },
+  {
+    "id": 23,
+    "nameArabic": "المؤمنون",
+    "nameTranslation": {
+      "ru": "Верующие",
+      "uz": "Mo'minun"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 118,
+    "juzStart": 18,
+    "pageStart": 342
+  },
+  {
+    "id": 24,
+    "nameArabic": "النور",
+    "nameTranslation": {
+      "ru": "Свет",
+      "uz": "Nur"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 64,
+    "juzStart": 18,
+    "pageStart": 350
+  },
+  {
+    "id": 25,
+    "nameArabic": "الفرقان",
+    "nameTranslation": {
+      "ru": "Различение",
+      "uz": "Furqon"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 77,
+    "juzStart": 18,
+    "pageStart": 359
+  },
+  {
+    "id": 26,
+    "nameArabic": "الشعراء",
+    "nameTranslation": {
+      "ru": "Поэты",
+      "uz": "Shuaro"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 227,
+    "juzStart": 19,
+    "pageStart": 367
+  },
+  {
+    "id": 27,
+    "nameArabic": "النمل",
+    "nameTranslation": {
+      "ru": "Муравьи",
+      "uz": "Naml"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 93,
+    "juzStart": 19,
+    "pageStart": 377
+  },
+  {
+    "id": 28,
+    "nameArabic": "القصص",
+    "nameTranslation": {
+      "ru": "Рассказ",
+      "uz": "Qasas"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 88,
+    "juzStart": 20,
+    "pageStart": 385
+  },
+  {
+    "id": 29,
+    "nameArabic": "العنكبوت",
+    "nameTranslation": {
+      "ru": "Паук",
+      "uz": "Ankabut"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 69,
+    "juzStart": 20,
+    "pageStart": 396
+  },
+  {
+    "id": 30,
+    "nameArabic": "الروم",
+    "nameTranslation": {
+      "ru": "Римляне",
+      "uz": "Rum"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 60,
+    "juzStart": 21,
+    "pageStart": 404
+  },
+  {
+    "id": 31,
+    "nameArabic": "لقمان",
+    "nameTranslation": {
+      "ru": "Лукман",
+      "uz": "Luqmon"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 34,
+    "juzStart": 21,
+    "pageStart": 411
+  },
+  {
+    "id": 32,
+    "nameArabic": "السجدة",
+    "nameTranslation": {
+      "ru": "Земной поклон",
+      "uz": "Sajda"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 30,
+    "juzStart": 21,
+    "pageStart": 415
+  },
+  {
+    "id": 33,
+    "nameArabic": "الأحزاب",
+    "nameTranslation": {
+      "ru": "Союзники",
+      "uz": "Ahzob"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 73,
+    "juzStart": 21,
+    "pageStart": 418
+  },
+  {
+    "id": 34,
+    "nameArabic": "سبإ",
+    "nameTranslation": {
+      "ru": "Саба",
+      "uz": "Saba'"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 54,
+    "juzStart": 22,
+    "pageStart": 428
+  },
+  {
+    "id": 35,
+    "nameArabic": "فاطر",
+    "nameTranslation": {
+      "ru": "Творец",
+      "uz": "Fotir"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 45,
+    "juzStart": 22,
+    "pageStart": 434
+  },
+  {
+    "id": 36,
+    "nameArabic": "يس",
+    "nameTranslation": {
+      "ru": "Йа Син",
+      "uz": "Yosin"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 83,
+    "juzStart": 22,
+    "pageStart": 440
+  },
+  {
+    "id": 37,
+    "nameArabic": "الصافات",
+    "nameTranslation": {
+      "ru": "Выстроившиеся в ряды",
+      "uz": "Soffat"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 182,
+    "juzStart": 23,
+    "pageStart": 446
+  },
+  {
+    "id": 38,
+    "nameArabic": "ص",
+    "nameTranslation": {
+      "ru": "Сад",
+      "uz": "Sod"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 88,
+    "juzStart": 23,
+    "pageStart": 453
+  },
+  {
+    "id": 39,
+    "nameArabic": "الزمر",
+    "nameTranslation": {
+      "ru": "Толпы",
+      "uz": "Zumar"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 75,
+    "juzStart": 23,
+    "pageStart": 458
+  },
+  {
+    "id": 40,
+    "nameArabic": "غافر",
+    "nameTranslation": {
+      "ru": "Прощающий",
+      "uz": "G'ofir"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 85,
+    "juzStart": 24,
+    "pageStart": 467
+  },
+  {
+    "id": 41,
+    "nameArabic": "فصلت",
+    "nameTranslation": {
+      "ru": "Разъяснены",
+      "uz": "Fussilat"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 54,
+    "juzStart": 24,
+    "pageStart": 477
+  },
+  {
+    "id": 42,
+    "nameArabic": "الشورى",
+    "nameTranslation": {
+      "ru": "Совет",
+      "uz": "Shuro"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 53,
+    "juzStart": 25,
+    "pageStart": 483
+  },
+  {
+    "id": 43,
+    "nameArabic": "الزخرف",
+    "nameTranslation": {
+      "ru": "Украшения",
+      "uz": "Zuxruf"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 89,
+    "juzStart": 25,
+    "pageStart": 489
+  },
+  {
+    "id": 44,
+    "nameArabic": "الدخان",
+    "nameTranslation": {
+      "ru": "Дым",
+      "uz": "Duxon"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 59,
+    "juzStart": 25,
+    "pageStart": 496
+  },
+  {
+    "id": 45,
+    "nameArabic": "الجاثية",
+    "nameTranslation": {
+      "ru": "Коленопреклонённые",
+      "uz": "Josiya"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 37,
+    "juzStart": 25,
+    "pageStart": 499
+  },
+  {
+    "id": 46,
+    "nameArabic": "الأحقاف",
+    "nameTranslation": {
+      "ru": "Барханы",
+      "uz": "Ahqof"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 35,
+    "juzStart": 26,
+    "pageStart": 502
+  },
+  {
+    "id": 47,
+    "nameArabic": "محمد",
+    "nameTranslation": {
+      "ru": "Мухаммад",
+      "uz": "Muhammad"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 38,
+    "juzStart": 26,
+    "pageStart": 507
+  },
+  {
+    "id": 48,
+    "nameArabic": "الفتح",
+    "nameTranslation": {
+      "ru": "Победа",
+      "uz": "Fath"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 29,
+    "juzStart": 26,
+    "pageStart": 511
+  },
+  {
+    "id": 49,
+    "nameArabic": "الحجرات",
+    "nameTranslation": {
+      "ru": "Комнаты",
+      "uz": "Hujurot"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 18,
+    "juzStart": 26,
+    "pageStart": 515
+  },
+  {
+    "id": 50,
+    "nameArabic": "ق",
+    "nameTranslation": {
+      "ru": "Каф",
+      "uz": "Qof"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 45,
+    "juzStart": 26,
+    "pageStart": 518
+  },
+  {
+    "id": 51,
+    "nameArabic": "الذاريات",
+    "nameTranslation": {
+      "ru": "Рассеивающие",
+      "uz": "Zoriyot"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 60,
+    "juzStart": 26,
+    "pageStart": 520
+  },
+  {
+    "id": 52,
+    "nameArabic": "الطور",
+    "nameTranslation": {
+      "ru": "Гора",
+      "uz": "Tur"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 49,
+    "juzStart": 27,
+    "pageStart": 523
+  },
+  {
+    "id": 53,
+    "nameArabic": "النجم",
+    "nameTranslation": {
+      "ru": "Звезда",
+      "uz": "Najm"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 62,
+    "juzStart": 27,
+    "pageStart": 526
+  },
+  {
+    "id": 54,
+    "nameArabic": "القمر",
+    "nameTranslation": {
+      "ru": "Месяц",
+      "uz": "Qamar"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 55,
+    "juzStart": 27,
+    "pageStart": 528
+  },
+  {
+    "id": 55,
+    "nameArabic": "الرحمن",
+    "nameTranslation": {
+      "ru": "Милостивый",
+      "uz": "Rahmon"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 78,
+    "juzStart": 27,
+    "pageStart": 531
+  },
+  {
+    "id": 56,
+    "nameArabic": "الواقعة",
+    "nameTranslation": {
+      "ru": "Неотвратимое событие",
+      "uz": "Voqea"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 96,
+    "juzStart": 27,
+    "pageStart": 534
+  },
+  {
+    "id": 57,
+    "nameArabic": "الحديد",
+    "nameTranslation": {
+      "ru": "Железо",
+      "uz": "Hadid"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 29,
+    "juzStart": 27,
+    "pageStart": 537
+  },
+  {
+    "id": 58,
+    "nameArabic": "المجادلة",
+    "nameTranslation": {
+      "ru": "Препирательство",
+      "uz": "Mujodala"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 22,
+    "juzStart": 28,
+    "pageStart": 542
+  },
+  {
+    "id": 59,
+    "nameArabic": "الحشر",
+    "nameTranslation": {
+      "ru": "Сбор",
+      "uz": "Hashr"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 24,
+    "juzStart": 28,
+    "pageStart": 545
+  },
+  {
+    "id": 60,
+    "nameArabic": "الممتحنة",
+    "nameTranslation": {
+      "ru": "Испытуемая",
+      "uz": "Mumtahana"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 13,
+    "juzStart": 28,
+    "pageStart": 549
+  },
+  {
+    "id": 61,
+    "nameArabic": "الصف",
+    "nameTranslation": {
+      "ru": "Ряды",
+      "uz": "Saff"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 14,
+    "juzStart": 28,
+    "pageStart": 551
+  },
+  {
+    "id": 62,
+    "nameArabic": "الجمعة",
+    "nameTranslation": {
+      "ru": "Пятница",
+      "uz": "Juma"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 11,
+    "juzStart": 28,
+    "pageStart": 553
+  },
+  {
+    "id": 63,
+    "nameArabic": "المنافقون",
+    "nameTranslation": {
+      "ru": "Лицемеры",
+      "uz": "Munofiqun"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 11,
+    "juzStart": 28,
+    "pageStart": 554
+  },
+  {
+    "id": 64,
+    "nameArabic": "التغابن",
+    "nameTranslation": {
+      "ru": "Взаимное обделение",
+      "uz": "Tag'obun"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 18,
+    "juzStart": 28,
+    "pageStart": 556
+  },
+  {
+    "id": 65,
+    "nameArabic": "الطلاق",
+    "nameTranslation": {
+      "ru": "Развод",
+      "uz": "Taloq"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 12,
+    "juzStart": 28,
+    "pageStart": 558
+  },
+  {
+    "id": 66,
+    "nameArabic": "التحريم",
+    "nameTranslation": {
+      "ru": "Запрещение",
+      "uz": "Tahrim"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 12,
+    "juzStart": 28,
+    "pageStart": 560
+  },
+  {
+    "id": 67,
+    "nameArabic": "الملك",
+    "nameTranslation": {
+      "ru": "Власть",
+      "uz": "Mulk"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 30,
+    "juzStart": 29,
+    "pageStart": 562
+  },
+  {
+    "id": 68,
+    "nameArabic": "القلم",
+    "nameTranslation": {
+      "ru": "Письменная трость",
+      "uz": "Qalam"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 52,
+    "juzStart": 29,
+    "pageStart": 564
+  },
+  {
+    "id": 69,
+    "nameArabic": "الحاقة",
+    "nameTranslation": {
+      "ru": "Неминуемое",
+      "uz": "Haaqqa"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 52,
+    "juzStart": 29,
+    "pageStart": 566
+  },
+  {
+    "id": 70,
+    "nameArabic": "المعارج",
+    "nameTranslation": {
+      "ru": "Ступени",
+      "uz": "Maorij"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 44,
+    "juzStart": 29,
+    "pageStart": 568
+  },
+  {
+    "id": 71,
+    "nameArabic": "نوح",
+    "nameTranslation": {
+      "ru": "Нух",
+      "uz": "Nuh"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 28,
+    "juzStart": 29,
+    "pageStart": 570
+  },
+  {
+    "id": 72,
+    "nameArabic": "الجن",
+    "nameTranslation": {
+      "ru": "Джинны",
+      "uz": "Jin"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 28,
+    "juzStart": 29,
+    "pageStart": 572
+  },
+  {
+    "id": 73,
+    "nameArabic": "المزمل",
+    "nameTranslation": {
+      "ru": "Закутавшийся",
+      "uz": "Muzzammil"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 20,
+    "juzStart": 29,
+    "pageStart": 574
+  },
+  {
+    "id": 74,
+    "nameArabic": "المدثر",
+    "nameTranslation": {
+      "ru": "Завернувшийся",
+      "uz": "Muddassir"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 56,
+    "juzStart": 29,
+    "pageStart": 575
+  },
+  {
+    "id": 75,
+    "nameArabic": "القيامة",
+    "nameTranslation": {
+      "ru": "Воскресение",
+      "uz": "Qiyomat"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 40,
+    "juzStart": 29,
+    "pageStart": 577
+  },
+  {
+    "id": 76,
+    "nameArabic": "الانسان",
+    "nameTranslation": {
+      "ru": "Человек",
+      "uz": "Inson"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 31,
+    "juzStart": 29,
+    "pageStart": 578
+  },
+  {
+    "id": 77,
+    "nameArabic": "المرسلات",
+    "nameTranslation": {
+      "ru": "Посылаемые",
+      "uz": "Mursalat"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 50,
+    "juzStart": 29,
+    "pageStart": 580
+  },
+  {
+    "id": 78,
+    "nameArabic": "النبإ",
+    "nameTranslation": {
+      "ru": "Весть",
+      "uz": "Naba'"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 40,
+    "juzStart": 30,
+    "pageStart": 582
+  },
+  {
+    "id": 79,
+    "nameArabic": "النازعات",
+    "nameTranslation": {
+      "ru": "Исторгающие",
+      "uz": "Noziot"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 46,
+    "juzStart": 30,
+    "pageStart": 583
+  },
+  {
+    "id": 80,
+    "nameArabic": "عبس",
+    "nameTranslation": {
+      "ru": "Нахмурился",
+      "uz": "Abasa"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 42,
+    "juzStart": 30,
+    "pageStart": 585
+  },
+  {
+    "id": 81,
+    "nameArabic": "التكوير",
+    "nameTranslation": {
+      "ru": "Скручивание",
+      "uz": "Takvir"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 29,
+    "juzStart": 30,
+    "pageStart": 586
+  },
+  {
+    "id": 82,
+    "nameArabic": "الإنفطار",
+    "nameTranslation": {
+      "ru": "Раскалывание",
+      "uz": "Infitor"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 19,
+    "juzStart": 30,
+    "pageStart": 587
+  },
+  {
+    "id": 83,
+    "nameArabic": "المطففين",
+    "nameTranslation": {
+      "ru": "Обвешивающие",
+      "uz": "Mutaffifun"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 36,
+    "juzStart": 30,
+    "pageStart": 587
+  },
+  {
+    "id": 84,
+    "nameArabic": "الإنشقاق",
+    "nameTranslation": {
+      "ru": "Разверзнется",
+      "uz": "Inshiqoq"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 25,
+    "juzStart": 30,
+    "pageStart": 589
+  },
+  {
+    "id": 85,
+    "nameArabic": "البروج",
+    "nameTranslation": {
+      "ru": "Созвездия",
+      "uz": "Buruj"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 22,
+    "juzStart": 30,
+    "pageStart": 590
+  },
+  {
+    "id": 86,
+    "nameArabic": "الطارق",
+    "nameTranslation": {
+      "ru": "Ночной путник",
+      "uz": "Toriq"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 17,
+    "juzStart": 30,
+    "pageStart": 591
+  },
+  {
+    "id": 87,
+    "nameArabic": "الأعلى",
+    "nameTranslation": {
+      "ru": "Высочайший",
+      "uz": "A'lo"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 19,
+    "juzStart": 30,
+    "pageStart": 591
+  },
+  {
+    "id": 88,
+    "nameArabic": "الغاشية",
+    "nameTranslation": {
+      "ru": "Покрывающее",
+      "uz": "G'oshiya"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 26,
+    "juzStart": 30,
+    "pageStart": 592
+  },
+  {
+    "id": 89,
+    "nameArabic": "الفجر",
+    "nameTranslation": {
+      "ru": "Заря",
+      "uz": "Fajr"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 30,
+    "juzStart": 30,
+    "pageStart": 593
+  },
+  {
+    "id": 90,
+    "nameArabic": "البلد",
+    "nameTranslation": {
+      "ru": "Город",
+      "uz": "Balad"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 20,
+    "juzStart": 30,
+    "pageStart": 594
+  },
+  {
+    "id": 91,
+    "nameArabic": "الشمس",
+    "nameTranslation": {
+      "ru": "Солнце",
+      "uz": "Shams"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 15,
+    "juzStart": 30,
+    "pageStart": 595
+  },
+  {
+    "id": 92,
+    "nameArabic": "الليل",
+    "nameTranslation": {
+      "ru": "Ночь",
+      "uz": "Layl"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 21,
+    "juzStart": 30,
+    "pageStart": 595
+  },
+  {
+    "id": 93,
+    "nameArabic": "الضحى",
+    "nameTranslation": {
+      "ru": "Утро",
+      "uz": "Zuho"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 11,
+    "juzStart": 30,
+    "pageStart": 596
+  },
+  {
+    "id": 94,
+    "nameArabic": "الشرح",
+    "nameTranslation": {
+      "ru": "Раскрытие",
+      "uz": "Sharh"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 8,
+    "juzStart": 30,
+    "pageStart": 596
+  },
+  {
+    "id": 95,
+    "nameArabic": "التين",
+    "nameTranslation": {
+      "ru": "Смоковница",
+      "uz": "Tiyn"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 8,
+    "juzStart": 30,
+    "pageStart": 597
+  },
+  {
+    "id": 96,
+    "nameArabic": "العلق",
+    "nameTranslation": {
+      "ru": "Сгусток",
+      "uz": "Alaq"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 19,
+    "juzStart": 30,
+    "pageStart": 597
+  },
+  {
+    "id": 97,
+    "nameArabic": "القدر",
+    "nameTranslation": {
+      "ru": "Предопределение",
+      "uz": "Qadr"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 5,
+    "juzStart": 30,
+    "pageStart": 598
+  },
+  {
+    "id": 98,
+    "nameArabic": "البينة",
+    "nameTranslation": {
+      "ru": "Ясное знамение",
+      "uz": "Bayyina"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 8,
+    "juzStart": 30,
+    "pageStart": 598
+  },
+  {
+    "id": 99,
+    "nameArabic": "الزلزلة",
+    "nameTranslation": {
+      "ru": "Сотрясение",
+      "uz": "Zalzala"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 8,
+    "juzStart": 30,
+    "pageStart": 599
+  },
+  {
+    "id": 100,
+    "nameArabic": "العاديات",
+    "nameTranslation": {
+      "ru": "Мчащиеся",
+      "uz": "Odiyot"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 11,
+    "juzStart": 30,
+    "pageStart": 599
+  },
+  {
+    "id": 101,
+    "nameArabic": "القارعة",
+    "nameTranslation": {
+      "ru": "Великое бедствие",
+      "uz": "Qoria"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 11,
+    "juzStart": 30,
+    "pageStart": 600
+  },
+  {
+    "id": 102,
+    "nameArabic": "التكاثر",
+    "nameTranslation": {
+      "ru": "Охота к умножению",
+      "uz": "Takasur"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 8,
+    "juzStart": 30,
+    "pageStart": 600
+  },
+  {
+    "id": 103,
+    "nameArabic": "العصر",
+    "nameTranslation": {
+      "ru": "Предвечернее время",
+      "uz": "Asr"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 3,
+    "juzStart": 30,
+    "pageStart": 601
+  },
+  {
+    "id": 104,
+    "nameArabic": "الهمزة",
+    "nameTranslation": {
+      "ru": "Хулитель",
+      "uz": "Humaza"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 9,
+    "juzStart": 30,
+    "pageStart": 601
+  },
+  {
+    "id": 105,
+    "nameArabic": "الفيل",
+    "nameTranslation": {
+      "ru": "Слон",
+      "uz": "Fil"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 5,
+    "juzStart": 30,
+    "pageStart": 601
+  },
+  {
+    "id": 106,
+    "nameArabic": "قريش",
+    "nameTranslation": {
+      "ru": "Курайшиты",
+      "uz": "Quraysh"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 4,
+    "juzStart": 30,
+    "pageStart": 602
+  },
+  {
+    "id": 107,
+    "nameArabic": "الماعون",
+    "nameTranslation": {
+      "ru": "Подаяние",
+      "uz": "Moun"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 7,
+    "juzStart": 30,
+    "pageStart": 602
+  },
+  {
+    "id": 108,
+    "nameArabic": "الكوثر",
+    "nameTranslation": {
+      "ru": "Изобилие",
+      "uz": "Kavsar"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 3,
+    "juzStart": 30,
+    "pageStart": 602
+  },
+  {
+    "id": 109,
+    "nameArabic": "الكافرون",
+    "nameTranslation": {
+      "ru": "Неверующие",
+      "uz": "Kofirun"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 6,
+    "juzStart": 30,
+    "pageStart": 603
+  },
+  {
+    "id": 110,
+    "nameArabic": "النصر",
+    "nameTranslation": {
+      "ru": "Помощь",
+      "uz": "Nasr"
+    },
+    "revelationType": "medinan",
+    "ayahCount": 3,
+    "juzStart": 30,
+    "pageStart": 603
+  },
+  {
+    "id": 111,
+    "nameArabic": "المسد",
+    "nameTranslation": {
+      "ru": "Пальмовые волокна",
+      "uz": "Masad"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 5,
+    "juzStart": 30,
+    "pageStart": 603
+  },
+  {
+    "id": 112,
+    "nameArabic": "الإخلاص",
+    "nameTranslation": {
+      "ru": "Очищение веры",
+      "uz": "Ixlos"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 4,
+    "juzStart": 30,
+    "pageStart": 604
+  },
+  {
+    "id": 113,
+    "nameArabic": "الفلق",
+    "nameTranslation": {
+      "ru": "Рассвет",
+      "uz": "Falaq"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 5,
+    "juzStart": 30,
+    "pageStart": 604
+  },
+  {
+    "id": 114,
+    "nameArabic": "الناس",
+    "nameTranslation": {
+      "ru": "Люди",
+      "uz": "Nos"
+    },
+    "revelationType": "meccan",
+    "ayahCount": 6,
+    "juzStart": 30,
+    "pageStart": 604
+  }
+]

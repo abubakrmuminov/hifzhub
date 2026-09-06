@@ -1,0 +1,216 @@
+[
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l1",
+    "order": 1,
+    "title": "Первые звуки: Алиф, Ба, Та, Са",
+    "description": "Учимся читать справа налево и знакомимся с первыми 4 буквами",
+    "estimatedMinutes": 5,
+    "xpReward": 20,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Добро пожаловать!",
+        "content": "В арабском языке 28 букв. Пишут и читают СПРАВА НАЛЕВО — как будто открываешь книгу с конца. Заглавных букв нет, а сами буквы меняют форму в зависимости от места в слове. Не пугайся: меняется только «хвостик», сердцевина буквы всегда узнаваема.",
+        "mnemonic": "Правило №1: глаз идёт справа → налево.",
+        "example": "بَتَثَ читается: ба — та — са"
+      },
+      {
+        "id": "step_2",
+        "type": "letter_intro",
+        "arabic": "ا",
+        "name": "Алиф",
+        "transliteration": "a / ʾ",
+        "makhraj": "Простая вертикальная палочка. Сама по себе Алиф — «пустая» буква-опора: она либо несёт хамзу (أ) и даёт щелчок из глубины горла, либо тянет звук [аа] из пустоты рта и груди (джауф).",
+        "isHeavy": false,
+        "audioFile": "letters/alif.mp3",
+        "forms": { "isolated": "ا", "initial": "ا", "medial": "ـا", "final": "ـا" },
+        "note": "Алиф НЕ соединяется со следующей буквой слева."
+      },
+      {
+        "id": "step_3",
+        "type": "letter_intro",
+        "arabic": "ب",
+        "name": "Ба",
+        "transliteration": "b",
+        "makhraj": "Смыкаем губы и резко размыкаем — как русский [б], но чуть звонче и с лёгким «отскоком».",
+        "isHeavy": false,
+        "audioFile": "letters/baa.mp3",
+        "forms": { "isolated": "ب", "initial": "بـ", "medial": "ـبـ", "final": "ـب" },
+        "note": "Одна точка СНИЗУ — «лодочка с якорем внизу»."
+      },
+      {
+        "id": "step_4",
+        "type": "letter_intro",
+        "arabic": "ت",
+        "name": "Та",
+        "transliteration": "t",
+        "makhraj": "Кончик языка касается ОСНОВАНИЯ верхних передних зубов (там, где зуб входит в десну). Мягкий, лёгкий русский [т], как в слове «тише».",
+        "isHeavy": false,
+        "audioFile": "letters/taa.mp3",
+        "forms": { "isolated": "ت", "initial": "تـ", "medial": "ـتـ", "final": "ـت" },
+        "note": "Две точки СВЕРХУ."
+      },
+      {
+        "id": "step_5",
+        "type": "letter_intro",
+        "arabic": "ث",
+        "name": "Са (Ща)",
+        "transliteration": "th (ث)",
+        "makhraj": "Кончик языка слегка высовывается и касается КРАЕВ верхних передних зубов. Звук межзубный, глухой — как английское «th» в слове think. Это НЕ русское [с]!",
+        "isHeavy": false,
+        "audioFile": "letters/thaa.mp3",
+        "forms": { "isolated": "ث", "initial": "ثـ", "medial": "ـثـ", "final": "ـث" },
+        "note": "Три точки СВЕРХУ — «горка из трёх камешков»."
+      },
+      {
+        "id": "step_6",
+        "type": "listen_and_repeat",
+        "instruction": "Прослушай и повтори вслух 3 раза. Следи за языком в буквах ت и ث.",
+        "items": [
+          { "arabic": "ا", "transliteration": "[а]", "audioFile": "letters/alif.mp3" },
+          { "arabic": "ب", "transliteration": "[б]", "audioFile": "letters/baa.mp3" },
+          { "arabic": "ت", "transliteration": "[т]", "audioFile": "letters/taa.mp3" },
+          { "arabic": "ث", "transliteration": "[th]", "audioFile": "letters/thaa.mp3" }
+        ]
+      },
+      {
+        "id": "step_7",
+        "type": "quiz_choice",
+        "question": "Какая из этих букв является буквой «Ба»?",
+        "options": ["ت", "ب", "ث", "ن"],
+        "correctIndex": 1,
+        "explanation": "Буква «Ба» имеет одну точку СНИЗУ."
+      },
+      {
+        "id": "step_8",
+        "type": "quiz_choice",
+        "question": "Сколько точек у буквы ث?",
+        "options": ["Одна снизу", "Две сверху", "Три сверху", "Нет точек"],
+        "correctIndex": 2,
+        "explanation": "ث — «Са» — единственная из этой группы с тремя точками сверху."
+      },
+      {
+        "id": "step_9",
+        "type": "quiz_match",
+        "question": "Соедини букву с её названием:",
+        "pairs": [
+          { "left": "ا", "right": "Алиф" },
+          { "left": "ب", "right": "Ба" },
+          { "left": "ت", "right": "Та" },
+          { "left": "ث", "right": "Са" }
+        ]
+      },
+      {
+        "id": "step_10",
+        "type": "reading_check",
+        "instruction": "Прочитай вслух справа налево, затем нажми «Проверить» и сравни с эталоном.",
+        "arabic": "ثَ  تَ  بَ  اَ",
+        "transliteration": "а — ба — та — са",
+        "audioFile": "practice/m1_l1_row.mp3"
+      }
+    ]
+  },
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l2",
+    "order": 2,
+    "title": "Три брата на чашке: Джим, Ха, Хо",
+    "description": "Буквы ج ح خ имеют одну форму, но разные точки и совершенно разные звуки",
+    "estimatedMinutes": 5,
+    "xpReward": 20,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Одна форма — три буквы",
+        "content": "ج ح خ пишутся абсолютно одинаково. Различаются ТОЛЬКО точкой: точка внутри = Джим, точки нет = Ха, точка сверху = Хо. Но звуки у них разные, и путать их нельзя: замена буквы меняет смысл аята.",
+        "mnemonic": "«Внутри — Джим, пусто — Ха, сверху — Хо».",
+        "example": "جـ ← حـ ← خـ"
+      },
+      {
+        "id": "step_2",
+        "type": "letter_intro",
+        "arabic": "ج",
+        "name": "Джим",
+        "transliteration": "j",
+        "makhraj": "СЕРЕДИНА языка плотно прижимается к твёрдому нёбу и отпускается. Звук слитный [дж], как в английском jam. Не разделяй на «д» + «ж».",
+        "isHeavy": false,
+        "audioFile": "letters/jeem.mp3",
+        "forms": { "isolated": "ج", "initial": "جـ", "medial": "ـجـ", "final": "ـج" },
+        "note": "Одна точка ВНУТРИ чашки. Входит в буквы калькаля."
+      },
+      {
+        "id": "step_3",
+        "type": "letter_intro",
+        "arabic": "ح",
+        "name": "Ха (халькый)",
+        "transliteration": "ḥ",
+        "makhraj": "СЕРЕДИНА горла. Представь, что дышишь на замёрзшее стекло, чтобы его протереть: сильный, сухой, «шершавый» выдох без участия языка.",
+        "isHeavy": false,
+        "audioFile": "letters/haa_h.mp3",
+        "forms": { "isolated": "ح", "initial": "حـ", "medial": "ـحـ", "final": "ـح" },
+        "note": "Без точек. Это НЕ русское [х] — горло сжимается, но не хрипит."
+      },
+      {
+        "id": "step_4",
+        "type": "letter_intro",
+        "arabic": "خ",
+        "name": "Хо",
+        "transliteration": "kh",
+        "makhraj": "ВЕРХНЯЯ (ближняя) часть горла. Похоже на русское [х] в слове «хохот», но глубже и «жирнее», с лёгким похрапыванием.",
+        "isHeavy": true,
+        "audioFile": "letters/khaa.mp3",
+        "forms": { "isolated": "خ", "initial": "خـ", "medial": "ـخـ", "final": "ـخ" },
+        "note": "Точка СВЕРХУ. Тяжёлая буква (тафхым) — рот наполняется звуком."
+      },
+      {
+        "id": "step_5",
+        "type": "listen_and_repeat",
+        "instruction": "Слушай контраст. Положи ладонь на горло: при ح дрожания нет, при خ чувствуется вибрация вверху.",
+        "items": [
+          { "arabic": "ج", "transliteration": "[джь]", "audioFile": "letters/jeem.mp3" },
+          { "arabic": "ح", "transliteration": "[ḥ] мягкий выдох", "audioFile": "letters/haa_h.mp3" },
+          { "arabic": "خ", "transliteration": "[х] глубокий", "audioFile": "letters/khaa.mp3" }
+        ]
+      },
+      {
+        "id": "step_6",
+        "type": "quiz_choice",
+        "question": "Ты слышишь звук как «выдох на стекло», без хрипа. Какая это буква?",
+        "options": ["خ", "ح", "ج", "ه"],
+        "correctIndex": 1,
+        "explanation": "ح — середина горла, чистый сильный выдох. У خ звук более «царапающий» и тяжёлый."
+      },
+      {
+        "id": "step_7",
+        "type": "quiz_choice",
+        "question": "Какая из этих трёх букв является ТЯЖЁЛОЙ (тафхым)?",
+        "options": ["ج", "ح", "خ"],
+        "correctIndex": 2,
+        "explanation": "خ входит в 7 букв истиля (خص ضغط قظ) и всегда читается твёрдо."
+      },
+      {
+        "id": "step_8",
+        "type": "quiz_match",
+        "question": "Соедини букву с её признаком:",
+        "pairs": [
+          { "left": "ج", "right": "Точка внутри" },
+          { "left": "ح", "right": "Без точек" },
+          { "left": "خ", "right": "Точка сверху" }
+        ]
+      },
+      {
+        "id": "step_9",
+        "type": "reading_check",
+        "instruction": "Прочитай справа налево:",
+        "arabic": "خَ  حَ  جَ",
+        "transliteration": "джа — ḥа — хо",
+        "audioFile": "practice/m1_l2_row.mp3"
+      }
+    ]
+  }
+]

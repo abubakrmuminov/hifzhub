@@ -1,0 +1,222 @@
+[
+  {
+    "id": 1,
+    "surahId": 1,
+    "ayahNumber": 1,
+    "textUthmani": "بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ",
+    "textTajweed": "",
+    "juz": 1,
+    "hizb": 1,
+    "page": 1
+  },
+  {
+    "id": 2,
+    "surahId": 1,
+    "ayahNumber": 2,
+    "textUthmani": "ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَـٰلَمِينَ",
+    "textTajweed": "",
+    "juz": 1,
+    "hizb": 1,
+    "page": 1
+  },
+  {
+    "id": 3,
+    "surahId": 1,
+    "ayahNumber": 3,
+    "textUthmani": "ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ",
+    "textTajweed": "",
+    "juz": 1,
+    "hizb": 1,
+    "page": 1
+  },
+  {
+    "id": 4,
+    "surahId": 1,
+    "ayahNumber": 4,
+    "textUthmani": "مَـٰلِكِ يَوْمِ ٱلدِّينِ",
+    "textTajweed": "",
+    "juz": 1,
+    "hizb": 1,
+    "page": 1
+  },
+  {
+    "id": 5,
+    "surahId": 1,
+    "ayahNumber": 5,
+    "textUthmani": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+    "textTajweed": "",
+    "juz": 1,
+    "hizb": 1,
+    "page": 1
+  },
+  {
+    "id": 6,
+    "surahId": 1,
+    "ayahNumber": 6,
+    "textUthmani": "ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ",
+    "textTajweed": "",
+    "juz": 1,
+    "hizb": 1,
+    "page": 1
+  },
+  {
+    "id": 7,
+    "surahId": 1,
+    "ayahNumber": 7,
+    "textUthmani": "صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ وَلَا ٱلضَّآلِّينَ",
+    "textTajweed": "",
+    "juz": 1,
+    "hizb": 1,
+    "page": 1
+  },
+  {
+    "id": 6222,
+    "surahId": 112,
+    "ayahNumber": 1,
+    "textUthmani": "قُلْ هُوَ ٱللَّهُ أَحَدٌ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6223,
+    "surahId": 112,
+    "ayahNumber": 2,
+    "textUthmani": "ٱللَّهُ ٱلصَّمَدُ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6224,
+    "surahId": 112,
+    "ayahNumber": 3,
+    "textUthmani": "لَمْ يَلِدْ وَلَمْ يُولَدْ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6225,
+    "surahId": 112,
+    "ayahNumber": 4,
+    "textUthmani": "وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6226,
+    "surahId": 113,
+    "ayahNumber": 1,
+    "textUthmani": "قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6227,
+    "surahId": 113,
+    "ayahNumber": 2,
+    "textUthmani": "مِن شَرِّ مَا خَلَقَ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6228,
+    "surahId": 113,
+    "ayahNumber": 3,
+    "textUthmani": "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6229,
+    "surahId": 113,
+    "ayahNumber": 4,
+    "textUthmani": "وَمِن شَرِّ ٱلنَّفَّـٰثَـٰتِ فِى ٱلْعُقَدِ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6230,
+    "surahId": 113,
+    "ayahNumber": 5,
+    "textUthmani": "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6231,
+    "surahId": 114,
+    "ayahNumber": 1,
+    "textUthmani": "قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6232,
+    "surahId": 114,
+    "ayahNumber": 2,
+    "textUthmani": "مَلِكِ ٱلنَّاسِ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6233,
+    "surahId": 114,
+    "ayahNumber": 3,
+    "textUthmani": "إِلَـٰهِ ٱلنَّاسِ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6234,
+    "surahId": 114,
+    "ayahNumber": 4,
+    "textUthmani": "مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6235,
+    "surahId": 114,
+    "ayahNumber": 5,
+    "textUthmani": "ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  },
+  {
+    "id": 6236,
+    "surahId": 114,
+    "ayahNumber": 6,
+    "textUthmani": "مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ",
+    "textTajweed": "",
+    "juz": 30,
+    "hizb": 60,
+    "page": 604
+  }
+]

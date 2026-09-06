@@ -1,0 +1,1522 @@
+[
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l1",
+    "order": 1,
+    "title": "Первые звуки: Алиф, Ба, Та, Са",
+    "description": "Учимся читать справа налево и знакомимся с первыми 4 буквами",
+    "estimatedMinutes": 5,
+    "xpReward": 20,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Добро пожаловать!",
+        "content": "В арабском языке 28 букв. Пишут и читают СПРАВА НАЛЕВО — как будто открываешь книгу с конца. Заглавных букв нет, а сами буквы меняют форму в зависимости от места в слове. Не пугайся: меняется только «хвостик», сердцевина буквы всегда узнаваема.",
+        "mnemonic": "Правило №1: глаз идёт справа → налево.",
+        "example": "بَتَثَ читается: ба — та — са"
+      },
+      {
+        "id": "step_2",
+        "type": "letter_intro",
+        "arabic": "ا",
+        "name": "Алиф",
+        "transliteration": "a / ʾ",
+        "makhraj": "Простая вертикальная палочка. Сама по себе Алиф — «пустая» буква-опора: она либо несёт хамзу (أ) и даёт щелчок из глубины горла, либо тянет звук [аа] из пустоты рта и груди (джауф).",
+        "isHeavy": false,
+        "audioFile": "letters/alif.mp3",
+        "forms": { "isolated": "ا", "initial": "ا", "medial": "ـا", "final": "ـا" },
+        "note": "Алиф НЕ соединяется со следующей буквой слева."
+      },
+      {
+        "id": "step_3",
+        "type": "letter_intro",
+        "arabic": "ب",
+        "name": "Ба",
+        "transliteration": "b",
+        "makhraj": "Смыкаем губы и резко размыкаем — как русский [б], но чуть звонче и с лёгким «отскоком».",
+        "isHeavy": false,
+        "audioFile": "letters/baa.mp3",
+        "forms": { "isolated": "ب", "initial": "بـ", "medial": "ـبـ", "final": "ـب" },
+        "note": "Одна точка СНИЗУ — «лодочка с якорем внизу»."
+      },
+      {
+        "id": "step_4",
+        "type": "letter_intro",
+        "arabic": "ت",
+        "name": "Та",
+        "transliteration": "t",
+        "makhraj": "Кончик языка касается ОСНОВАНИЯ верхних передних зубов (там, где зуб входит в десну). Мягкий, лёгкий русский [т], как в слове «тише».",
+        "isHeavy": false,
+        "audioFile": "letters/taa.mp3",
+        "forms": { "isolated": "ت", "initial": "تـ", "medial": "ـتـ", "final": "ـت" },
+        "note": "Две точки СВЕРХУ."
+      },
+      {
+        "id": "step_5",
+        "type": "letter_intro",
+        "arabic": "ث",
+        "name": "Са (Ща)",
+        "transliteration": "th (ث)",
+        "makhraj": "Кончик языка слегка высовывается и касается КРАЕВ верхних передних зубов. Звук межзубный, глухой — как английское «th» в слове think. Это НЕ русское [с]!",
+        "isHeavy": false,
+        "audioFile": "letters/thaa.mp3",
+        "forms": { "isolated": "ث", "initial": "ثـ", "medial": "ـثـ", "final": "ـث" },
+        "note": "Три точки СВЕРХУ — «горка из трёх камешков»."
+      },
+      {
+        "id": "step_6",
+        "type": "listen_and_repeat",
+        "instruction": "Прослушай и повтори вслух 3 раза. Следи за языком в буквах ت и ث.",
+        "items": [
+          { "arabic": "ا", "transliteration": "[а]", "audioFile": "letters/alif.mp3" },
+          { "arabic": "ب", "transliteration": "[б]", "audioFile": "letters/baa.mp3" },
+          { "arabic": "ت", "transliteration": "[т]", "audioFile": "letters/taa.mp3" },
+          { "arabic": "ث", "transliteration": "[th]", "audioFile": "letters/thaa.mp3" }
+        ]
+      },
+      {
+        "id": "step_7",
+        "type": "quiz_choice",
+        "question": "Какая из этих букв является буквой «Ба»?",
+        "options": ["ت", "ب", "ث", "ن"],
+        "correctIndex": 1,
+        "explanation": "Буква «Ба» имеет одну точку СНИЗУ."
+      },
+      {
+        "id": "step_8",
+        "type": "quiz_choice",
+        "question": "Сколько точек у буквы ث?",
+        "options": ["Одна снизу", "Две сверху", "Три сверху", "Нет точек"],
+        "correctIndex": 2,
+        "explanation": "ث — «Са» — единственная из этой группы с тремя точками сверху."
+      },
+      {
+        "id": "step_9",
+        "type": "quiz_match",
+        "question": "Соедини букву с её названием:",
+        "pairs": [
+          { "left": "ا", "right": "Алиф" },
+          { "left": "ب", "right": "Ба" },
+          { "left": "ت", "right": "Та" },
+          { "left": "ث", "right": "Са" }
+        ]
+      },
+      {
+        "id": "step_10",
+        "type": "reading_check",
+        "instruction": "Прочитай вслух справа налево, затем нажми «Проверить» и сравни с эталоном.",
+        "arabic": "ثَ  تَ  بَ  اَ",
+        "transliteration": "а — ба — та — са",
+        "audioFile": "practice/m1_l1_row.mp3"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l2",
+    "order": 2,
+    "title": "Три брата на чашке: Джим, Ха, Хо",
+    "description": "Буквы ج ح خ имеют одну форму, но разные точки и совершенно разные звуки",
+    "estimatedMinutes": 5,
+    "xpReward": 20,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Одна форма — три буквы",
+        "content": "ج ح خ пишутся абсолютно одинаково. Различаются ТОЛЬКО точкой: точка внутри = Джим, точки нет = Ха, точка сверху = Хо. Но звуки у них разные, и путать их нельзя: замена буквы меняет смысл аята.",
+        "mnemonic": "«Внутри — Джим, пусто — Ха, сверху — Хо».",
+        "example": "جـ ← حـ ← خـ"
+      },
+      {
+        "id": "step_2",
+        "type": "letter_intro",
+        "arabic": "ج",
+        "name": "Джим",
+        "transliteration": "j",
+        "makhraj": "СЕРЕДИНА языка плотно прижимается к твёрдому нёбу и отпускается. Звук слитный [дж], как в английском jam. Не разделяй на «д» + «ж».",
+        "isHeavy": false,
+        "audioFile": "letters/jeem.mp3",
+        "forms": { "isolated": "ج", "initial": "جـ", "medial": "ـجـ", "final": "ـج" },
+        "note": "Одна точка ВНУТРИ чашки. Входит в буквы калькаля."
+      },
+      {
+        "id": "step_3",
+        "type": "letter_intro",
+        "arabic": "ح",
+        "name": "Ха (халькый)",
+        "transliteration": "ḥ",
+        "makhraj": "СЕРЕДИНА горла. Представь, что дышишь на замёрзшее стекло, чтобы его протереть: сильный, сухой, «шершавый» выдох без участия языка.",
+        "isHeavy": false,
+        "audioFile": "letters/haa_h.mp3",
+        "forms": { "isolated": "ح", "initial": "حـ", "medial": "ـحـ", "final": "ـح" },
+        "note": "Без точек. Это НЕ русское [х] — горло сжимается, но не хрипит."
+      },
+      {
+        "id": "step_4",
+        "type": "letter_intro",
+        "arabic": "خ",
+        "name": "Хо",
+        "transliteration": "kh",
+        "makhraj": "ВЕРХНЯЯ (ближняя) часть горла. Похоже на русское [х] в слове «хохот», но глубже и «жирнее», с лёгким похрапыванием.",
+        "isHeavy": true,
+        "audioFile": "letters/khaa.mp3",
+        "forms": { "isolated": "خ", "initial": "خـ", "medial": "ـخـ", "final": "ـخ" },
+        "note": "Точка СВЕРХУ. Тяжёлая буква (тафхым) — рот наполняется звуком."
+      },
+      {
+        "id": "step_5",
+        "type": "listen_and_repeat",
+        "instruction": "Слушай контраст. Положи ладонь на горло: при ح дрожания нет, при خ чувствуется вибрация вверху.",
+        "items": [
+          { "arabic": "ج", "transliteration": "[джь]", "audioFile": "letters/jeem.mp3" },
+          { "arabic": "ح", "transliteration": "[ḥ] мягкий выдох", "audioFile": "letters/haa_h.mp3" },
+          { "arabic": "خ", "transliteration": "[х] глубокий", "audioFile": "letters/khaa.mp3" }
+        ]
+      },
+      {
+        "id": "step_6",
+        "type": "quiz_choice",
+        "question": "Ты слышишь звук как «выдох на стекло», без хрипа. Какая это буква?",
+        "options": ["خ", "ح", "ج", "ه"],
+        "correctIndex": 1,
+        "explanation": "ح — середина горла, чистый сильный выдох. У خ звук более «царапающий» и тяжёлый."
+      },
+      {
+        "id": "step_7",
+        "type": "quiz_choice",
+        "question": "Какая из этих трёх букв является ТЯЖЁЛОЙ (тафхым)?",
+        "options": ["ج", "ح", "خ"],
+        "correctIndex": 2,
+        "explanation": "خ входит в 7 букв истиля (خص ضغط قظ) и всегда читается твёрдо."
+      },
+      {
+        "id": "step_8",
+        "type": "quiz_match",
+        "question": "Соедини букву с её признаком:",
+        "pairs": [
+          { "left": "ج", "right": "Точка внутри" },
+          { "left": "ح", "right": "Без точек" },
+          { "left": "خ", "right": "Точка сверху" }
+        ]
+      },
+      {
+        "id": "step_9",
+        "type": "reading_check",
+        "instruction": "Прочитай справа налево:",
+        "arabic": "خَ  حَ  جَ",
+        "transliteration": "джа — ḥа — хо",
+        "audioFile": "practice/m1_l2_row.mp3"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l3",
+    "order": 3,
+    "title": "Буквы-одиночки: Даль, Заль, Ра, Зай",
+    "description": "Четыре буквы, которые не подают руку следующей букве",
+    "estimatedMinutes": 5,
+    "xpReward": 20,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Буквы-«гордецы»",
+        "content": "В арабском есть 6 букв, которые соединяются только СПРАВА, но никогда не соединяются со следующей буквой слева: ا د ذ ر ز و. После них в слове всегда появляется маленький разрыв. Сегодня знакомимся с четырьмя из них.",
+        "mnemonic": "«Алиф, Даль, Заль, Ра, Зай, Вав — руку влево не давав».",
+        "example": "أَحَد — видишь разрыв перед د? Его не будет, потому что د стоит в конце. А вот в رَبّ после ر идёт разрыв: ر + بّ"
+      },
+      {
+        "id": "step_2",
+        "type": "letter_intro",
+        "arabic": "د",
+        "name": "Даль",
+        "transliteration": "d",
+        "makhraj": "Кончик языка у ОСНОВАНИЯ верхних передних зубов (тот же махрадж, что у ت, но звонкий). Мягкий русский [д], как в слове «дядя».",
+        "isHeavy": false,
+        "audioFile": "letters/dal.mp3",
+        "forms": { "isolated": "د", "initial": "د", "medial": "ـد", "final": "ـد" },
+        "note": "Буква калькаля. Влево не соединяется."
+      },
+      {
+        "id": "step_3",
+        "type": "letter_intro",
+        "arabic": "ذ",
+        "name": "Заль",
+        "transliteration": "dh (ذ)",
+        "makhraj": "Кончик языка выходит между зубами и касается краёв верхних резцов — звонкий межзубный звук, как английское «th» в this. Пара к букве ث, но со звуком голоса.",
+        "isHeavy": false,
+        "audioFile": "letters/dhal.mp3",
+        "forms": { "isolated": "ذ", "initial": "ذ", "medial": "ـذ", "final": "ـذ" },
+        "note": "Как د, но с точкой сверху."
+      },
+      {
+        "id": "step_4",
+        "type": "letter_intro",
+        "arabic": "ر",
+        "name": "Ра",
+        "transliteration": "r",
+        "makhraj": "Кончик языка слегка загнут вверх и мягко вибрирует у десны. Один-два удара, НЕ раскатистое русское «ррр».",
+        "isHeavy": false,
+        "audioFile": "letters/raa.mp3",
+        "forms": { "isolated": "ر", "initial": "ر", "medial": "ـر", "final": "ـر" },
+        "note": "Особая буква: бывает и твёрдой, и мягкой. Правила изучим в Модуле 4."
+      },
+      {
+        "id": "step_5",
+        "type": "letter_intro",
+        "arabic": "ز",
+        "name": "Зай",
+        "transliteration": "z",
+        "makhraj": "Кончик языка у НИЖНИХ передних зубов, воздух идёт узкой струёй — свистящий звонкий [з], как в слове «зима».",
+        "isHeavy": false,
+        "audioFile": "letters/zay.mp3",
+        "forms": { "isolated": "ز", "initial": "ز", "medial": "ـز", "final": "ـز" },
+        "note": "Буква-свистун (сафир), вместе с س и ص."
+      },
+      {
+        "id": "step_6",
+        "type": "listen_and_repeat",
+        "instruction": "Главный контраст урока: ذ (язык между зубами) против ز (язык за нижними зубами).",
+        "items": [
+          { "arabic": "د", "transliteration": "[д]", "audioFile": "letters/dal.mp3" },
+          { "arabic": "ذ", "transliteration": "[đ] межзубный", "audioFile": "letters/dhal.mp3" },
+          { "arabic": "ر", "transliteration": "[р]", "audioFile": "letters/raa.mp3" },
+          { "arabic": "ز", "transliteration": "[з] свистящий", "audioFile": "letters/zay.mp3" }
+        ]
+      },
+      {
+        "id": "step_7",
+        "type": "quiz_choice",
+        "question": "При произнесении какой буквы кончик языка ВЫХОДИТ между зубами?",
+        "options": ["ز", "ذ", "د", "ر"],
+        "correctIndex": 1,
+        "explanation": "ذ — межзубная звонкая. Если язык остался за зубами, получится ز — это ошибка."
+      },
+      {
+        "id": "step_8",
+        "type": "quiz_choice",
+        "question": "Какая буква из урока НЕ входит в список «не соединяющихся влево»?",
+        "options": ["د", "ذ", "ر", "Все четыре не соединяются"],
+        "correctIndex": 3,
+        "explanation": "Все четыре — د ذ ر ز — входят в шестёрку ا د ذ ر ز و."
+      },
+      {
+        "id": "step_9",
+        "type": "quiz_match",
+        "question": "Соедини букву с её названием:",
+        "pairs": [
+          { "left": "د", "right": "Даль" },
+          { "left": "ذ", "right": "Заль" },
+          { "left": "ر", "right": "Ра" },
+          { "left": "ز", "right": "Зай" }
+        ]
+      },
+      {
+        "id": "step_10",
+        "type": "reading_check",
+        "instruction": "Прочитай справа налево:",
+        "arabic": "زَ  رَ  ذَ  دَ",
+        "transliteration": "да — за(межзуб.) — ра — за",
+        "audioFile": "practice/m1_l3_row.mp3"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l4",
+    "order": 4,
+    "title": "Зубчики: Син и Шин",
+    "description": "Свистящая س и шипящая ش — учимся не смягчать их",
+    "estimatedMinutes": 4,
+    "xpReward": 20,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Три зубчика",
+        "content": "س и ش пишутся как три зубчика с «хвостом-чашкой». Отличие только в точках: у ش три точки сверху. Обе буквы лёгкие (таркык) — рот при них не должен «наполняться».",
+        "mnemonic": "«Три точки — три шипения: Шин».",
+        "example": "سـ ← شـ"
+      },
+      {
+        "id": "step_2",
+        "type": "letter_intro",
+        "arabic": "س",
+        "name": "Син",
+        "transliteration": "s",
+        "makhraj": "Кончик языка у НИЖНИХ передних зубов, узкая струя воздуха. Тонкий, острый свист [с], как в слове «сила». Не «толстый»!",
+        "isHeavy": false,
+        "audioFile": "letters/seen.mp3",
+        "forms": { "isolated": "س", "initial": "سـ", "medial": "ـسـ", "final": "ـس" }
+      },
+      {
+        "id": "step_3",
+        "type": "letter_intro",
+        "arabic": "ش",
+        "name": "Шин",
+        "transliteration": "sh",
+        "makhraj": "СЕРЕДИНА языка приближается к твёрдому нёбу (там же, где ج и ي), воздух рассеивается по всему рту. Мягкое [щ]-образное шипение, ближе к русскому «щ», чем к «ш».",
+        "isHeavy": false,
+        "audioFile": "letters/sheen.mp3",
+        "forms": { "isolated": "ش", "initial": "شـ", "medial": "ـشـ", "final": "ـش" },
+        "note": "Обладает качеством «тафашши» — растекание звука во рту."
+      },
+      {
+        "id": "step_4",
+        "type": "listen_and_repeat",
+        "instruction": "Повтори, растягивая звук: ссссс — щщщщщ.",
+        "items": [
+          { "arabic": "س", "transliteration": "[с] тонкий", "audioFile": "letters/seen.mp3" },
+          { "arabic": "ش", "transliteration": "[щ] растекающийся", "audioFile": "letters/sheen.mp3" }
+        ]
+      },
+      {
+        "id": "step_5",
+        "type": "quiz_choice",
+        "question": "Где образуется звук ش?",
+        "options": [
+          "Кончик языка у нижних зубов",
+          "Середина языка у твёрдого нёба",
+          "Губы",
+          "Горло"
+        ],
+        "correctIndex": 1,
+        "explanation": "ش делит махрадж с ج и ي — середина языка."
+      },
+      {
+        "id": "step_6",
+        "type": "quiz_match",
+        "question": "Соедини форму буквы с её позицией:",
+        "pairs": [
+          { "left": "سـ", "right": "Начальная" },
+          { "left": "ـسـ", "right": "Серединная" },
+          { "left": "ـس", "right": "Конечная" },
+          { "left": "س", "right": "Обособленная" }
+        ]
+      },
+      {
+        "id": "step_7",
+        "type": "reading_check",
+        "instruction": "Прочитай справа налево:",
+        "arabic": "شَ  سَ  شِ  سِ",
+        "transliteration": "си — щи — са — ща",
+        "audioFile": "practice/m1_l4_row.mp3"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l5",
+    "order": 5,
+    "title": "Тяжёлая пара: Сод и Дод",
+    "description": "Знакомство с «толстыми» звуками и с самой сложной буквой Корана",
+    "estimatedMinutes": 5,
+    "xpReward": 25,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Что такое «тяжёлый» звук?",
+        "content": "Есть 7 букв, при которых спинка языка ПОДНИМАЕТСЯ к нёбу, и звук становится густым, «толстым», будто рот наполнен горячей едой. Это тафхым. Сегодня — две из них: ص и ض.",
+        "mnemonic": "Проверь себя: скажи русское «сила», а теперь «сон» низким голосом — второе ближе к ص.",
+        "example": "س (лёгкая) → ص (тяжёлая)"
+      },
+      {
+        "id": "step_2",
+        "type": "letter_intro",
+        "arabic": "ص",
+        "name": "Сод",
+        "transliteration": "ṣ",
+        "makhraj": "Тот же кончик языка у нижних зубов, что и у س, НО спинка языка поднята к нёбу. Получается низкий, глухой, «объёмный» свист.",
+        "isHeavy": true,
+        "audioFile": "letters/sad.mp3",
+        "forms": { "isolated": "ص", "initial": "صـ", "medial": "ـصـ", "final": "ـص" },
+        "note": "Тяжёлая буква (истиля) + свистящая (сафир)."
+      },
+      {
+        "id": "step_3",
+        "type": "letter_intro",
+        "arabic": "ض",
+        "name": "Дод",
+        "transliteration": "ḍ",
+        "makhraj": "БОКОВАЯ часть языка прижимается к верхним коренным зубам (легче слева), и звук как бы «выдавливается» вбок. Тяжёлый, растянутый [д] с давлением.",
+        "isHeavy": true,
+        "audioFile": "letters/dad.mp3",
+        "forms": { "isolated": "ض", "initial": "ضـ", "medial": "ـضـ", "final": "ـض" },
+        "note": "Арабский язык называют «языком Дод» — этот звук уникален. Обладает качеством иститаля (растягивание)."
+      },
+      {
+        "id": "step_4",
+        "type": "listen_and_repeat",
+        "instruction": "Сравни лёгкое и тяжёлое. Обрати внимание: при ص и ض голос звучит НИЖЕ.",
+        "items": [
+          { "arabic": "س", "transliteration": "[с] лёгкий", "audioFile": "letters/seen.mp3" },
+          { "arabic": "ص", "transliteration": "[ṣ] тяжёлый", "audioFile": "letters/sad.mp3" },
+          { "arabic": "د", "transliteration": "[д] лёгкий", "audioFile": "letters/dal.mp3" },
+          { "arabic": "ض", "transliteration": "[ḍ] тяжёлый, боковой", "audioFile": "letters/dad.mp3" }
+        ]
+      },
+      {
+        "id": "step_5",
+        "type": "quiz_choice",
+        "question": "Какая часть языка работает при произнесении ض?",
+        "options": ["Кончик", "Середина", "Боковая часть у коренных зубов", "Корень языка"],
+        "correctIndex": 2,
+        "explanation": "ض — единственная буква, у которой махрадж находится на боковой кромке языка."
+      },
+      {
+        "id": "step_6",
+        "type": "quiz_choice",
+        "question": "Выбери пару «лёгкая → тяжёлая»:",
+        "options": ["ص → س", "س → ص", "ض → د", "ث → ذ"],
+        "correctIndex": 1,
+        "explanation": "س лёгкая, её тяжёлый «двойник» — ص."
+      },
+      {
+        "id": "step_7",
+        "type": "quiz_match",
+        "question": "Раздели буквы: лёгкая или тяжёлая?",
+        "pairs": [
+          { "left": "ص", "right": "Тяжёлая (тафхым)" },
+          { "left": "ض", "right": "Тяжёлая (тафхым)" },
+          { "left": "س", "right": "Лёгкая (таркык)" },
+          { "left": "د", "right": "Лёгкая (таркык)" }
+        ]
+      },
+      {
+        "id": "step_8",
+        "type": "reading_check",
+        "instruction": "Прочитай, «утяжеляя» звук:",
+        "arabic": "ضَ  صَ  ضُ  صُ",
+        "transliteration": "ṣа — ḍа — ṣу — ḍу",
+        "audioFile": "practice/m1_l5_row.mp3"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l6",
+    "order": 6,
+    "title": "Тяжёлая пара: То и Зо",
+    "description": "Эмфатические ط и ظ — «братья» лёгких ت и ذ",
+    "estimatedMinutes": 4,
+    "xpReward": 25,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Пары «лёгкий — тяжёлый»",
+        "content": "Арабские звуки часто ходят парами: один лёгкий, второй — его тяжёлая версия. ت→ط, ذ→ظ, س→ص. Махрадж (место) почти тот же, меняется только положение спинки языка.",
+        "mnemonic": "Тяжёлый = «говорю в пустую бочку».",
+        "example": "تَ (та) ↔ طَ (то) · ذَ (za) ↔ ظَ (zo)"
+      },
+      {
+        "id": "step_2",
+        "type": "letter_intro",
+        "arabic": "ط",
+        "name": "То",
+        "transliteration": "ṭ",
+        "makhraj": "Кончик языка сильно прижимается к основанию верхних передних зубов, спинка языка поднята. Звук резкий, «плотный», ближе к твёрдому [т] в слове «тон», но глубже.",
+        "isHeavy": true,
+        "audioFile": "letters/taa_heavy.mp3",
+        "forms": { "isolated": "ط", "initial": "طـ", "medial": "ـطـ", "final": "ـط" },
+        "note": "Самая сильная буква алфавита: тяжёлая + калькаля + шидда."
+      },
+      {
+        "id": "step_3",
+        "type": "letter_intro",
+        "arabic": "ظ",
+        "name": "Зо",
+        "transliteration": "ẓ",
+        "makhraj": "Кончик языка МЕЖДУ зубами, как у ذ, но спинка языка поднята — звук густой, звонкий, «жирный». Не путать с ز (там язык за зубами) и с ض.",
+        "isHeavy": true,
+        "audioFile": "letters/zaa_heavy.mp3",
+        "forms": { "isolated": "ظ", "initial": "ظـ", "medial": "ـظـ", "final": "ـظ" }
+      },
+      {
+        "id": "step_4",
+        "type": "listen_and_repeat",
+        "instruction": "Слушай пары. Второй звук в каждой паре — тяжёлый.",
+        "items": [
+          { "arabic": "تَ — طَ", "transliteration": "та — ṭо", "audioFile": "contrast/ta_vs_tah.mp3" },
+          { "arabic": "ذَ — ظَ", "transliteration": "đа — ẓо", "audioFile": "contrast/dhal_vs_zah.mp3" }
+        ]
+      },
+      {
+        "id": "step_5",
+        "type": "quiz_choice",
+        "question": "У буквы ظ кончик языка находится:",
+        "options": ["За верхними зубами", "Между зубами", "У нижних зубов", "Не участвует"],
+        "correctIndex": 1,
+        "explanation": "ظ — межзубная, как ذ и ث. Разница с ذ только в тяжести звука."
+      },
+      {
+        "id": "step_6",
+        "type": "quiz_choice",
+        "question": "Какая буква считается самой «сильной» по совокупности качеств?",
+        "options": ["ت", "ط", "ظ", "س"],
+        "correctIndex": 1,
+        "explanation": "ط сочетает истиля (подъём), итбак (прижатие), калькаля и шидда."
+      },
+      {
+        "id": "step_7",
+        "type": "quiz_match",
+        "question": "Соедини лёгкую букву с её тяжёлой парой:",
+        "pairs": [
+          { "left": "ت", "right": "ط" },
+          { "left": "ذ", "right": "ظ" },
+          { "left": "س", "right": "ص" },
+          { "left": "د", "right": "ض" }
+        ]
+      },
+      {
+        "id": "step_8",
+        "type": "reading_check",
+        "instruction": "Прочитай, чувствуя разницу:",
+        "arabic": "ظَ  طَ  ذَ  تَ",
+        "transliteration": "та — đа — ṭо — ẓо",
+        "audioFile": "practice/m1_l6_row.mp3"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l7",
+    "order": 7,
+    "title": "Сердце горла: Айн и Гайн",
+    "description": "Два звука, которых нет в русском языке — ставим их по шагам",
+    "estimatedMinutes": 5,
+    "xpReward": 30,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Не бойся عайна",
+        "content": "ع — самый «пугающий» звук для русскоязычных, но секрет прост: это лёгкое СЖАТИЕ середины горла, как перед тем, как что-то проглотить, при этом голос продолжает звучать. Язык не двигается, губы расслаблены. Тренируйся перед зеркалом: рот открыт, работает только горло.",
+        "mnemonic": "Скажи «а» и слегка «придуши» звук в горле — получится عَ.",
+        "example": "أَ (алиф) — глубокий щелчок · عَ — сжатое, «сдавленное» а"
+      },
+      {
+        "id": "step_2",
+        "type": "letter_intro",
+        "arabic": "ع",
+        "name": "Айн",
+        "transliteration": "ʿ",
+        "makhraj": "СЕРЕДИНА горла, тот же уровень, что и у ح, но со звуком голоса и меньшим напряжением. Звонкий, «сдавленный» звук.",
+        "isHeavy": false,
+        "audioFile": "letters/ain.mp3",
+        "forms": { "isolated": "ع", "initial": "عـ", "medial": "ـعـ", "final": "ـع" },
+        "note": "Всегда лёгкая (таркык), даже если звучит «густо»."
+      },
+      {
+        "id": "step_3",
+        "type": "letter_intro",
+        "arabic": "غ",
+        "name": "Гайн",
+        "transliteration": "gh",
+        "makhraj": "ВЕРХНЯЯ часть горла, там же, где خ, но со звуком голоса. Похоже на украинское/южнорусское «г» в слове «ага» или на французское картавое «r».",
+        "isHeavy": true,
+        "audioFile": "letters/ghain.mp3",
+        "forms": { "isolated": "غ", "initial": "غـ", "medial": "ـغـ", "final": "ـغ" },
+        "note": "Тяжёлая буква (истиля). Пара к خ."
+      },
+      {
+        "id": "step_4",
+        "type": "listen_and_repeat",
+        "instruction": "Прослушай лесенку горла сверху вниз: خ غ → ح ع → ه ء",
+        "items": [
+          { "arabic": "غ", "transliteration": "[г͏ъ] верх горла", "audioFile": "letters/ghain.mp3" },
+          { "arabic": "خ", "transliteration": "[х] верх горла", "audioFile": "letters/khaa.mp3" },
+          { "arabic": "ع", "transliteration": "[ʿ] середина", "audioFile": "letters/ain.mp3" },
+          { "arabic": "ح", "transliteration": "[ḥ] середина", "audioFile": "letters/haa_h.mp3" }
+        ]
+      },
+      {
+        "id": "step_5",
+        "type": "quiz_choice",
+        "question": "Какая пара букв образуется в СЕРЕДИНЕ горла?",
+        "options": ["خ и غ", "ع и ح", "ء и ه", "ق и ك"],
+        "correctIndex": 1,
+        "explanation": "Горло делится на 3 части: дальняя (ء ه), средняя (ع ح), ближняя (غ خ)."
+      },
+      {
+        "id": "step_6",
+        "type": "quiz_choice",
+        "question": "Чем ع отличается от ح?",
+        "options": [
+          "Разные места образования",
+          "Тем же местом, но ع — звонкий, ح — глухой выдох",
+          "ع тяжёлая, ح лёгкая",
+          "Ничем"
+        ],
+        "correctIndex": 1,
+        "explanation": "Место одно — середина горла. Разница в работе голосовых связок и силе сжатия."
+      },
+      {
+        "id": "step_7",
+        "type": "quiz_match",
+        "question": "Соедини букву с зоной горла:",
+        "pairs": [
+          { "left": "ء / ه", "right": "Дальняя часть (глубина)" },
+          { "left": "ع / ح", "right": "Средняя часть" },
+          { "left": "غ / خ", "right": "Ближняя часть (верх)" }
+        ]
+      },
+      {
+        "id": "step_8",
+        "type": "reading_check",
+        "instruction": "Прочитай вслух и запиши себя на диктофон:",
+        "arabic": "غَ  عَ  غُ  عُ",
+        "transliteration": "ʿа — г̣а — ʿу — г̣у",
+        "audioFile": "practice/m1_l7_row.mp3"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l8",
+    "order": 8,
+    "title": "Фа, Коф и Кяф",
+    "description": "Губно-зубная ف и главная пара тяжёлый/лёгкий: ق против ك",
+    "estimatedMinutes": 5,
+    "xpReward": 25,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Две «К» в арабском",
+        "content": "Русскому уху ق и ك кажутся одной буквой, но это разные звуки и разные места. ك — как обычное [к]. ق — глубокое [къ] из самого корня языка, тяжёлое. Ошибка здесь меняет смысл: قَلْب (сердце) ≠ كَلْب (собака).",
+        "mnemonic": "ق — «к» из глубины, будто глотаешь; ك — «к» у самого нёба.",
+        "example": "قَلْب vs كَلْب"
+      },
+      {
+        "id": "step_2",
+        "type": "letter_intro",
+        "arabic": "ف",
+        "name": "Фа",
+        "transliteration": "f",
+        "makhraj": "Внутренняя сторона НИЖНЕЙ губы касается кончиков верхних передних зубов. Обычный русский [ф], но чётко и без напряжения.",
+        "isHeavy": false,
+        "audioFile": "letters/faa.mp3",
+        "forms": { "isolated": "ف", "initial": "فـ", "medial": "ـفـ", "final": "ـف" },
+        "note": "Одна точка сверху."
+      },
+      {
+        "id": "step_3",
+        "type": "letter_intro",
+        "arabic": "ق",
+        "name": "Коф",
+        "transliteration": "q",
+        "makhraj": "САМЫЙ КОРЕНЬ языка поднимается к мягкому нёбу (почти к язычку). Звук глубокий, тяжёлый, «глотающий» — [къ].",
+        "isHeavy": true,
+        "audioFile": "letters/qaf.mp3",
+        "forms": { "isolated": "ق", "initial": "قـ", "medial": "ـقـ", "final": "ـق" },
+        "note": "Две точки сверху. Тяжёлая + буква калькаля."
+      },
+      {
+        "id": "step_4",
+        "type": "letter_intro",
+        "arabic": "ك",
+        "name": "Кяф",
+        "transliteration": "k",
+        "makhraj": "Корень языка, но НА САНТИМЕТР ближе ко рту, чем у ق. Звук лёгкий, мягкий [к], как в слове «кино».",
+        "isHeavy": false,
+        "audioFile": "letters/kaf.mp3",
+        "forms": { "isolated": "ك", "initial": "كـ", "medial": "ـكـ", "final": "ـك" }
+      },
+      {
+        "id": "step_5",
+        "type": "listen_and_repeat",
+        "instruction": "Повтори пары. Приложи руку к горлу: при ق ощущается движение глубоко внизу.",
+        "items": [
+          { "arabic": "قَ — كَ", "transliteration": "къа — кя", "audioFile": "contrast/qaf_vs_kaf.mp3" },
+          { "arabic": "قُ — كُ", "transliteration": "къу — кю", "audioFile": "contrast/qaf_vs_kaf_u.mp3" },
+          { "arabic": "فَ", "transliteration": "фа", "audioFile": "letters/faa.mp3" }
+        ]
+      },
+      {
+        "id": "step_6",
+        "type": "quiz_choice",
+        "question": "В слове قَلْب («сердце») первая буква:",
+        "options": ["ك — лёгкая", "ق — тяжёлая, из корня языка", "ف", "خ"],
+        "correctIndex": 1,
+        "explanation": "Если прочитать كَلْب, смысл изменится на «собака». Будь внимателен!"
+      },
+      {
+        "id": "step_7",
+        "type": "quiz_choice",
+        "question": "Сколько точек у буквы «Коф» и где они?",
+        "options": ["Одна сверху", "Две сверху", "Две снизу", "Три сверху"],
+        "correctIndex": 1,
+        "explanation": "ق — две точки сверху; ف — одна точка сверху."
+      },
+      {
+        "id": "step_8",
+        "type": "quiz_match",
+        "question": "Соедини букву с описанием махраджа:",
+        "pairs": [
+          { "left": "ف", "right": "Нижняя губа + верхние зубы" },
+          { "left": "ق", "right": "Корень языка, глубоко" },
+          { "left": "ك", "right": "Корень языка, чуть ближе" }
+        ]
+      },
+      {
+        "id": "step_9",
+        "type": "reading_check",
+        "instruction": "Прочитай справа налево:",
+        "arabic": "كَ  قَ  فَ",
+        "transliteration": "фа — къа — кя",
+        "audioFile": "practice/m1_l8_row.mp3"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l9",
+    "order": 9,
+    "title": "Лям, Мим, Нун — и первый носовой звук",
+    "description": "Три звонкие буквы и знакомство с гунной",
+    "estimatedMinutes": 5,
+    "xpReward": 25,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Что такое гунна?",
+        "content": "У букв م и ن есть особое качество — ГУННА: часть звука выходит через НОС. Проверь: зажми нос пальцами и попробуй протянуть «ммм» или «ннн» — звук перекроется. Значит, ты делаешь гунну правильно. В Таджвиде на этом построена половина правил.",
+        "mnemonic": "Зажал нос — звук пропал = гунна есть.",
+        "example": "مَنْ · إِنَّ · مُحَمَّد"
+      },
+      {
+        "id": "step_2",
+        "type": "letter_intro",
+        "arabic": "ل",
+        "name": "Лям",
+        "transliteration": "l",
+        "makhraj": "Кончик языка широко прижимается к десне над верхними передними зубами. Мягкий [ль], как в слове «лямка». Не твёрдое русское «л»!",
+        "isHeavy": false,
+        "audioFile": "letters/lam.mp3",
+        "forms": { "isolated": "ل", "initial": "لـ", "medial": "ـلـ", "final": "ـل" },
+        "note": "Исключение: в слове اللَّه после фатхи/даммы Лям читается ТВЁРДО (изучим в Модуле 4)."
+      },
+      {
+        "id": "step_3",
+        "type": "letter_intro",
+        "arabic": "م",
+        "name": "Мим",
+        "transliteration": "m",
+        "makhraj": "Губы мягко смыкаются, звук идёт через нос. Русское [м], но губы не сжимаем с силой.",
+        "isHeavy": false,
+        "audioFile": "letters/meem.mp3",
+        "forms": { "isolated": "م", "initial": "مـ", "medial": "ـمـ", "final": "ـم" },
+        "note": "Обладает гунной."
+      },
+      {
+        "id": "step_4",
+        "type": "letter_intro",
+        "arabic": "ن",
+        "name": "Нун",
+        "transliteration": "n",
+        "makhraj": "Кончик языка у десны, чуть НИЖЕ места Ляма, звук идёт через нос. Мягкий [нь].",
+        "isHeavy": false,
+        "audioFile": "letters/noon.mp3",
+        "forms": { "isolated": "ن", "initial": "نـ", "medial": "ـنـ", "final": "ـن" },
+        "note": "Обладает гунной. Одна точка сверху."
+      },
+      {
+        "id": "step_5",
+        "type": "listen_and_repeat",
+        "instruction": "Протяни каждый звук 2 секунды, зажимая и отпуская нос.",
+        "items": [
+          { "arabic": "ل", "transliteration": "[ль]", "audioFile": "letters/lam.mp3" },
+          { "arabic": "م", "transliteration": "[м] + нос", "audioFile": "letters/meem.mp3" },
+          { "arabic": "ن", "transliteration": "[нь] + нос", "audioFile": "letters/noon.mp3" }
+        ]
+      },
+      {
+        "id": "step_6",
+        "type": "quiz_choice",
+        "question": "У каких букв есть гунна (носовой призвук)?",
+        "options": ["ل и م", "م и ن", "ن и ل", "Только ن"],
+        "correctIndex": 1,
+        "explanation": "Гунна — врождённое качество только двух букв: م и ن."
+      },
+      {
+        "id": "step_7",
+        "type": "quiz_choice",
+        "question": "Чем отличается махрадж ن от ل?",
+        "options": [
+          "Совершенно разные зоны",
+          "ن образуется чуть ниже места ل, и звук идёт через нос",
+          "ن губная",
+          "ل горловая"
+        ],
+        "correctIndex": 1,
+        "explanation": "Оба звука — кончик языка у десны, но у ن точка ниже и подключается носовая полость."
+      },
+      {
+        "id": "step_8",
+        "type": "quiz_match",
+        "question": "Соедини букву с её конечной формой:",
+        "pairs": [
+          { "left": "ل", "right": "ـل" },
+          { "left": "م", "right": "ـم" },
+          { "left": "ن", "right": "ـن" },
+          { "left": "ب", "right": "ـب" }
+        ]
+      },
+      {
+        "id": "step_9",
+        "type": "reading_check",
+        "instruction": "Прочитай справа налево, тянув носовые:",
+        "arabic": "نَ  مَ  لَ",
+        "transliteration": "ля — ма — на",
+        "audioFile": "practice/m1_l9_row.mp3"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l10",
+    "order": 10,
+    "title": "Финиш алфавита: Ха, Вав, Йа и Хамза",
+    "description": "Закрываем все 28 букв и знакомимся со знаком хамзы",
+    "estimatedMinutes": 5,
+    "xpReward": 30,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "letter_intro",
+        "arabic": "ه",
+        "name": "Ха (мягкая)",
+        "transliteration": "h",
+        "makhraj": "САМАЯ ГЛУБИНА горла, полное расслабление. Простой выдох со звуком, как когда с облегчением говоришь «хааа». Ничего не напрягается.",
+        "isHeavy": false,
+        "audioFile": "letters/haa_soft.mp3",
+        "forms": { "isolated": "ه", "initial": "هـ", "medial": "ـهـ", "final": "ـه" },
+        "note": "Самая «многоликая» по написанию буква — запомни все 4 формы."
+      },
+      {
+        "id": "step_2",
+        "type": "letter_intro",
+        "arabic": "و",
+        "name": "Вав",
+        "transliteration": "w / ū",
+        "makhraj": "Губы округляются и вытягиваются вперёд трубочкой, как для звука [у]. Согласный звук — английское [w] в слове water, а не русское [в].",
+        "isHeavy": false,
+        "audioFile": "letters/waw.mp3",
+        "forms": { "isolated": "و", "initial": "و", "medial": "ـو", "final": "ـو" },
+        "note": "Не соединяется влево. Может быть буквой мадда (удлинения) — Модуль 3."
+      },
+      {
+        "id": "step_3",
+        "type": "letter_intro",
+        "arabic": "ي",
+        "name": "Йа",
+        "transliteration": "y / ī",
+        "makhraj": "Середина языка приближается к твёрдому нёбу (место ج и ش). Звук [й], как в слове «яма».",
+        "isHeavy": false,
+        "audioFile": "letters/yaa.mp3",
+        "forms": { "isolated": "ي", "initial": "يـ", "medial": "ـيـ", "final": "ـي" },
+        "note": "Две точки снизу. Тоже может быть буквой мадда."
+      },
+      {
+        "id": "step_4",
+        "type": "letter_intro",
+        "arabic": "ء",
+        "name": "Хамза",
+        "transliteration": "ʾ",
+        "makhraj": "Самая глубина горла — голосовые связки резко смыкаются и размыкаются. Это «щелчок», как в русском «не-а» или перед словом «Аня» в резком окрике.",
+        "isHeavy": false,
+        "audioFile": "letters/hamza.mp3",
+        "forms": { "isolated": "ء", "initial": "أ / إ", "medial": "ـئـ / ـؤ / ـأ", "final": "ـأ / ـؤ / ـئ / ء" },
+        "note": "Хамза — звук, а Алиф — его «подставка». Хамза может сидеть на ا, و, ي или писаться отдельно."
+      },
+      {
+        "id": "step_5",
+        "type": "listen_and_repeat",
+        "instruction": "Сравни три «х»-подобных звука и щелчок хамзы.",
+        "items": [
+          { "arabic": "ء", "transliteration": "щелчок", "audioFile": "letters/hamza.mp3" },
+          { "arabic": "ه", "transliteration": "[h] лёгкий выдох", "audioFile": "letters/haa_soft.mp3" },
+          { "arabic": "ح", "transliteration": "[ḥ] сильный выдох", "audioFile": "letters/haa_h.mp3" },
+          { "arabic": "خ", "transliteration": "[х] с хрипом", "audioFile": "letters/khaa.mp3" }
+        ]
+      },
+      {
+        "id": "step_6",
+        "type": "quiz_choice",
+        "question": "Какая из этих букв НЕ соединяется со следующей буквой слева?",
+        "options": ["ه", "ي", "و", "ن"],
+        "correctIndex": 2,
+        "explanation": "و входит в шестёрку ا د ذ ر ز و."
+      },
+      {
+        "id": "step_7",
+        "type": "quiz_choice",
+        "question": "Хамза (ء) — это:",
+        "options": [
+          "Огласовка",
+          "Гортанный смычный звук из глубины горла",
+          "Знак остановки",
+          "Удвоение буквы"
+        ],
+        "correctIndex": 1,
+        "explanation": "Хамза — полноценный согласный звук, образующийся смыканием голосовых связок."
+      },
+      {
+        "id": "step_8",
+        "type": "quiz_match",
+        "question": "Соедини букву ه с её формами:",
+        "pairs": [
+          { "left": "Обособленная", "right": "ه" },
+          { "left": "Начальная", "right": "هـ" },
+          { "left": "Серединная", "right": "ـهـ" },
+          { "left": "Конечная", "right": "ـه" }
+        ]
+      },
+      {
+        "id": "step_9",
+        "type": "theory",
+        "title": "Поздравляем — 28 из 28!",
+        "content": "Ты прошёл весь алфавит: ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي. Дальше мы систематизируем звуки по махраджам и научимся не путать похожие буквы.",
+        "mnemonic": "Повторяй алфавит вслух каждый день по 1 минуте — это лучший тренажёр.",
+        "example": "أَبْجَدِيَّة — «алфавит»"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l11",
+    "order": 11,
+    "title": "Карта махраджей: где живут звуки",
+    "description": "Пять зон речевого аппарата и распределение 28 букв",
+    "estimatedMinutes": 5,
+    "xpReward": 30,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "5 главных зон",
+        "content": "Махрадж — это место, откуда рождается звук. Всего зон пять: 1) ДЖАУФ — пустота рта и горла (буквы удлинения ا و ي); 2) ХАЛЬК — горло (6 букв); 3) ЛИСАН — язык (18 букв); 4) ШАФАТАН — губы (4 буквы: ف ب م و); 5) ХАЙШУМ — носовая полость (только гунна).",
+        "mnemonic": "«Пустота → Горло → Язык → Губы → Нос» — сверху вниз и изнутри наружу.",
+        "example": "Всего 17 точных точек внутри этих 5 зон."
+      },
+      {
+        "id": "step_2",
+        "type": "theory",
+        "title": "Горло — 3 этажа",
+        "content": "Дальний (глубокий) этаж: ء و ه. Средний этаж: ع و ح. Ближний (верхний) этаж: غ و خ. Именно эти 6 букв называются «горловыми» — они понадобятся в правиле Изхар (Модуль 4).",
+        "mnemonic": "Пары «глухой — звонкий»: ء/ه · ح/ع · خ/غ",
+        "example": "أ ه ع ح غ خ"
+      },
+      {
+        "id": "step_3",
+        "type": "theory",
+        "title": "Язык — самый населённый район",
+        "content": "Корень языка: ق, затем ك. Середина: ج ش ي. Бок языка: ض. Кончик языка у десны: ل، ن، ر. Кончик у основания зубов: ط د ت. Кончик у нижних зубов (свист): ص س ز. Кончик между зубами: ظ ذ ث.",
+        "mnemonic": "Двигайся от горла к зубам — буквы идут «поездом».",
+        "example": "ق ← ك ← ج ش ي ← ض ← ل ن ر ← ط د ت ← ص س ز ← ظ ذ ث"
+      },
+      {
+        "id": "step_4",
+        "type": "quiz_match",
+        "question": "Соедини букву с её зоной:",
+        "pairs": [
+          { "left": "ع", "right": "Горло (халькь)" },
+          { "left": "ض", "right": "Бок языка" },
+          { "left": "ب", "right": "Губы" },
+          { "left": "ث", "right": "Между зубами" }
+        ]
+      },
+      {
+        "id": "step_5",
+        "type": "quiz_choice",
+        "question": "Сколько букв образуется в горле?",
+        "options": ["4", "6", "8", "3"],
+        "correctIndex": 1,
+        "explanation": "Шесть: ء ه ع ح غ خ. Их знание обязательно для правила Изхар Халькый."
+      },
+      {
+        "id": "step_6",
+        "type": "quiz_choice",
+        "question": "Какие буквы относятся к ГУБНЫМ?",
+        "options": ["ف ب م و", "ب م ن ل", "و ي ا", "ف ق ك"],
+        "correctIndex": 0,
+        "explanation": "ف — губно-зубная; ب م و — образуются двумя губами."
+      },
+      {
+        "id": "step_7",
+        "type": "find_the_rule",
+        "instruction": "Найди в ряду ВСЕ горловые буквы:",
+        "items": ["ب", "ح", "س", "ع", "ت", "خ", "م", "ه"],
+        "correctIndices": [1, 3, 5, 7],
+        "targetRule": "Горловые буквы (ء ه ع ح غ خ)",
+        "explanation": "ح، ع، خ، ه — горловые. Остальные образуются языком или губами."
+      },
+      {
+        "id": "step_8",
+        "type": "quiz_match",
+        "question": "Соедини зону с количеством букв:",
+        "pairs": [
+          { "left": "Джауф (пустота)", "right": "3 буквы мадда" },
+          { "left": "Халькь (горло)", "right": "6 букв" },
+          { "left": "Лисан (язык)", "right": "18 букв" },
+          { "left": "Шафатан (губы)", "right": "4 буквы" }
+        ]
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l12",
+    "order": 12,
+    "title": "Тафхым и Таркык: тяжёлые и лёгкие буквы",
+    "description": "7 букв истиля и мнемоника خُصَّ ضَغْطٍ قِظْ",
+    "estimatedMinutes": 5,
+    "xpReward": 30,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Семь тяжёлых букв",
+        "content": "Тафхым — «утолщение» звука: спинка языка поднимается, звук становится густым и низким. Таких букв ровно 7: خ ص ض غ ط ق ظ. Все остальные 21 буква — лёгкие (таркык), кроме трёх «переменчивых»: ر، ل (в имени Аллаха) и ا (алиф мадда), которые подстраиваются под соседей.",
+        "mnemonic": "Запомни фразу: خُصَّ ضَغْطٍ قِظْ — «Хусса Даг̣тын Къиз̣». Каждая буква фразы — тяжёлая.",
+        "example": "الصِّرَاط · الْقُرْآن · عَظِيم"
+      },
+      {
+        "id": "step_2",
+        "type": "listen_and_repeat",
+        "instruction": "Произнеси мнемо-фразу вслух 3 раза, чувствуя тяжесть каждой буквы.",
+        "items": [
+          { "arabic": "خُصَّ", "transliteration": "хуṣṣа", "audioFile": "mnemonics/khussa.mp3" },
+          { "arabic": "ضَغْطٍ", "transliteration": "ḍаг̣ṭын", "audioFile": "mnemonics/daghtin.mp3" },
+          { "arabic": "قِظْ", "transliteration": "къиẓ", "audioFile": "mnemonics/qiz.mp3" }
+        ]
+      },
+      {
+        "id": "step_3",
+        "type": "theory",
+        "title": "Степени тяжести",
+        "content": "Тяжесть не всегда одинакова. Самая сильная — с фатхой + алифом (قَال), затем с фатхой (قَ), затем с даммой (قُ), затем с сукуном (قْ), и самая слабая — с касрой (قِ). Но даже с касрой тяжёлая буква никогда не становится лёгкой.",
+        "mnemonic": "Фатха+алиф > Фатха > Дамма > Сукун > Касра.",
+        "example": "طَال — طَ — طُ — طْ — طِ"
+      },
+      {
+        "id": "step_4",
+        "type": "quiz_choice",
+        "question": "Сколько букв всегда читаются тяжело (истиля)?",
+        "options": ["5", "6", "7", "15"],
+        "correctIndex": 2,
+        "explanation": "Семь: خ ص ض غ ط ق ظ — фраза خُصَّ ضَغْطٍ قِظْ."
+      },
+      {
+        "id": "step_5",
+        "type": "quiz_choice",
+        "question": "Какая буква НЕ входит в число тяжёлых?",
+        "options": ["ص", "ع", "ط", "غ"],
+        "correctIndex": 1,
+        "explanation": "ع — горловая, но всегда ЛЁГКАЯ. Её часто ошибочно утяжеляют."
+      },
+      {
+        "id": "step_6",
+        "type": "find_the_rule",
+        "instruction": "Найди все ТЯЖЁЛЫЕ буквы в ряду:",
+        "items": ["س", "ص", "ت", "ط", "ذ", "ظ", "ك", "ق"],
+        "correctIndices": [1, 3, 5, 7],
+        "targetRule": "Тафхым (истиля)",
+        "explanation": "ص، ط، ظ، ق — тяжёлые. Их лёгкие «двойники»: س، ت، ذ، ك."
+      },
+      {
+        "id": "step_7",
+        "type": "quiz_match",
+        "question": "Соедини букву с её характеристикой:",
+        "pairs": [
+          { "left": "خ", "right": "Тяжёлая" },
+          { "left": "ح", "right": "Лёгкая" },
+          { "left": "غ", "right": "Тяжёлая" },
+          { "left": "ع", "right": "Лёгкая" }
+        ]
+      },
+      {
+        "id": "step_8",
+        "type": "reading_check",
+        "instruction": "Прочитай, утяжеляя выделенные буквы:",
+        "arabic": "قَ  ظَ  طَ  غَ  ضَ  صَ  خَ",
+        "transliteration": "хо — ṣо — ḍо — ṭо — г̣о — ẓо — къо",
+        "audioFile": "practice/m1_l12_heavy.mp3"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l13",
+    "order": 13,
+    "title": "Дуэль звуков: ت ↔ ط и د ↔ ض",
+    "description": "Тренируем слух на минимальных парах",
+    "estimatedMinutes": 4,
+    "xpReward": 25,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Зачем это нужно",
+        "content": "Замена буквы на похожую — это лахн джали, явная ошибка, которая меняет смысл слова. Например, طِين (глина) и تِين (инжир). Твоя задача — научить ухо ловить разницу, а язык — воспроизводить её.",
+        "mnemonic": "Тяжёлая буква = «звук в бочке», лёгкая = «звук у губ».",
+        "example": "تِين ≠ طِين"
+      },
+      {
+        "id": "step_2",
+        "type": "listen_and_repeat",
+        "instruction": "Слушай пары и повторяй, преувеличивая разницу.",
+        "items": [
+          { "arabic": "تَاب — طَاب", "transliteration": "тааба — ṭооба", "audioFile": "contrast/tab_tab.mp3" },
+          { "arabic": "دَلَّ — ضَلَّ", "transliteration": "далля — ḍолля", "audioFile": "contrast/dalla_dalla.mp3" }
+        ]
+      },
+      {
+        "id": "step_3",
+        "type": "quiz_choice",
+        "question": "🔊 Прослушай аудио. Какую букву ты услышал?",
+        "audioFile": "quiz/m1_l13_q1.mp3",
+        "options": ["ت", "ط"],
+        "correctIndex": 1,
+        "explanation": "Звук был низким и «плотным» — это ط."
+      },
+      {
+        "id": "step_4",
+        "type": "quiz_choice",
+        "question": "🔊 Прослушай аудио. Какую букву ты услышал?",
+        "audioFile": "quiz/m1_l13_q2.mp3",
+        "options": ["د", "ض"],
+        "correctIndex": 0,
+        "explanation": "Звук лёгкий, кончик языка у зубов — это د."
+      },
+      {
+        "id": "step_5",
+        "type": "quiz_choice",
+        "question": "Чем ض принципиально отличается от د по месту образования?",
+        "options": [
+          "Ничем, только тяжестью",
+          "ض образуется боковой частью языка у коренных зубов",
+          "ض губная",
+          "ض горловая"
+        ],
+        "correctIndex": 1,
+        "explanation": "У ض другой махрадж, а не просто «утяжелённый د»."
+      },
+      {
+        "id": "step_6",
+        "type": "find_the_rule",
+        "instruction": "Найди слова, в которых есть ТЯЖЁЛАЯ буква (ط или ض):",
+        "items": ["كِتَاب", "الطَّارِق", "تِين", "ضُحَى"],
+        "correctIndices": [1, 3],
+        "targetRule": "Тафхым: ط / ض",
+        "explanation": "الطَّارِق содержит ط, ضُحَى содержит ض. Остальные слова читаются легко."
+      },
+      {
+        "id": "step_7",
+        "type": "reading_check",
+        "instruction": "Прочитай, чётко разделяя пары:",
+        "arabic": "ضَ  دَ  طَ  تَ",
+        "transliteration": "та — ṭо — да — ḍо",
+        "audioFile": "practice/m1_l13_row.mp3"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l14",
+    "order": 14,
+    "title": "Дуэль звуков: س ↔ ص и ذ ↔ ز ↔ ظ",
+    "description": "Три «зэ» арабского языка и два «эс»",
+    "estimatedMinutes": 5,
+    "xpReward": 25,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Три разных «З»",
+        "content": "Русское ухо слышит в ذ، ز، ظ один звук [з], но они совершенно разные. ز — язык ЗА нижними зубами, свистит, лёгкий. ذ — язык МЕЖДУ зубами, лёгкий. ظ — язык МЕЖДУ зубами, тяжёлый. Ключ к различению: где находится кончик языка.",
+        "mnemonic": "«За зубами — ز, между зубами лёгкий — ذ, между зубами тяжёлый — ظ».",
+        "example": "زَكَاة · ذَلِكَ · ظَلَمَ"
+      },
+      {
+        "id": "step_2",
+        "type": "listen_and_repeat",
+        "instruction": "Смотри на себя в зеркало: при ذ и ظ кончик языка должен быть виден.",
+        "items": [
+          { "arabic": "زَ", "transliteration": "за (свист)", "audioFile": "letters/zay.mp3" },
+          { "arabic": "ذَ", "transliteration": "đа (межзуб., лёгкий)", "audioFile": "letters/dhal.mp3" },
+          { "arabic": "ظَ", "transliteration": "ẓо (межзуб., тяжёлый)", "audioFile": "letters/zaa_heavy.mp3" },
+          { "arabic": "سَ — صَ", "transliteration": "са — ṣо", "audioFile": "contrast/seen_vs_sad.mp3" }
+        ]
+      },
+      {
+        "id": "step_3",
+        "type": "quiz_choice",
+        "question": "🔊 Прослушай. Какая буква прозвучала?",
+        "audioFile": "quiz/m1_l14_q1.mp3",
+        "options": ["ذ", "ز", "ظ"],
+        "correctIndex": 2,
+        "explanation": "Звук был межзубным и тяжёлым — это ظ."
+      },
+      {
+        "id": "step_4",
+        "type": "quiz_choice",
+        "question": "При какой букве кончик языка НЕ выходит за зубы?",
+        "options": ["ذ", "ظ", "ز", "ث"],
+        "correctIndex": 2,
+        "explanation": "ز — единственная из перечисленных, где язык остаётся за нижними зубами."
+      },
+      {
+        "id": "step_5",
+        "type": "quiz_choice",
+        "question": "В слове الصِّرَاط первая согласная после «аль» — это:",
+        "options": ["س (лёгкая)", "ص (тяжёлая)", "ز", "ث"],
+        "correctIndex": 1,
+        "explanation": "ص — тяжёлая, поэтому и последующая ر в этом слове тоже читается твёрдо."
+      },
+      {
+        "id": "step_6",
+        "type": "quiz_match",
+        "question": "Соедини букву с положением языка:",
+        "pairs": [
+          { "left": "ز", "right": "За нижними зубами, свист, лёгкий" },
+          { "left": "ذ", "right": "Между зубами, лёгкий" },
+          { "left": "ظ", "right": "Между зубами, тяжёлый" },
+          { "left": "ص", "right": "За нижними зубами, свист, тяжёлый" }
+        ]
+      },
+      {
+        "id": "step_7",
+        "type": "find_the_rule",
+        "instruction": "Найди слова с МЕЖЗУБНЫМИ буквами (ث ذ ظ):",
+        "items": ["زَيْت", "ثَلَاثَة", "سَلَام", "ظُلْم"],
+        "correctIndices": [1, 3],
+        "targetRule": "Межзубные буквы",
+        "explanation": "ثَلَاثَة содержит ث, ظُلْم содержит ظ — язык выходит между зубами."
+      },
+      {
+        "id": "step_8",
+        "type": "reading_check",
+        "instruction": "Прочитай ряд:",
+        "arabic": "صَ  سَ  ظَ  ذَ  زَ",
+        "transliteration": "за — đа — ẓо — са — ṣо",
+        "audioFile": "practice/m1_l14_row.mp3"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l15",
+    "order": 15,
+    "title": "Дуэль звуков: ك ↔ ق и ح ↔ ه ↔ خ",
+    "description": "Финальная тренировка горловых и задненёбных контрастов",
+    "estimatedMinutes": 5,
+    "xpReward": 25,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Лестница горла",
+        "content": "ه — расслабленный выдох из самой глубины. ح — сжатое горло, сильный «шершавый» выдох из середины. خ — верх горла, с хрипотцой и тяжестью. Попробуй произнести их подряд: почувствуешь, как точка звука поднимается вверх.",
+        "mnemonic": "ه = «уф, устал» · ح = «дышу на стекло» · خ = «прочищаю горло».",
+        "example": "هُوَ · الْحَمْد · خَلَقَ"
+      },
+      {
+        "id": "step_2",
+        "type": "listen_and_repeat",
+        "instruction": "Повтори лесенку три раза подряд.",
+        "items": [
+          { "arabic": "هَ", "transliteration": "hа (лёгкий)", "audioFile": "letters/haa_soft.mp3" },
+          { "arabic": "حَ", "transliteration": "ḥа (сжатый)", "audioFile": "letters/haa_h.mp3" },
+          { "arabic": "خَ", "transliteration": "хо (тяжёлый)", "audioFile": "letters/khaa.mp3" },
+          { "arabic": "كَ — قَ", "transliteration": "кя — къо", "audioFile": "contrast/kaf_vs_qaf.mp3" }
+        ]
+      },
+      {
+        "id": "step_3",
+        "type": "quiz_choice",
+        "question": "🔊 Прослушай. Какая буква прозвучала?",
+        "audioFile": "quiz/m1_l15_q1.mp3",
+        "options": ["ه", "ح", "خ"],
+        "correctIndex": 1,
+        "explanation": "Сильный сухой выдох без хрипа и без тяжести — это ح."
+      },
+      {
+        "id": "step_4",
+        "type": "quiz_choice",
+        "question": "Слово كَلْب означает «собака». Что означает قَلْب?",
+        "options": ["Собака", "Сердце", "Книга", "Дом"],
+        "correctIndex": 1,
+        "explanation": "Одна буква меняет смысл полностью — вот почему махрадж так важен."
+      },
+      {
+        "id": "step_5",
+        "type": "quiz_choice",
+        "question": "Какая из трёх «х»-подобных букв — тяжёлая?",
+        "options": ["ه", "ح", "خ"],
+        "correctIndex": 2,
+        "explanation": "خ входит в семёрку истиля. ه и ح всегда лёгкие."
+      },
+      {
+        "id": "step_6",
+        "type": "quiz_match",
+        "question": "Соедини букву с ассоциацией:",
+        "pairs": [
+          { "left": "ه", "right": "Расслабленный вздох облегчения" },
+          { "left": "ح", "right": "Дышу на замёрзшее стекло" },
+          { "left": "خ", "right": "Прочищаю горло" },
+          { "left": "ق", "right": "«К» из самой глубины" }
+        ]
+      },
+      {
+        "id": "step_7",
+        "type": "find_the_rule",
+        "instruction": "Найди слова, начинающиеся с ТЯЖЁЛОЙ буквы:",
+        "items": ["هُوَ", "خَلَقَ", "حَمْد", "قُلْ"],
+        "correctIndices": [1, 3],
+        "targetRule": "Тафхым в начале слова",
+        "explanation": "خَلَقَ начинается с خ, قُلْ — с ق. Обе буквы из семёрки истиля."
+      },
+      {
+        "id": "step_8",
+        "type": "reading_check",
+        "instruction": "Прочитай ряд, поднимаясь по горлу:",
+        "arabic": "قَ  كَ  خَ  حَ  هَ",
+        "transliteration": "hа — ḥа — хо — кя — къо",
+        "audioFile": "practice/m1_l15_row.mp3"
+      }
+    ]
+  },
+
+  {
+    "moduleId": 1,
+    "moduleTitle": "Арабский алфавит и махраджи",
+    "lessonId": "m1_l16",
+    "order": 16,
+    "title": "Экзамен: все 28 букв",
+    "description": "Итоговая проверка перед переходом к огласовкам",
+    "estimatedMinutes": 5,
+    "xpReward": 60,
+    "isExam": true,
+    "passingScore": 80,
+    "steps": [
+      {
+        "id": "step_1",
+        "type": "theory",
+        "title": "Проверим себя",
+        "content": "Впереди 8 заданий на весь алфавит. Чтобы открыть Модуль 2, нужно набрать 80%. Не спеши — вспоминай махрадж каждой буквы, прежде чем отвечать.",
+        "mnemonic": "Ошибся? Это нормально: урок можно перепройти без потери прогресса.",
+        "example": "28 букв = фундамент всего Корана."
+      },
+      {
+        "id": "step_2",
+        "type": "quiz_choice",
+        "question": "Сколько букв в арабском алфавите?",
+        "options": ["26", "28", "29", "33"],
+        "correctIndex": 1,
+        "explanation": "28 основных букв. Хамза (ء) считается отдельным звуком, а не 29-й буквой алфавита."
+      },
+      {
+        "id": "step_3",
+        "type": "quiz_choice",
+        "question": "Какие 6 букв НЕ соединяются со следующей буквой?",
+        "options": ["ا د ذ ر ز و", "ب ت ث ن ي س", "ا ل م ن و ي", "ج ح خ د ذ ر"],
+        "correctIndex": 0,
+        "explanation": "Мнемоника: «Алиф, Даль, Заль, Ра, Зай, Вав»."
+      },
+      {
+        "id": "step_4",
+        "type": "quiz_match",
+        "question": "Соедини букву с названием:",
+        "pairs": [
+          { "left": "ض", "right": "Дод" },
+          { "left": "ع", "right": "Айн" },
+          { "left": "ق", "right": "Коф" },
+          { "left": "ه", "right": "Ха (мягкая)" },
+          { "left": "ث", "right": "Са" }
+        ]
+      },
+      {
+        "id": "step_5",
+        "type": "find_the_rule",
+        "instruction": "Найди ВСЕ 7 тяжёлых букв (истиля) в ряду:",
+        "items": ["خ", "ح", "ص", "س", "ض", "د", "غ", "ع", "ط", "ت", "ق", "ك", "ظ", "ذ"],
+        "correctIndices": [0, 2, 4, 6, 8, 10, 12],
+        "targetRule": "خُصَّ ضَغْطٍ قِظْ",
+        "explanation": "خ ص ض غ ط ق ظ — семь тяжёлых. Их соседи по ряду — лёгкие двойники."
+      },
+      {
+        "id": "step_6",
+        "type": "quiz_choice",
+        "question": "🔊 Прослушай и выбери правильную букву:",
+        "audioFile": "quiz/m1_l16_q1.mp3",
+        "options": ["ص", "س", "ث", "ز"],
+        "correctIndex": 0,
+        "explanation": "Тяжёлый низкий свист — это ص."
+      },
+      {
+        "id": "step_7",
+        "type": "quiz_match",
+        "question": "Соедини начальную форму с обособленной:",
+        "pairs": [
+          { "left": "هـ", "right": "ه" },
+          { "left": "عـ", "right": "ع" },
+          { "left": "كـ", "right": "ك" },
+          { "left": "يـ", "right": "ي" },
+          { "left": "غـ", "right": "غ" }
+        ]
+      },
+      {
+        "id": "step_8",
+        "type": "quiz_choice",
+        "question": "Какие две буквы обладают качеством ГУННА (носовой призвук)?",
+        "options": ["ل и ر", "م и ن", "ب и م", "ن и ل"],
+        "correctIndex": 1,
+        "explanation": "Только م и ن. На этом построены правила Ихфа, Идгам и Иклаб."
+      },
+      {
+        "id": "step_9",
+        "type": "reading_check",
+        "instruction": "Финальное задание: прочитай весь алфавит вслух справа налево и запиши себя.",
+        "arabic": "ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي",
+        "transliteration": "алиф, ба, та, са, джим, ха, хо, даль, заль, ра, зай, син, шин, сод, дод, то, зо, айн, гайн, фа, коф, кяф, лям, мим, нун, ха, вав, йа",
+        "audioFile": "practice/full_alphabet.mp3"
+      }
+    ]
+  }
+]

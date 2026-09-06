@@ -1,0 +1,1951 @@
+{
+  "moduleId": "m4",
+  "moduleTitle": "Полный курс Таджвида",
+  "moduleSubtitle": "Нун сакина, Мим сакина, Калькаля, Ра, Лям, Вакф",
+  "riwaya": "Хафс от Асыма, тарик аш-Шатыбийя",
+  "totalLessons": 22,
+  "totalXp": 950,
+  "tajweedRuleColors": {
+    "izhar": "#2E7D32",
+    "idgham": "#6A1B9A",
+    "ikhfa": "#EF6C00",
+    "iqlab": "#1565C0",
+    "qalqalah": "#C62828",
+    "ghunna": "#00838F",
+    "madd": "#AD1457"
+  },
+  "globalRules": {
+    "maddMuttasil": 4,
+    "maddMunfasil": 4,
+    "ghunnaDuration": 2,
+    "note": "Длительности из M3 не меняются. Гунна = 2 хараката во всех правилах: Идгам с гунной, Иклаб, Ихфа, Гунна мушаддада, Ихфа шафави."
+  },
+  "lessons": [
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l1",
+      "order": 1,
+      "title": "Нун сакина и танвин: развилка из 4 дорог",
+      "description": "Главная тема Таджвида. Учимся видеть нун без огласовки и танвин — и понимать, что дальше будет одна из 4 дорог.",
+      "estimatedMinutes": 4,
+      "xpReward": 30,
+      "steps": [
+        {
+          "id": "m4_l1_s1",
+          "type": "theory",
+          "content": {
+            "title": "Кто такая нун сакина?",
+            "text": "Нун сакина — это نْ без огласовки: مِنْ، أَنْعَمْتَ، عَنْ. Танвин — это те самые «двойные значки» ً ٌ ٍ, и секрет в том, что танвин на слух = فتحة/ضمة/كسرة + нун сакина! كِتَابٌ читается «китābун», а этот «н» на конце — та же нун сакина. Поэтому все 4 правила работают одинаково для نْ и для танвина.",
+            "mnemonic": "Танвин — это нун сакина в маскировке. Значка ن нет, а звук есть.",
+            "highlightPairs": [
+              { "written": "كِتَابٌ", "sounds": "كِتَابُنْ" },
+              { "written": "هُدًى", "sounds": "هُدَنْ" },
+              { "written": "قَوْمٍ", "sounds": "قَوْمِنْ" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l1_s2",
+          "type": "theory",
+          "content": {
+            "title": "4 дороги",
+            "text": "Дальше всё решает СЛЕДУЮЩАЯ буква. Всего 28 букв, и они делятся на 4 группы — значит, у нун сакина ровно 4 судьбы:",
+            "table": [
+              { "rule": "Изхар", "letters": "6 горловых", "action": "произносим нун ясно и чисто", "ruleKey": "izhar" },
+              { "rule": "Идгам", "letters": "ي ر م ل و ن", "action": "нун исчезает, сливается со следующей", "ruleKey": "idgham" },
+              { "rule": "Иклаб", "letters": "ب", "action": "нун превращается в мим с гунной", "ruleKey": "iqlab" },
+              { "rule": "Ихфа", "letters": "остальные 15", "action": "нун прячется: между ясным и слитым, с гунной", "ruleKey": "ikhfa" }
+            ],
+            "mnemonic": "6 + 6 + 1 + 15 = 28. Ни одна буква не осталась без дороги — проверь сам!"
+          }
+        },
+        {
+          "id": "m4_l1_s3",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Послушай 4 дороги подряд. Пока не заучивай — просто почувствуй, что нун звучит по-разному.",
+            "items": [
+              { "arabic": "مِنْ هَادٍ", "translit": "мин hāдин", "audioFile": "m4_l1_izhar_min_hadin.mp3", "tajweedRule": "izhar" },
+              { "arabic": "مَنْ يَعْمَلْ", "translit": "маййя'мал", "audioFile": "m4_l1_idgham_man_yamal.mp3", "tajweedRule": "idgham" },
+              { "arabic": "مِنْ بَعْدِ", "translit": "мим-ба'ди", "audioFile": "m4_l1_iqlab_min_badi.mp3", "tajweedRule": "iqlab" },
+              { "arabic": "مِنْ قَبْلِ", "translit": "мин~qабли", "audioFile": "m4_l1_ikhfa_min_qabli.mp3", "tajweedRule": "ikhfa" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l1_s4",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Слово ٌرَحِيم на слух заканчивается на…",
+            "options": ["«…мун» — есть скрытая нун сакина", "«…м» — никакой нун там нет", "«…ми» — краткое и"],
+            "correctIndex": 0,
+            "explanation": "رَحِيمٌ = «рахӥмун». Танвин дамма всегда даёт нун сакина на слух — поэтому в «غَفُورٌ رَحِيمٌ» работает Идгам."
+          }
+        },
+        {
+          "id": "m4_l1_s5",
+          "type": "quiz_choice",
+          "content": {
+            "question": "От чего зависит, какое правило применить к нун сакина?",
+            "options": ["От буквы, которая идёт ПОСЛЕ неё", "От буквы ПЕРЕД ней", "От длины аята"],
+            "correctIndex": 0,
+            "explanation": "Всегда смотри вперёд. Нун сакина — как путник: её судьбу решает встречный."
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l2",
+      "order": 2,
+      "title": "Изхар: 6 горловых букв",
+      "description": "Первая дорога. Нун произносится ясно, без гунны и без сливания.",
+      "estimatedMinutes": 4,
+      "xpReward": 35,
+      "steps": [
+        {
+          "id": "m4_l2_s1",
+          "type": "theory",
+          "content": {
+            "title": "Изхар халькый (إظهار حلقي)",
+            "text": "«Изхар» = проявление, ясность. Если после нун сакина/танвина стоит одна из 6 букв ГОРЛА — ء ه ع ح غ خ — нун произносится чётко, как есть. Гунну НЕ тянем, паузу не делаем.",
+            "mnemonic": "Нун живёт в языке, а эти 6 букв — глубоко в горле. Они слишком «далеко живут», чтобы слиться. Далеко = ясно.",
+            "letters": ["ء", "ه", "ع", "ح", "غ", "خ"],
+            "tajweedRule": "izhar",
+            "hafsNote": "Классическая мнемоника учёных: «أَخِي هَاكَ عِلْمًا حَازَهُ غَيْرُ خَاسِرٍ» — первые буквы слов и есть 6 букв Изхара."
+          }
+        },
+        {
+          "id": "m4_l2_s2",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "По одному примеру на каждую букву. Держи нун коротко и сухо — как точку, а не как гудок.",
+            "items": [
+              { "arabic": "مَنْ آمَنَ", "letter": "ء", "translit": "ман 'āмана", "audioFile": "m4_l2_izhar_hamza.mp3", "tajweedRule": "izhar" },
+              { "arabic": "مِنْ هَادٍ", "letter": "ه", "translit": "мин hāдин", "audioFile": "m4_l2_izhar_ha.mp3", "tajweedRule": "izhar" },
+              { "arabic": "أَنْعَمْتَ", "letter": "ع", "translit": "ан'амта", "audioFile": "m4_l2_izhar_ain.mp3", "tajweedRule": "izhar" },
+              { "arabic": "وَانْحَرْ", "letter": "ح", "translit": "ванхар", "audioFile": "m4_l2_izhar_hha.mp3", "tajweedRule": "izhar" },
+              { "arabic": "مِنْ غِسْلِينٍ", "letter": "غ", "translit": "мин гислӥн", "audioFile": "m4_l2_izhar_ghain.mp3", "tajweedRule": "izhar" },
+              { "arabic": "مِنْ خَوْفٍ", "letter": "خ", "translit": "мин хauфин", "audioFile": "m4_l2_izhar_kha.mp3", "tajweedRule": "izhar" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l2_s3",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "А теперь Изхар с ТАНВИНОМ. Слушай, как «…ун / …ан / …ин» звучит отдельно от следующей буквы.",
+            "items": [
+              { "arabic": "عَذَابٌ عَظِيمٌ", "translit": "'азāбун 'азӥм", "audioFile": "m4_l2_izhar_tanwin_1.mp3", "tajweedRule": "izhar" },
+              { "arabic": "قَوْلًا هَيِّنًا", "translit": "қаулан hаййинан", "audioFile": "m4_l2_izhar_tanwin_2.mp3", "tajweedRule": "izhar" },
+              { "arabic": "حَكِيمٍ حَمِيدٍ", "translit": "хакӥмин хамӥд", "audioFile": "m4_l2_izhar_tanwin_3.mp3", "tajweedRule": "izhar" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l2_s4",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Самая частая ошибка в أَنْعَمْتَ — это…",
+            "options": ["протянуть «н» с гунной: ан~~'амта", "сказать «а'амта» без нун", "оба варианта — ошибки"],
+            "correctIndex": 2,
+            "explanation": "И то и то — ошибка. Нун должна быть: чёткая, но короткая. Ни гудка, ни исчезновения.",
+            "cameraHintEnabled": true,
+            "cameraHint": "Положи ладонь на нос: при правильном Изхаре вибрации почти нет. Если нос «жужжит» — ты тянешь гунну."
+          }
+        },
+        {
+          "id": "m4_l2_s5",
+          "type": "find_the_rule",
+          "content": {
+            "task": "Найди все места Изхара в аяте",
+            "ayah": "وَمَنْ أَعْرَضَ عَنْ ذِكْرِي",
+            "tokens": [
+              { "text": "وَمَنْ أَعْرَضَ", "tajweedRule": "izhar", "isTarget": true },
+              { "text": "عَنْ ذِكْرِي", "tajweedRule": "ikhfa", "isTarget": false }
+            ],
+            "explanation": "После مَنْ — хамза (горло) → Изхар. А после عَنْ идёт ذ, это уже другая дорога (Ихфа), её пройдём в уроке 7."
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l3",
+      "order": 3,
+      "title": "Идгам с гунной: يَنْمُو",
+      "description": "Нун исчезает и переливается в следующую букву — с носовым звуком на 2 хараката.",
+      "estimatedMinutes": 5,
+      "xpReward": 40,
+      "steps": [
+        {
+          "id": "m4_l3_s1",
+          "type": "theory",
+          "content": {
+            "title": "6 букв Идгама — يَرْمَلُونَ",
+            "text": "Если после нун сакина/танвина идёт одна из букв ي ر م ل و ن — нун ИСЧЕЗАЕТ, а следующая буква удваивается (получает шадду). Эти 6 букв делятся на две команды: 4 буквы с гунной — ي ن م و (мнемоника يَنْمُو «янмӯ» — «растёт») и 2 буквы без гунны — ل ر.",
+            "mnemonic": "يَنْمُو = «растёт». Гунна тоже «растёт» на 2 хараката. А ل и ر гунну не выращивают.",
+            "tajweedRule": "idgham"
+          }
+        },
+        {
+          "id": "m4_l3_s2",
+          "type": "theory",
+          "content": {
+            "title": "Как это звучит",
+            "text": "مَنْ يَعْمَلْ пишется через нун, а читается «маййя'мал»: нун полностью растворилась в ي, и мы держим носовой звук 2 хараката — столько же, сколько длится краткий мадд. Никакой паузы между словами быть не должно!",
+            "maddDuration": 2,
+            "rhythmHint": "Гунна = ровно 2 счёта метронома. Не 1 (обрубил) и не 4 (это уже мадд).",
+            "tajweedRule": "ghunna"
+          }
+        },
+        {
+          "id": "m4_l3_s3",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "4 буквы с гунной. Слушай: нун не слышно, слышно только «мычание» и удвоенную букву.",
+            "items": [
+              { "arabic": "مَنْ يَعْمَلْ", "letter": "ي", "translit": "маййя'мал", "audioFile": "m4_l3_idgham_ya.mp3", "tajweedRule": "idgham", "maddDuration": 2 },
+              { "arabic": "مِنْ نِعْمَةٍ", "letter": "ن", "translit": "мин~ни'матин", "audioFile": "m4_l3_idgham_nun.mp3", "tajweedRule": "idgham", "maddDuration": 2 },
+              { "arabic": "مِنْ مَاءٍ", "letter": "م", "translit": "мим~мā'ин", "audioFile": "m4_l3_idgham_mim.mp3", "tajweedRule": "idgham", "maddDuration": 2 },
+              { "arabic": "مِنْ وَلِيٍّ", "letter": "و", "translit": "мив~валиййин", "audioFile": "m4_l3_idgham_waw.mp3", "tajweedRule": "idgham", "maddDuration": 2 }
+            ]
+          }
+        },
+        {
+          "id": "m4_l3_s4",
+          "type": "rhythm_tap",
+          "content": {
+            "instruction": "Тапни ровно 2 раза в такт, пока держится гунна",
+            "arabic": "خَيْرًا يَرَهُ",
+            "audioFile": "m4_l3_rhythm_khayran_yarah.mp3",
+            "maddDuration": 2,
+            "bpm": 60,
+            "expectedTaps": 2,
+            "tolerance": 0.2,
+            "feedback": {
+              "tooShort": "Ты обрубил гунну — получилось «хайра ярах». Носовой звук должен прожить 2 счёта.",
+              "tooLong": "Слишком долго! Гунна — это 2, а не 4. Не путай её с маддом.",
+              "correct": "Идеально: «хайрай~~ярах» — 2 счёта, ровно как метроном."
+            }
+          }
+        },
+        {
+          "id": "m4_l3_s5",
+          "type": "quiz_match",
+          "content": {
+            "instruction": "Соедини написание и правильное чтение",
+            "pairs": [
+              { "left": "أَنْ يَقُولَ", "right": "аййяқӯла" },
+              { "left": "غِشَاوَةٌ وَلَهُمْ", "right": "гишāватув~валаhум" },
+              { "left": "مِنْ مَالٍ", "right": "мим~мāлин" },
+              { "left": "يَوْمًا نَجْعَلُ", "right": "яумáн~наджалу" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l3_s6",
+          "type": "quiz_choice",
+          "content": {
+            "question": "В مِنْ مَاءٍ сколько раз мы произносим звук «м»?",
+            "options": ["Один длинный «м» с гунной 2 хараката", "Два отдельных «м-м»", "Ни одного, только «н»"],
+            "correctIndex": 0,
+            "explanation": "Идгам — это одна усиленная буква с шаддой, а не два хлопка. «мим~мā'ин» — один плотный «м» с носом на 2 счёта."
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l4",
+      "order": 4,
+      "title": "Идгам без гунны: ل и ر",
+      "description": "Две буквы, где нун исчезает начисто — без всякого носового звука.",
+      "estimatedMinutes": 3,
+      "xpReward": 35,
+      "steps": [
+        {
+          "id": "m4_l4_s1",
+          "type": "theory",
+          "content": {
+            "title": "Идгам камиль би-ля гунна",
+            "text": "Перед ل и ر нун сакина/танвин исчезает ПОЛНОСТЬЮ — и гунны нет вообще. Никакого носа. غَفُورٌ رَحِيمٌ читается «гафӯрур-рахӥм», а не «гафӯрун~рахӥм».",
+            "mnemonic": "ل и ر — «сухие» буквы. Нун входит в них и не оставляет даже эха в носу.",
+            "tajweedRule": "idgham",
+            "maddDuration": 0
+          }
+        },
+        {
+          "id": "m4_l4_s2",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Слушай очень внимательно: носового звука быть НЕ должно",
+            "items": [
+              { "arabic": "مِنْ رَبِّهِمْ", "translit": "мир-раббиhим", "audioFile": "m4_l4_idgham_ra_1.mp3", "tajweedRule": "idgham" },
+              { "arabic": "غَفُورٌ رَحِيمٌ", "translit": "гафӯрур-рахӥм", "audioFile": "m4_l4_idgham_ra_2.mp3", "tajweedRule": "idgham" },
+              { "arabic": "مِنْ لَدُنْهُ", "translit": "мил-ладунh", "audioFile": "m4_l4_idgham_lam_1.mp3", "tajweedRule": "idgham" },
+              { "arabic": "هُدًى لِلْمُتَّقِينَ", "translit": "hудал-лил-муттақӥн", "audioFile": "m4_l4_idgham_lam_2.mp3", "tajweedRule": "idgham" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l4_s3",
+          "type": "rhythm_compare",
+          "content": {
+            "instruction": "Сравни два Идгама: с гунной и без",
+            "variants": [
+              { "arabic": "مِنْ نِعْمَةٍ", "label": "Идгам с гунной", "maddDuration": 2, "audioFile": "m4_l4_cmp_ghunna.mp3", "tajweedRule": "ghunna" },
+              { "arabic": "مِنْ رَبِّهِمْ", "label": "Идгам без гунны", "maddDuration": 0, "audioFile": "m4_l4_cmp_no_ghunna.mp3", "tajweedRule": "idgham" }
+            ],
+            "question": "Чем отличаются?",
+            "answer": "В первом случае — 2 счёта носового звука. Во втором — 0 счётов, переход мгновенный.",
+            "cameraHintEnabled": true,
+            "cameraHint": "Приложи палец к переносице: при ل/ر вибрации быть не должно."
+          }
+        },
+        {
+          "id": "m4_l4_s4",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Как правильно прочитать «وَلَئِنْ لَمْ»?",
+            "options": ["ва-лаил-лам (без носа)", "ва-лаин~лам (с гунной)", "ва-лаин лам (с паузой)"],
+            "correctIndex": 0,
+            "explanation": "ل — буква Идгама без гунны. Нун растворяется в ل полностью."
+          }
+        },
+        {
+          "id": "m4_l4_s5",
+          "type": "quiz_match",
+          "content": {
+            "instruction": "Раздели по группам: с гунной или без?",
+            "pairs": [
+              { "left": "مِنْ وَرَائِهِمْ", "right": "с гунной (2 хараката)" },
+              { "left": "خَيْرٌ لَكُمْ", "right": "без гунны" },
+              { "left": "أَنْ نَّعْبُدَ", "right": "с гунной (2 хараката)" },
+              { "left": "رَسُولٌ رَبَّانِيٌّ", "right": "без гунны" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l5",
+      "order": 5,
+      "title": "Исключения Идгама: когда нун остаётся",
+      "description": "Изхар мутлак и разорванные буквы. Редкие места, где правило не срабатывает.",
+      "estimatedMinutes": 4,
+      "xpReward": 35,
+      "steps": [
+        {
+          "id": "m4_l5_s1",
+          "type": "theory",
+          "content": {
+            "title": "Правило одного слова",
+            "text": "Идгам нун сакина работает только на СТЫКЕ двух слов. Если نْ и следующая буква стоят внутри ОДНОГО слова — Идгама нет, читаем ясно. Это называется Изхар мутлак (إظهار مطلق) — «абсолютный Изхар», потому что он не привязан ни к горлу, ни к губам.",
+            "words": ["الدُّنْيَا", "بُنْيَانٌ", "قِنْوَانٌ", "صِنْوَانٌ"],
+            "mnemonic": "Всего 4 корня во всём Коране! Запомни фразу: «в ДУНЬЯ строят БУНЬЯН из КИНВАН и СИНВАН».",
+            "tajweedRule": "izhar"
+          }
+        },
+        {
+          "id": "m4_l5_s2",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Слушай: нун чёткая, никакого сливания",
+            "items": [
+              { "arabic": "الدُّنْيَا", "translit": "ад-дунйā", "audioFile": "m4_l5_dunya.mp3", "tajweedRule": "izhar" },
+              { "arabic": "بُنْيَانَهُمْ", "translit": "буньйāнаhум", "audioFile": "m4_l5_bunyan.mp3", "tajweedRule": "izhar" },
+              { "arabic": "وَقِنْوَانٌ", "translit": "ва-қинвāн", "audioFile": "m4_l5_qinwan.mp3", "tajweedRule": "izhar" },
+              { "arabic": "صِنْوَانٌ", "translit": "синвāн", "audioFile": "m4_l5_sinwan.mp3", "tajweedRule": "izhar" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l5_s3",
+          "type": "theory",
+          "content": {
+            "title": "Разорванные буквы (الحروف المقطعة)",
+            "text": "В начале сур يس и ن (Аль-Калям) буква ن читается как «нӯн» с нун сакина на конце. По риваяту Хафса здесь делается ИЗХАР, хотя дальше идёт و:",
+            "examples": [
+              { "arabic": "يس ۚ وَالْقُرْآنِ", "translit": "йā-сӥн, вал-қур'āн", "tajweedRule": "izhar" },
+              { "arabic": "ن ۚ وَالْقَلَمِ", "translit": "нӯн, вал-қалам", "tajweedRule": "izhar" }
+            ],
+            "hafsNote": "Хафс от Асыма по тарику аш-Шатыбийя: в обоих местах — Изхар. Идгам здесь у других чтецов, у нас — ясное произнесение. Также в طسم / حم возможны свои особенности, но нун сакина там нет."
+          }
+        },
+        {
+          "id": "m4_l5_s4",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Почему в الدُّنْيَا нет Идгама, хотя после نْ стоит ي?",
+            "options": ["Потому что نْ и ي — внутри одного слова", "Потому что ي здесь слабая", "Потому что слово начинается с ال"],
+            "correctIndex": 0,
+            "explanation": "Идгам разрушил бы структуру слова, и смысл стал бы неузнаваем. Поэтому арабы сохранили нун ясной."
+          }
+        },
+        {
+          "id": "m4_l5_s5",
+          "type": "find_the_rule",
+          "content": {
+            "task": "Где Идгам, а где Изхар мутлак?",
+            "tokens": [
+              { "text": "مَنْ يَشَاءُ", "tajweedRule": "idgham", "label": "Идгам (два слова)" },
+              { "text": "الدُّنْيَا", "tajweedRule": "izhar", "label": "Изхар мутлак (одно слово)" },
+              { "text": "أَنْ نَشَاءَ", "tajweedRule": "idgham", "label": "Идгам (два слова)" },
+              { "text": "بُنْيَانٌ", "tajweedRule": "izhar", "label": "Изхар мутлак (одно слово)" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l6",
+      "order": 6,
+      "title": "Иклаб: нун превращается в мим",
+      "description": "Одна буква — ب — и полное превращение с гунной на 2 хараката.",
+      "estimatedMinutes": 4,
+      "xpReward": 40,
+      "steps": [
+        {
+          "id": "m4_l6_s1",
+          "type": "theory",
+          "content": {
+            "title": "Иклаб (إقلاب) — переворот",
+            "text": "Если после нун сакина/танвина стоит ب — нун ПРЕВРАЩАЕТСЯ в мим (م), и этот мим держится с гунной 2 хараката. مِنْ بَعْدِ читается «мим~ба'ди». В мусхафе это отмечено крошечной буквой مـ над нун.",
+            "mnemonic": "Почему мим? Потому что ب — губная. Языку неудобно бежать от нун к ب, а мим — «губной родственник» нун. Нун меняет паспорт на губной!",
+            "tajweedRule": "iqlab",
+            "maddDuration": 2
+          }
+        },
+        {
+          "id": "m4_l6_s2",
+          "type": "theory",
+          "content": {
+            "title": "Ключевой момент: губы почти закрыты",
+            "text": "Мим при Иклабе — не такой плотный, как обычный مّ. Губы соприкасаются легко, без давления, и воздух идёт через нос 2 хараката. Это называется мим мухфа — «спрятанный мим».",
+            "maddDuration": 2,
+            "cameraHintEnabled": true,
+            "cameraHint": "Включи фронталку: губы должны сомкнуться мягко, БЕЗ сжатия. Если губы побелели от давления — ты сделал обычный мим со шаддой."
+          }
+        },
+        {
+          "id": "m4_l6_s3",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Слушай и повторяй. Держи нос «включённым» ровно 2 счёта.",
+            "items": [
+              { "arabic": "مِنْ بَعْدِ", "translit": "мим~ба'ди", "audioFile": "m4_l6_iqlab_1.mp3", "tajweedRule": "iqlab", "maddDuration": 2 },
+              { "arabic": "أَنْبِئْهُمْ", "translit": "ам~би'hум", "audioFile": "m4_l6_iqlab_2.mp3", "tajweedRule": "iqlab", "maddDuration": 2 },
+              { "arabic": "سَمِيعٌ بَصِيرٌ", "translit": "самӥ'ум~басӥр", "audioFile": "m4_l6_iqlab_3.mp3", "tajweedRule": "iqlab", "maddDuration": 2 },
+              { "arabic": "لَيُنْبَذَنَّ", "translit": "лаюм~базанна", "audioFile": "m4_l6_iqlab_4.mp3", "tajweedRule": "iqlab", "maddDuration": 2 },
+              { "arabic": "مُنْبَثًّا", "translit": "мум~басса", "audioFile": "m4_l6_iqlab_5.mp3", "tajweedRule": "iqlab", "maddDuration": 2 }
+            ]
+          }
+        },
+        {
+          "id": "m4_l6_s4",
+          "type": "rhythm_tap",
+          "content": {
+            "instruction": "Тапни 2 раза, пока звучит спрятанный мим",
+            "arabic": "سَمِيعٌ بَصِيرٌ",
+            "audioFile": "m4_l6_rhythm_sami_basir.mp3",
+            "maddDuration": 2,
+            "bpm": 60,
+            "expectedTaps": 2,
+            "feedback": {
+              "tooShort": "Гунна пропала — получилось «самӥ'ун-басӥр». Это критическая ошибка Иклаба!",
+              "tooLong": "Перетянул. Иклаб — это 2 хараката, не больше.",
+              "correct": "Отлично! «самӥ'ум~~басӥр» — губы мягко закрыты, нос работает 2 счёта."
+            }
+          }
+        },
+        {
+          "id": "m4_l6_s5",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Какая ошибка в чтении «أَنْبِئْهُمْ» как «ан-би'hум»?",
+            "options": ["Не сделан Иклаб: нун не превратилась в мим и потерялась гунна", "Слишком длинная гунна", "Всё верно"],
+            "correctIndex": 0,
+            "explanation": "Это ляхн — нарушение обязательного правила. Перед ب нун ВСЕГДА становится мимом с гунной 2 хараката."
+          }
+        },
+        {
+          "id": "m4_l6_s6",
+          "type": "reading_check",
+          "content": {
+            "instruction": "Прочитай вслух, следя за губами",
+            "ayah": "وَاللَّهُ سَمِيعٌ بَصِيرٌ ۝ مِنْ بَعْدِ ذَلِكَ",
+            "audioFile": "m4_l6_check_model.mp3",
+            "checkPoints": [
+              { "label": "سَمِيعٌ بَصِيرٌ — мим с гунной 2 хараката", "tajweedRule": "iqlab" },
+              { "label": "مِنْ بَعْدِ — мим с гунной 2 хараката", "tajweedRule": "iqlab" },
+              { "label": "بَعْدِ — калькаля на د? Нет: د огласована, калькаля только на سكون", "tajweedRule": "qalqalah" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l7",
+      "order": 7,
+      "title": "Ихфа: 15 букв и искусство «прятать» нун",
+      "description": "Самое частое правило Корана. Нун ни ясная, ни слитая — она спрятана.",
+      "estimatedMinutes": 5,
+      "xpReward": 40,
+      "steps": [
+        {
+          "id": "m4_l7_s1",
+          "type": "theory",
+          "content": {
+            "title": "Ихфа (إخفاء) — сокрытие",
+            "text": "Остальные 15 букв дают Ихфа: язык НЕ прижимается к небу для нун, звук идёт через нос 2 хараката, а рот уже готовится к следующей букве. Это состояние «между Изхаром и Идгамом».",
+            "mnemonic": "Ихфа — как человек в тумане: ты видишь, что кто-то есть, но не различаешь лица. Нун слышна, но размыта.",
+            "letters": ["ص", "ذ", "ث", "ك", "ج", "ش", "ق", "س", "د", "ط", "ز", "ف", "ت", "ض", "ظ"],
+            "tajweedRule": "ikhfa",
+            "maddDuration": 2
+          }
+        },
+        {
+          "id": "m4_l7_s2",
+          "type": "theory",
+          "content": {
+            "title": "Как запомнить 15 букв",
+            "text": "Учёные сложили стих — первая буква каждого слова и есть буква Ихфа:",
+            "arabic": "صِفْ ذَا ثَنَا كَمْ جَادَ شَخْصٌ قَدْ سَمَا * دُمْ طَيِّبًا زِدْ فِي تُقَىٰ ضَعْ ظَالِمَا",
+            "translit": "Сиф зā санā кам джāда шахсун қад самā / дум таййибан зид фӥ туқā да' зāлимā",
+            "mnemonic": "Ленивый способ: выучи 6 букв Изхара + 6 букв Идгама + ب. Всё остальное — Ихфа. Проверять быстрее, чем помнить 15!"
+          }
+        },
+        {
+          "id": "m4_l7_s3",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Повторяй. Главный секрет: язык лежит расслабленно, работает только нос.",
+            "items": [
+              { "arabic": "مِنْ قَبْلِ", "letter": "ق", "translit": "мин~qабли", "audioFile": "m4_l7_ikhfa_qaf.mp3", "tajweedRule": "ikhfa", "maddDuration": 2 },
+              { "arabic": "أَنْتُمْ", "letter": "ت", "translit": "ан~тум", "audioFile": "m4_l7_ikhfa_ta.mp3", "tajweedRule": "ikhfa", "maddDuration": 2 },
+              { "arabic": "إِنْسَانَ", "letter": "س", "translit": "ин~сāна", "audioFile": "m4_l7_ikhfa_sin.mp3", "tajweedRule": "ikhfa", "maddDuration": 2 },
+              { "arabic": "أَنْزَلَ", "letter": "ز", "translit": "ан~зала", "audioFile": "m4_l7_ikhfa_zay.mp3", "tajweedRule": "ikhfa", "maddDuration": 2 },
+              { "arabic": "مِنْ صَلْصَالٍ", "letter": "ص", "translit": "мин~салсāлин", "audioFile": "m4_l7_ikhfa_sad.mp3", "tajweedRule": "ikhfa", "maddDuration": 2 },
+              { "arabic": "كِتَابٌ كَرِيمٌ", "letter": "ك", "translit": "китāбун~карӥм", "audioFile": "m4_l7_ikhfa_kaf.mp3", "tajweedRule": "ikhfa", "maddDuration": 2 }
+            ]
+          }
+        },
+        {
+          "id": "m4_l7_s4",
+          "type": "quiz_choice",
+          "content": {
+            "question": "При Ихфа кончик языка…",
+            "options": ["НЕ касается неба — он свободен", "прижат к небу как при обычной нун", "прижат к зубам"],
+            "correctIndex": 0,
+            "explanation": "Это главный тест на правильный Ихфа. Если язык прижался — получился Изхар с гунной, а это ошибка.",
+            "cameraHintEnabled": true,
+            "cameraHint": "Скажи «ан~қабли» перед зеркалом. Язык должен оставаться внизу, а рот — уже в форме ق."
+          }
+        },
+        {
+          "id": "m4_l7_s5",
+          "type": "quiz_match",
+          "content": {
+            "instruction": "Определи правило по следующей букве",
+            "pairs": [
+              { "left": "مِنْ خَيْرٍ", "right": "Изхар" },
+              { "left": "مِنْ طَيِّبَاتِ", "right": "Ихфа" },
+              { "left": "مِنْ بَعْدِهِمْ", "right": "Иклаб" },
+              { "left": "مِنْ نُورٍ", "right": "Идгам с гунной" },
+              { "left": "مِنْ لَبَنٍ", "right": "Идгам без гунны" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l8",
+      "order": 8,
+      "title": "Уровни Ихфа: тонкая настройка",
+      "description": "Ихфа бывает «ближе к Идгаму» и «ближе к Изхару». Учимся слышать разницу с ط ق ك.",
+      "estimatedMinutes": 4,
+      "xpReward": 40,
+      "steps": [
+        {
+          "id": "m4_l8_s1",
+          "type": "theory",
+          "content": {
+            "title": "Три степени Ихфа",
+            "text": "Все 15 букв дают гунну 2 хараката, но окраска разная — потому что рот заранее принимает форму следующей буквы:",
+            "table": [
+              { "level": "Высший (أعلى) — ближе к Идгаму", "letters": "ط د ت", "note": "буквы-соседи нун по махраджу, гунна почти сливается" },
+              { "level": "Средний (أوسط)", "letters": "остальные 10", "note": "стандартный Ихфа" },
+              { "level": "Низший (أدنى) — ближе к Изхару", "letters": "ق ك", "note": "далеко от нун, гунна звучит «отдельнее»" }
+            ],
+            "tajweedRule": "ikhfa"
+          }
+        },
+        {
+          "id": "m4_l8_s2",
+          "type": "theory",
+          "content": {
+            "title": "Тафхим и таркик гунны",
+            "text": "Ещё тоньше: если следующая буква «толстая» (буквы исти'ля: خ ص ض ط ظ غ ق), гунна произносится ТОЛСТО, с поднятым корнем языка. Если буква «тонкая» — гунна тонкая.",
+            "examples": [
+              { "arabic": "مِنْ قَبْلِ", "label": "толстая гунна (ق)", "tajweedRule": "ikhfa" },
+              { "arabic": "أَنْتُمْ", "label": "тонкая гунна (ت)", "tajweedRule": "ikhfa" },
+              { "arabic": "مَنْ ظَلَمَ", "label": "толстая гунна (ظ)", "tajweedRule": "ikhfa" },
+              { "arabic": "مِنْ ذَهَبٍ", "label": "тонкая гунна (ذ)", "tajweedRule": "ikhfa" }
+            ],
+            "mnemonic": "Гунна — как эхо в комнате: в большой толстой комнате эхо гулкое, в маленькой — звонкое."
+          }
+        },
+        {
+          "id": "m4_l8_s3",
+          "type": "rhythm_compare",
+          "content": {
+            "instruction": "Сравни толстую и тонкую гунну — длительность ОДНА, окраска разная",
+            "variants": [
+              { "arabic": "مِنْ طِينٍ", "label": "толстая гунна", "maddDuration": 2, "audioFile": "m4_l8_cmp_thick.mp3", "tajweedRule": "ikhfa" },
+              { "arabic": "مِنْ تَحْتِهَا", "label": "тонкая гунна", "maddDuration": 2, "audioFile": "m4_l8_cmp_thin.mp3", "tajweedRule": "ikhfa" }
+            ],
+            "question": "Что изменилось — длина или тембр?",
+            "answer": "Только тембр. Оба раза ровно 2 хараката."
+          }
+        },
+        {
+          "id": "m4_l8_s4",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Тренировка на سُورَة الفَاتِحَة и короткие аяты",
+            "items": [
+              { "arabic": "أَنْعَمْتَ عَلَيْهِمْ", "translit": "ан'амта 'алайhим", "audioFile": "m4_l8_fatiha_izhar.mp3", "tajweedRule": "izhar" },
+              { "arabic": "مِنْ شَرِّ", "translit": "мин~шарри", "audioFile": "m4_l8_ikhfa_shin.mp3", "tajweedRule": "ikhfa", "maddDuration": 2 },
+              { "arabic": "عَنْ صَلَاتِهِمْ", "translit": "'ан~салāтиhим", "audioFile": "m4_l8_ikhfa_sad2.mp3", "tajweedRule": "ikhfa", "maddDuration": 2 }
+            ]
+          }
+        },
+        {
+          "id": "m4_l8_s5",
+          "type": "quiz_choice",
+          "content": {
+            "question": "В مِنْ قَبْلِ гунна должна быть…",
+            "options": ["толстая, 2 хараката", "тонкая, 2 хараката", "толстая, 4 хараката"],
+            "correctIndex": 0,
+            "explanation": "ق — буква исти'ля, значит гунна толстая. Но длительность гунны всегда 2 хараката — она не меняется никогда."
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l9",
+      "order": 9,
+      "title": "Гунна мушаддада: نّ и مّ",
+      "description": "Самая сильная гунна в Коране. Каждая نّ и مّ со шаддой — обязательные 2 хараката.",
+      "estimatedMinutes": 3,
+      "xpReward": 35,
+      "steps": [
+        {
+          "id": "m4_l9_s1",
+          "type": "theory",
+          "content": {
+            "title": "Правило шадды",
+            "text": "Всегда, когда ты видишь نّ или مّ со шаддой — держи носовой звук 2 хараката. Без исключений: в середине слова, в конце, при остановке. Это самая полная гунна (أكمل الغنة).",
+            "examples": ["إِنَّ", "ثُمَّ", "الْجَنَّةِ", "أَمَّا", "عَمَّ", "مُحَمَّدٌ", "النَّاسِ"],
+            "tajweedRule": "ghunna",
+            "maddDuration": 2,
+            "mnemonic": "Шадда на نّ/مّ — это как знак «стоп на 2 счёта» для носа. Увидел шадду — включил нос."
+          }
+        },
+        {
+          "id": "m4_l9_s2",
+          "type": "theory",
+          "content": {
+            "title": "5 уровней гунны (мараатиб аль-гунна)",
+            "text": "Полезно знать иерархию — так ты никогда не перепутаешь силу звука:",
+            "table": [
+              { "rank": "1. Самая полная", "case": "نّ / مّ со шаддой", "duration": 2 },
+              { "rank": "2. Полная", "case": "Идгам с гунной, Иклаб", "duration": 2 },
+              { "rank": "3. Неполная", "case": "Ихфа, Ихфа шафави", "duration": 2 },
+              { "rank": "4. Слабая", "case": "нун/мим сакина при Изхаре", "duration": 0 },
+              { "rank": "5. Самая слабая", "case": "نَ / مِ с огласовкой", "duration": 0 }
+            ],
+            "hafsNote": "Уровни 1–3 требуют выдержки 2 хараката, уровни 4–5 — естественный, не растянутый носовой призвук."
+          }
+        },
+        {
+          "id": "m4_l9_s3",
+          "type": "rhythm_tap",
+          "content": {
+            "instruction": "Тапни 2 счёта на каждой шадде",
+            "arabic": "إِنَّ ٱلَّذِينَ ءَامَنُوا",
+            "audioFile": "m4_l9_rhythm_inna.mp3",
+            "maddDuration": 2,
+            "bpm": 60,
+            "expectedTaps": 2,
+            "feedback": {
+              "tooShort": "«Ина» вместо «Инна» — потерялась и шадда, и гунна.",
+              "correct": "«Инн~~а» — вот это правильно!"
+            }
+          }
+        },
+        {
+          "id": "m4_l9_s4",
+          "type": "find_the_rule",
+          "content": {
+            "task": "Найди все обязательные гунны в аяте",
+            "ayah": "إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ",
+            "tokens": [
+              { "text": "إِنَّا", "tajweedRule": "ghunna", "isTarget": true, "maddDuration": 2 },
+              { "text": "أَعْطَيْنَاكَ", "tajweedRule": null, "isTarget": false },
+              { "text": "الْكَوْثَرَ", "tajweedRule": null, "isTarget": false }
+            ],
+            "explanation": "Одна гунна — в إِنَّا. И обрати внимание: أَعْطَيْنَاكَ содержит ط с сукуном — это уже калькаля, о ней в уроке 14!"
+          }
+        },
+        {
+          "id": "m4_l9_s5",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Сколько гунн в слове ٍمُّحَمَّد?",
+            "options": ["Одна — на مّ", "Две", "Ни одной"],
+            "correctIndex": 0,
+            "explanation": "Шадда стоит только на مّ. Держим нос 2 хараката: «Мухамм~мад»."
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l10",
+      "order": 10,
+      "title": "Контрольная: все правила нун сакина",
+      "description": "Промежуточный экзамен по 4 дорогам + гунна. Без него дальше не идём.",
+      "estimatedMinutes": 5,
+      "xpReward": 60,
+      "isCheckpoint": true,
+      "passingScore": 85,
+      "masteryGate": {
+        "minimumScore": 85,
+        "criticalErrors": [
+          { "code": "ghunna_missing_iqlab", "label": "Нет гунны в Иклабе", "severity": "lahn_jali", "remediationLessonId": "m4_l6" },
+          { "code": "ghunna_missing_idgham", "label": "Нет гунны в Идгаме с гунной", "severity": "lahn_jali", "remediationLessonId": "m4_l3" },
+          { "code": "ghunna_added_izhar", "label": "Добавлена гунна там, где Изхар", "severity": "lahn_khafi", "remediationLessonId": "m4_l2" },
+          { "code": "ghunna_added_lam_ra", "label": "Гунна перед ل / ر", "severity": "lahn_khafi", "remediationLessonId": "m4_l4" },
+          { "code": "nun_tongue_touch_ikhfa", "label": "Язык касается неба при Ихфа", "severity": "lahn_khafi", "remediationLessonId": "m4_l7" }
+        ],
+        "criticalConfusions": [["ب", "م"], ["ن", "م"]],
+        "remediationMap": {
+          "izhar": "m4_l2",
+          "idgham": "m4_l3",
+          "idgham_no_ghunna": "m4_l4",
+          "iqlab": "m4_l6",
+          "ikhfa": "m4_l7",
+          "ghunna": "m4_l9"
+        },
+        "fallbackRemediationLessonId": "m4_l1"
+      },
+      "steps": [
+        {
+          "id": "m4_l10_s1",
+          "type": "quiz_choice",
+          "content": {
+            "question": "أَنْ يَتُوبَ — какое правило?",
+            "options": ["Идгам с гунной", "Ихфа", "Изхар"],
+            "correctIndex": 0,
+            "errorCode": "idgham",
+            "explanation": "ي — из يَنْمُو. «Аййятӯба», гунна 2 хараката."
+          }
+        },
+        {
+          "id": "m4_l10_s2",
+          "type": "quiz_choice",
+          "content": {
+            "question": "جَنَّاتٍ تَجْرِي — какое правило на танвине?",
+            "options": ["Ихфа", "Изхар", "Идгам"],
+            "correctIndex": 0,
+            "errorCode": "ikhfa",
+            "explanation": "ت — буква Ихфа, причём высшего уровня (близко к нун). Гунна 2 хараката."
+          }
+        },
+        {
+          "id": "m4_l10_s3",
+          "type": "quiz_choice",
+          "content": {
+            "question": "عَلِيمٌ بِذَاتِ الصُّدُورِ — что делаем с танвином?",
+            "options": ["Превращаем в мим с гунной 2 хараката", "Читаем ясно «…мун»", "Сливаем с ب"],
+            "correctIndex": 0,
+            "errorCode": "ghunna_missing_iqlab",
+            "explanation": "Иклаб! «'алӥмум~бизāтис-судӯр»."
+          }
+        },
+        {
+          "id": "m4_l10_s4",
+          "type": "quiz_match",
+          "content": {
+            "instruction": "Разложи по правилам",
+            "pairs": [
+              { "left": "مِنْ حَيْثُ", "right": "Изхар" },
+              { "left": "فَإِنْ لَمْ", "right": "Идгам без гунны" },
+              { "left": "أَنْبِيَاءَ", "right": "Иклаб" },
+              { "left": "مِنْ فَضْلِ", "right": "Ихфа" },
+              { "left": "مِنْ مَاءٍ", "right": "Идгам с гунной" }
+            ],
+            "errorCode": "mixed"
+          }
+        },
+        {
+          "id": "m4_l10_s5",
+          "type": "rule_paint",
+          "content": {
+            "instruction": "Раскрась правила в аяте: выбери цвет для каждого выделенного места",
+            "ayah": "وَمِنْ آيَاتِهِ أَنْ يُرْسِلَ الرِّيَاحَ مُبَشِّرَاتٍ لِيُذِيقَكُمْ مِنْ رَحْمَتِهِ",
+            "tokens": [
+              { "text": "وَمِنْ آيَاتِهِ", "expectedRule": "izhar" },
+              { "text": "أَنْ يُرْسِلَ", "expectedRule": "idgham" },
+              { "text": "مُبَشِّرَاتٍ لِيُذِيقَكُمْ", "expectedRule": "idgham" },
+              { "text": "مِنْ رَحْمَتِهِ", "expectedRule": "idgham" }
+            ],
+            "hint": "Последние два — Идгам без гунны! Не включай нос."
+          }
+        },
+        {
+          "id": "m4_l10_s6",
+          "type": "reading_check",
+          "content": {
+            "instruction": "Прочитай суру Аль-Ихляс полностью, соблюдая все правила нун",
+            "ayah": "قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ",
+            "audioFile": "m4_l10_ikhlas_model.mp3",
+            "checkPoints": [
+              { "label": "لَمْ يَكُنْ لَهُ — Идгам без гунны: «лам якуллаh»", "tajweedRule": "idgham", "errorCode": "ghunna_added_lam_ra" },
+              { "label": "كُفُوًا أَحَدٌ — Изхар: танвин + хамза, чисто", "tajweedRule": "izhar", "errorCode": "ghunna_added_izhar" },
+              { "label": "أَحَدٌ при остановке — «ахад» с калькаля (урок 15)", "tajweedRule": "qalqalah" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l11",
+      "order": 11,
+      "title": "Мим сакина: Ихфа шафави",
+      "description": "Мим без огласовки перед ب. Губы почти касаются — и гунна 2 хараката.",
+      "estimatedMinutes": 4,
+      "xpReward": 35,
+      "steps": [
+        {
+          "id": "m4_l11_s1",
+          "type": "theory",
+          "content": {
+            "title": "Три правила мим сакина",
+            "text": "У مْ без огласовки только 3 дороги, и все они зависят от следующей буквы: ب → Ихфа шафави (губной), م → Идгам мисляйн, остальные 26 → Изхар шафави. Проще, чем нун!",
+            "mnemonic": "«Шафа» (شفة) = губа. Все правила мима — губные, потому что мим живёт на губах.",
+            "tajweedRule": "ikhfa"
+          }
+        },
+        {
+          "id": "m4_l11_s2",
+          "type": "theory",
+          "content": {
+            "title": "Ихфа шафави (إخفاء شفوي)",
+            "text": "Если после مْ идёт ب — мим не смыкается плотно: губы соприкасаются легко-легко, воздух идёт через нос 2 хараката, а потом уже произносим ب. تَرْمِيهِمْ بِحِجَارَةٍ — «тармӥhим~бихиджāратин».",
+            "maddDuration": 2,
+            "tajweedRule": "ikhfa",
+            "cameraHintEnabled": true,
+            "cameraHint": "Фронталка обязательна: губы должны быть в мягком контакте, БЕЗ сжатия. Полное сжатие = Изхар с гунной, это ошибка."
+          }
+        },
+        {
+          "id": "m4_l11_s3",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Классические примеры из Корана",
+            "items": [
+              { "arabic": "تَرْمِيهِمْ بِحِجَارَةٍ", "translit": "тармӥhим~бихиджāра", "audioFile": "m4_l11_ikhfa_shaf_1.mp3", "tajweedRule": "ikhfa", "maddDuration": 2 },
+              { "arabic": "وَمَا هُمْ بِمُؤْمِنِينَ", "translit": "вамā hум~биму'минӥн", "audioFile": "m4_l11_ikhfa_shaf_2.mp3", "tajweedRule": "ikhfa", "maddDuration": 2 },
+              { "arabic": "يَعْتَصِمْ بِاللَّهِ", "translit": "я'тасым~билляh", "audioFile": "m4_l11_ikhfa_shaf_3.mp3", "tajweedRule": "ikhfa", "maddDuration": 2 },
+              { "arabic": "رَبُّهُمْ بِهِمْ", "translit": "раббуhум~биhим", "audioFile": "m4_l11_ikhfa_shaf_4.mp3", "tajweedRule": "ikhfa", "maddDuration": 2 }
+            ]
+          }
+        },
+        {
+          "id": "m4_l11_s4",
+          "type": "rhythm_compare",
+          "content": {
+            "instruction": "Сравни Иклаб и Ихфа шафави — звучат похоже, но приходят из разных букв!",
+            "variants": [
+              { "arabic": "مِنْ بَعْدِ", "label": "Иклаб: нун → мим", "maddDuration": 2, "audioFile": "m4_l11_cmp_iqlab.mp3", "tajweedRule": "iqlab" },
+              { "arabic": "هُمْ بِهِ", "label": "Ихфа шафави: мим остаётся мимом", "maddDuration": 2, "audioFile": "m4_l11_cmp_ikhfa_shaf.mp3", "tajweedRule": "ikhfa" }
+            ],
+            "question": "В чём разница на письме?",
+            "answer": "В Иклабе была نْ и над ней маленький مـ. В Ихфа шафави с самого начала стоит مْ. На слух — почти одно и то же: мягкий мим + нос 2 счёта."
+          }
+        },
+        {
+          "id": "m4_l11_s5",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Как НЕ надо читать «هُمْ بِمُؤْمِنِينَ»?",
+            "options": ["«hум-биму'минӥн» с плотным мимом без носа", "«hум~биму'минӥн» с гунной", "оба правильные"],
+            "correctIndex": 0,
+            "explanation": "Плотный мим без гунны = потеря обязательного правила. Нос должен работать 2 хараката."
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l12",
+      "order": 12,
+      "title": "Идгам мисляйн и Изхар шафави",
+      "description": "Мим в мим — со гунной. Мим перед و и ف — самая коварная ловушка Таджвида.",
+      "estimatedMinutes": 4,
+      "xpReward": 35,
+      "steps": [
+        {
+          "id": "m4_l12_s1",
+          "type": "theory",
+          "content": {
+            "title": "Идгам мисляйн (إدغام مثلين)",
+            "text": "مْ + م = один мим со шаддой и гунной 2 хараката. «Мисляйн» = «два одинаковых». لَهُمْ مَا يَشْتَهُونَ → «лаhум~мā яштаhӯн».",
+            "examples": ["لَهُمْ مَا", "كَمْ مِنْ", "فِي قُلُوبِهِمْ مَرَضٌ", "أَمْ مَنْ"],
+            "tajweedRule": "idgham",
+            "maddDuration": 2
+          }
+        },
+        {
+          "id": "m4_l12_s2",
+          "type": "theory",
+          "content": {
+            "title": "Изхар шафави: ловушка و и ف",
+            "text": "Перед всеми остальными 26 буквами мим произносится ЯСНО, без гунны. Но особая осторожность с و и ف: они тоже губные, и язык сам норовит «спрятать» мим. НЕЛЬЗЯ! عَلَيْهِمْ وَلَا الضَّالِّينَ — мим чёткий, губы полностью смыкаются и раскрываются.",
+            "examples": ["عَلَيْهِمْ وَلَا", "هُمْ فِيهَا", "أَمْ لَمْ", "الْحَمْدُ", "تَمْشِي"],
+            "tajweedRule": "izhar",
+            "maddDuration": 0,
+            "mnemonic": "و и ف — «фальшивые друзья» мима. Похожи по месту, но правило требует ясности.",
+            "cameraHintEnabled": true,
+            "cameraHint": "Скажи «'алайhим валā» перед зеркалом: губы должны СОМКНУТЬСЯ на «м» и раскрыться на «в». Если они просто вытянулись — мим потерялся."
+          }
+        },
+        {
+          "id": "m4_l12_s3",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Слушай контраст: с гунной и без",
+            "items": [
+              { "arabic": "لَهُمْ مَغْفِرَةٌ", "translit": "лаhум~магфира", "audioFile": "m4_l12_idgham_mimi.mp3", "tajweedRule": "idgham", "maddDuration": 2 },
+              { "arabic": "عَلَيْهِمْ وَلَا", "translit": "'алайhим валā", "audioFile": "m4_l12_izhar_waw.mp3", "tajweedRule": "izhar", "maddDuration": 0 },
+              { "arabic": "هُمْ فِيهَا خَالِدُونَ", "translit": "hум фӥhā хāлидӯн", "audioFile": "m4_l12_izhar_fa.mp3", "tajweedRule": "izhar", "maddDuration": 0 },
+              { "arabic": "أَلَمْ نَجْعَلْ", "translit": "алам надж'ал", "audioFile": "m4_l12_izhar_nun.mp3", "tajweedRule": "izhar", "maddDuration": 0 }
+            ]
+          }
+        },
+        {
+          "id": "m4_l12_s4",
+          "type": "find_the_rule",
+          "content": {
+            "task": "Определи правило мим сакина в каждом фрагменте",
+            "tokens": [
+              { "text": "أَمْ بِهِ", "tajweedRule": "ikhfa", "label": "Ихфа шафави" },
+              { "text": "لَهُمْ مِنْ", "tajweedRule": "idgham", "label": "Идгам мисляйн" },
+              { "text": "أَنْعَمْتَ", "tajweedRule": "izhar", "label": "Изхар шафави" },
+              { "text": "عَلَيْهِمْ فِيهَا", "tajweedRule": "izhar", "label": "Изхар шафави (осторожно с ف!)" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l12_s5",
+          "type": "reading_check",
+          "content": {
+            "instruction": "Прочитай суру Аль-Фатиха. Контроль: мим в عَلَيْهِمْ",
+            "ayah": "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+            "audioFile": "m4_l12_fatiha_model.mp3",
+            "checkPoints": [
+              { "label": "أَنْعَمْتَ — Изхар нун (ع) + Изхар шафави мим (ت)", "tajweedRule": "izhar" },
+              { "label": "عَلَيْهِمْ غَيْرِ — мим ясный, без гунны", "tajweedRule": "izhar" },
+              { "label": "عَلَيْهِمْ وَلَا — мим ЯСНЫЙ, губы смыкаются", "tajweedRule": "izhar", "errorCode": "mim_hidden_before_waw" },
+              { "label": "الضَّالِّينَ — мадд лязим 6 харакатов", "tajweedRule": "madd", "maddDuration": 6 }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l13",
+      "order": 13,
+      "title": "Остальные Идгамы: мутаджанисайн и муташабихайн",
+      "description": "Когда сливаются не нун и не мим, а другие буквы: قَدْ تَبَيَّنَ، ارْكَبْ مَعَنَا، يَلْهَثْ ذَلِكَ.",
+      "estimatedMinutes": 5,
+      "xpReward": 45,
+      "steps": [
+        {
+          "id": "m4_l13_s1",
+          "type": "theory",
+          "content": {
+            "title": "Три семьи Идгама",
+            "text": "Помимо нун и мим, в Коране есть места, где сливаются другие буквы. Их делят по «родству»:",
+            "table": [
+              { "type": "Митляйн (مثلين)", "meaning": "буквы одинаковые", "example": "اضْرِبْ بِعَصَاكَ → «идриб-би'асāк»" },
+              { "type": "Мутаджанисайн (متجانسين)", "meaning": "один махрадж, разные признаки", "example": "قَدْ تَبَيَّنَ → «қаттабаййана»" },
+              { "type": "Мутакарибайн (متقاربين)", "meaning": "махраджи рядом", "example": "قُلْ رَبِّ → «қур-рабби»" }
+            ],
+            "tajweedRule": "idgham"
+          }
+        },
+        {
+          "id": "m4_l13_s2",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Мутаджанисайн: группа ت د ط",
+            "items": [
+              { "arabic": "قَدْ تَبَيَّنَ", "translit": "қат~табаййана", "audioFile": "m4_l13_dal_ta.mp3", "tajweedRule": "idgham", "note": "د → ت полностью" },
+              { "arabic": "أَثْقَلَتْ دَعَوَا", "translit": "асқалад~да'авā", "audioFile": "m4_l13_ta_dal.mp3", "tajweedRule": "idgham", "note": "ت → د полностью" },
+              { "arabic": "بَسَطْتَ", "translit": "басат-та", "audioFile": "m4_l13_ta_naqis.mp3", "tajweedRule": "idgham", "note": "Идгам НЕПОЛНЫЙ: остаётся толщина ط!" },
+              { "arabic": "وَدَّتْ طَائِفَةٌ", "translit": "ваддат~тāифатун", "audioFile": "m4_l13_ta_tta.mp3", "tajweedRule": "idgham", "note": "ت → ط полностью" }
+            ],
+            "hafsNote": "بَسَطْتَ и أَحَطْتُ / فَرَّطْتُ — Идгам накыс (неполный): звук ط уходит, но его тафхим (толщина) сохраняется. Это тонкость Хафса."
+          }
+        },
+        {
+          "id": "m4_l13_s3",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Остальные знаменитые места",
+            "items": [
+              { "arabic": "إِذْ ظَلَمْتُمْ", "translit": "из~залямтум", "audioFile": "m4_l13_dhal_dha.mp3", "tajweedRule": "idgham", "note": "ذ → ظ" },
+              { "arabic": "يَلْهَثْ ذَلِكَ", "translit": "ялhаз~зāлика", "audioFile": "m4_l13_tha_dhal.mp3", "tajweedRule": "idgham", "note": "ث → ذ" },
+              { "arabic": "ارْكَبْ مَعَنَا", "translit": "иркам~ма'анā", "audioFile": "m4_l13_ba_mim.mp3", "tajweedRule": "idgham", "note": "ب → م с гунной 2 хараката!", "maddDuration": 2 },
+              { "arabic": "قُلْ رَبِّ", "translit": "қур-рабби", "audioFile": "m4_l13_lam_ra.mp3", "tajweedRule": "idgham", "note": "ل → ر" },
+              { "arabic": "أَلَمْ نَخْلُقْكُمْ", "translit": "алам нахлуккум", "audioFile": "m4_l13_qaf_kaf.mp3", "tajweedRule": "idgham", "note": "ق → ك, неполный" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l13_s4",
+          "type": "quiz_choice",
+          "content": {
+            "question": "В ارْكَبْ مَعَنَا почему нужна гунна?",
+            "options": ["Потому что ب слилась с م, а мим со шаддой всегда даёт гунну 2 хараката", "Гунна тут не нужна", "Потому что рядом стоит ر"],
+            "correctIndex": 0,
+            "explanation": "Идгам превратил ب в مّ. А любая مّ со шаддой = гунна 2 хараката. Читаем «иркам~~ма'анā»."
+          }
+        },
+        {
+          "id": "m4_l13_s5",
+          "type": "quiz_match",
+          "content": {
+            "instruction": "Соедини место в Коране и правильное чтение",
+            "pairs": [
+              { "left": "قَدْ تَبَيَّنَ", "right": "қаттабаййана" },
+              { "left": "يَلْهَثْ ذَلِكَ", "right": "ялhаззāлика" },
+              { "left": "بَسَطْتَ", "right": "басат-та (с толщиной)" },
+              { "left": "ارْكَبْ مَعَنَا", "right": "иркамма'анā (с гунной)" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l14",
+      "order": 14,
+      "title": "Калькаля: буквы قُطْبُ جَدٍّ и малая калькаля",
+      "description": "Пять букв, которые «подпрыгивают». Учимся делать отскок без гласной.",
+      "estimatedMinutes": 4,
+      "xpReward": 40,
+      "steps": [
+        {
+          "id": "m4_l14_s1",
+          "type": "theory",
+          "content": {
+            "title": "Что такое Калькаля",
+            "text": "Калькаля (قلقلة) = «дрожание, отскок». Пять букв ق ط ب ج د при сукуне произносятся с лёгким «щелчком» — потому что их махрадж закрывается полностью, и воздух вырывается толчком.",
+            "letters": ["ق", "ط", "ب", "ج", "د"],
+            "mnemonic": "قُطْبُ جَدٍّ — «Кутбу джаддин». Пять букв, которые прыгают на батуте!",
+            "tajweedRule": "qalqalah"
+          }
+        },
+        {
+          "id": "m4_l14_s2",
+          "type": "theory",
+          "content": {
+            "title": "ГЛАВНОЕ правило: без гласной!",
+            "text": "Калькаля — это чистый отскок, НЕ гласный звук. أَبْصَارُهُمْ = «абсāруhум», а не «абасāруhум» и не «абусāруhум». Добавление гласной к калькаля — грубая ошибка (ляхн джали), потому что ты добавляешь в Коран звук, которого там нет.",
+            "wrongExamples": [
+              { "wrong": "яд-хулӯна", "note": "правильно — с отскоком د, без «э»" },
+              { "wrong": "къэд самиъа", "note": "правильно — «қад самиʼа», ق с чистым отскоком" }
+            ],
+            "tajweedRule": "qalqalah",
+            "cameraHintEnabled": true,
+            "cameraHint": "Смотри на подбородок в камеру: при калькаля челюсть НЕ должна открываться. Открылась — значит проскочила гласная."
+          }
+        },
+        {
+          "id": "m4_l14_s3",
+          "type": "theory",
+          "content": {
+            "title": "Калькаля сугра (малая)",
+            "text": "Если буква калькаля стоит с сукуном в СЕРЕДИНЕ слова или речи — отскок легкий, быстрый, почти незаметный. Мы не останавливаемся, движение продолжается.",
+            "qalqalahLevel": "sughra",
+            "examples": [
+              { "arabic": "يَقْطَعُونَ", "letter": "ق", "tajweedRule": "qalqalah" },
+              { "arabic": "أَبْصَارُ", "letter": "ب", "tajweedRule": "qalqalah" },
+              { "arabic": "أَجْرًا", "letter": "ج", "tajweedRule": "qalqalah" },
+              { "arabic": "يَدْعُونَ", "letter": "د", "tajweedRule": "qalqalah" },
+              { "arabic": "يَطْمَعُ", "letter": "ط", "tajweedRule": "qalqalah" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l14_s4",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Повторяй, следя за челюстью: отскок есть, гласной нет",
+            "items": [
+              { "arabic": "خَلَقْنَا", "translit": "халақ-нā", "audioFile": "m4_l14_qalq_qaf.mp3", "tajweedRule": "qalqalah", "qalqalahLevel": "sughra" },
+              { "arabic": "إِبْرَاهِيمَ", "translit": "иб-рāhӥма", "audioFile": "m4_l14_qalq_ba.mp3", "tajweedRule": "qalqalah", "qalqalahLevel": "sughra" },
+              { "arabic": "قَدْ أَفْلَحَ", "translit": "қад-афлаха", "audioFile": "m4_l14_qalq_dal.mp3", "tajweedRule": "qalqalah", "qalqalahLevel": "sughra" },
+              { "arabic": "يَجْعَلُونَ", "translit": "ядж-'алӯна", "audioFile": "m4_l14_qalq_jim.mp3", "tajweedRule": "qalqalah", "qalqalahLevel": "sughra" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l14_s5",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Есть ли калькаля в слове بَعْدِ?",
+            "options": ["Нет — د огласована кясрой, сукуна нет", "Да, на د", "Да, на ب"],
+            "correctIndex": 0,
+            "explanation": "Калькаля бывает ТОЛЬКО при сукуне. Огласованная буква калькаля не даёт."
+          }
+        },
+        {
+          "id": "m4_l14_s6",
+          "type": "find_the_rule",
+          "content": {
+            "task": "Найди все калькаля в аяте",
+            "ayah": "وَلَقَدْ خَلَقْنَا الْإِنْسَانَ مِنْ سُلَالَةٍ",
+            "tokens": [
+              { "text": "وَلَقَدْ", "tajweedRule": "qalqalah", "isTarget": true, "qalqalahLevel": "sughra" },
+              { "text": "خَلَقْنَا", "tajweedRule": "qalqalah", "isTarget": true, "qalqalahLevel": "sughra" },
+              { "text": "الْإِنْسَانَ", "tajweedRule": "ikhfa", "isTarget": false },
+              { "text": "مِنْ سُلَالَةٍ", "tajweedRule": "ikhfa", "isTarget": false }
+            ],
+            "explanation": "Две калькаля (د и ق) и два Ихфа (س и س). Аят-тренажёр на два правила сразу!"
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l15",
+      "order": 15,
+      "title": "Калькаля кубра и акба: сила на остановке",
+      "description": "Три уровня отскока. Самый сильный — на шадде при вакфе: وَتَبَّ، بِالْحَقِّ.",
+      "estimatedMinutes": 4,
+      "xpReward": 45,
+      "steps": [
+        {
+          "id": "m4_l15_s1",
+          "type": "theory",
+          "content": {
+            "title": "Три уровня калькаля",
+            "text": "Сила отскока зависит от положения буквы:",
+            "table": [
+              { "level": "Сугра (صغرى) — малая", "position": "сукун в середине", "example": "يَقْطَعُونَ", "strength": 1 },
+              { "level": "Кубра (كبرى) — большая", "position": "конец слова при остановке", "example": "مُحِيطْ، الْفَلَقْ", "strength": 2 },
+              { "level": "Акба (أكبر) — сильнейшая", "position": "шадда в конце при остановке", "example": "وَتَبّْ، بِالْحَقّْ", "strength": 3 }
+            ],
+            "mnemonic": "Чем ближе к концу и чем плотнее буква — тем громче прыжок. Шадда + вакф = максимальный отскок.",
+            "tajweedRule": "qalqalah"
+          }
+        },
+        {
+          "id": "m4_l15_s2",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Калькаля кубра — останавливаемся на буквах قطبجد",
+            "items": [
+              { "arabic": "مِنْ شَرِّ مَا خَلَقْ", "translit": "…мā халақ'", "audioFile": "m4_l15_kubra_1.mp3", "tajweedRule": "qalqalah", "qalqalahLevel": "kubra" },
+              { "arabic": "لَمْ يَلِدْ وَلَمْ يُولَدْ", "translit": "…валам йӯлад'", "audioFile": "m4_l15_kubra_2.mp3", "tajweedRule": "qalqalah", "qalqalahLevel": "kubra" },
+              { "arabic": "وَاللَّهُ مُحِيطٌ", "translit": "…мухӥт'", "audioFile": "m4_l15_kubra_3.mp3", "tajweedRule": "qalqalah", "qalqalahLevel": "kubra" },
+              { "arabic": "ذِي الْمَعَارِجْ", "translit": "…аль-ма'āридж'", "audioFile": "m4_l15_kubra_4.mp3", "tajweedRule": "qalqalah", "qalqalahLevel": "kubra" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l15_s3",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Калькаля акба — самый мощный. Держим шадду, потом отскок.",
+            "items": [
+              { "arabic": "تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ", "translit": "…ватабб'", "audioFile": "m4_l15_akba_1.mp3", "tajweedRule": "qalqalah", "qalqalahLevel": "akba" },
+              { "arabic": "هُوَ الْحَقُّ", "translit": "…аль-хаққ'", "audioFile": "m4_l15_akba_2.mp3", "tajweedRule": "qalqalah", "qalqalahLevel": "akba" },
+              { "arabic": "وَالْحَجِّ", "translit": "…валь-хаджж'", "audioFile": "m4_l15_akba_3.mp3", "tajweedRule": "qalqalah", "qalqalahLevel": "akba" }
+            ],
+            "note": "Секрет: сначала «удвоенная задержка» на букве (это шадда), и только потом отскок. Не наоборот!"
+          }
+        },
+        {
+          "id": "m4_l15_s4",
+          "type": "rhythm_compare",
+          "content": {
+            "instruction": "Сравни три уровня — почувствуй разницу в силе",
+            "variants": [
+              { "arabic": "يَبْصُطُ", "label": "Сугра — лёгкий", "strength": 1, "audioFile": "m4_l15_cmp_sughra.mp3", "tajweedRule": "qalqalah" },
+              { "arabic": "لَهَبْ", "label": "Кубра — ясный", "strength": 2, "audioFile": "m4_l15_cmp_kubra.mp3", "tajweedRule": "qalqalah" },
+              { "arabic": "وَتَبّْ", "label": "Акба — максимум", "strength": 3, "audioFile": "m4_l15_cmp_akba.mp3", "tajweedRule": "qalqalah" }
+            ],
+            "question": "Что НЕ меняется на всех трёх уровнях?",
+            "answer": "Отсутствие гласной! Отскок может быть слабым или сильным, но «э/а/у» после буквы не появляется никогда."
+          }
+        },
+        {
+          "id": "m4_l15_s5",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Как правильно остановиться на أَحَدٌ (сура Аль-Ихляс)?",
+            "options": ["«ахад'» — сукун + отскок د, без гласной", "«ахадун» — с танвином", "«ахаду» — с даммой"],
+            "correctIndex": 0,
+            "explanation": "При остановке танвин уходит, د становится сакин → калькаля кубра. «Ахад'» с чистым отскоком.",
+            "errorCode": "qalqalah_vowel_added"
+          }
+        },
+        {
+          "id": "m4_l15_s6",
+          "type": "reading_check",
+          "content": {
+            "instruction": "Прочитай суру Аль-Масад (аят 1) с правильными калькаля",
+            "ayah": "تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ",
+            "audioFile": "m4_l15_masad_model.mp3",
+            "checkPoints": [
+              { "label": "تَبَّتْ — гунна? нет. ت сакин — калькаля? нет, ت не из قطبجد", "tajweedRule": null },
+              { "label": "أَبِي — ب огласована, калькаля нет", "tajweedRule": null },
+              { "label": "لَهَبٍ وَتَبَّ — Идгам без гунны? Нет: و из يَنْمُو → Идгам С гунной 2 хараката", "tajweedRule": "idgham", "maddDuration": 2 },
+              { "label": "وَتَبَّ при вакфе — калькаля АКБА", "tajweedRule": "qalqalah", "qalqalahLevel": "akba", "errorCode": "qalqalah_vowel_added" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l16",
+      "order": 16,
+      "title": "Буква Ра: толстая или тонкая?",
+      "description": "Тафхим и таркик буквы ر — правило, которое слышно в каждом аяте.",
+      "estimatedMinutes": 5,
+      "xpReward": 45,
+      "steps": [
+        {
+          "id": "m4_l16_s1",
+          "type": "theory",
+          "content": {
+            "title": "Два лица буквы Ра",
+            "text": "ر — «двуликая» буква: иногда толстая (мufaххама), иногда тонкая (мuraққақа). Толстая — как русское твёрдое «р» с поднятым корнем языка, тонкая — лёгкое, почти «мягкое» р. Правило простое: смотри на огласовку!",
+            "mnemonic": "Фатха и дамма = толстая Ра. Кясра = тонкая Ра. «Рa/Рu — толсто, Рi — тонко»."
+          }
+        },
+        {
+          "id": "m4_l16_s2",
+          "type": "theory",
+          "content": {
+            "title": "Когда Ра ТОЛСТАЯ (тафхим)",
+            "text": "Пять случаев:",
+            "table": [
+              { "case": "ر с фатхой", "example": "رَبِّ الْعَالَمِينَ" },
+              { "case": "ر с даммой", "example": "رُزِقْنَا" },
+              { "case": "رْ сакин после фатхи", "example": "مَرْيَمَ" },
+              { "case": "رْ сакин после даммы", "example": "قُرْآن" },
+              { "case": "رْ сакин после кясры, если дальше буква исти'ля", "example": "مِرْصَادٍ، فِرْقَةٍ، قِرْطَاسٍ" }
+            ],
+            "hafsNote": "Пятый случай — самый хитрый. В لَبِالْمِرْصَادِ кясра есть, но за ر стоит ص (толстая), поэтому ر тоже толстая."
+          }
+        },
+        {
+          "id": "m4_l16_s3",
+          "type": "theory",
+          "content": {
+            "title": "Когда Ра ТОНКАЯ (таркик)",
+            "text": "Три случая: ر с кясрой (رِجَالٌ، مِنْ رِزْقٍ), رْ сакин после исконной кясры (فِرْعَوْن، مِرْيَةٍ), и при остановке — если перед ر стоит кясра или йа сакина (قَدِيرْ، خَيْرْ، الْبَصِيرْ).",
+            "examples": [
+              { "arabic": "رِزْقًا", "type": "таркик" },
+              { "arabic": "فِرْعَوْنَ", "type": "таркик" },
+              { "arabic": "وَالْعَصْرْ", "type": "таркик — перед ر кясра? нет, сукун ص… смотри вакф на ر после ص: тафхим" },
+              { "arabic": "بِكُلِّ شَيْءٍ قَدِيرْ", "type": "таркик (перед ر — йа сакина)" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l16_s4",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Слушай контраст. Обрати внимание на корень языка.",
+            "items": [
+              { "arabic": "رَبِّ", "translit": "Рабби (толсто)", "audioFile": "m4_l16_ra_thick_1.mp3", "type": "тафхим" },
+              { "arabic": "رِجَالٌ", "translit": "риджāлун (тонко)", "audioFile": "m4_l16_ra_thin_1.mp3", "type": "таркик" },
+              { "arabic": "مَرْيَمَ", "translit": "Марьяма (толсто)", "audioFile": "m4_l16_ra_thick_2.mp3", "type": "тафхим" },
+              { "arabic": "فِرْعَوْنَ", "translit": "Фир'ауна (тонко)", "audioFile": "m4_l16_ra_thin_2.mp3", "type": "таркик" },
+              { "arabic": "بِالْمِرْصَادِ", "translit": "биль-мирсāд (толсто!)", "audioFile": "m4_l16_ra_thick_3.mp3", "type": "тафхим" }
+            ],
+            "cameraHintEnabled": true,
+            "cameraHint": "При толстой Ра рот шире и звук «наполненный»; при тонкой — губы чуть растянуты в улыбку. Проверь на фронталке: «Рабби» vs «риджāлун»."
+          }
+        },
+        {
+          "id": "m4_l16_s5",
+          "type": "quiz_match",
+          "content": {
+            "instruction": "Толстая или тонкая?",
+            "pairs": [
+              { "left": "الرَّحْمَنِ", "right": "толстая" },
+              { "left": "الْآخِرَةِ", "right": "толстая" },
+              { "left": "مِنْ شَرِّ", "right": "тонкая" },
+              { "left": "فِرْقَةٍ", "right": "толстая (исти'ля)" },
+              { "left": "مُسْتَقِيمٍ… بَصِيرْ (вакф)", "right": "тонкая" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l16_s6",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Почему в الرَّحْمَنِ الرَّحِيمِ первая Ра толстая, а вторая тоже толстая?",
+            "options": ["Обе с фатхой после шадды → тафхим", "Первая толстая, вторая тонкая", "Обе тонкие"],
+            "correctIndex": 0,
+            "explanation": "الرَّحْمَنِ и الرَّحِيمِ — в обоих ر несёт фатху. Кясра стоит на ح, а не на ر. Классическая ловушка!"
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l17",
+      "order": 17,
+      "title": "Лям в имени Аллаха",
+      "description": "لفظ الجلالة — когда ل в слове اللَّه толстая, а когда тонкая.",
+      "estimatedMinutes": 3,
+      "xpReward": 40,
+      "steps": [
+        {
+          "id": "m4_l17_s1",
+          "type": "theory",
+          "content": {
+            "title": "Правило одной строки",
+            "text": "В имени اللَّه: если перед ним ФАТХА или ДАММА — Лям толстая. Если КЯСРА — Лям тонкая. Всё.",
+            "table": [
+              { "before": "фатха", "example": "قَالَ اللَّهُ", "lam": "толстая" },
+              { "before": "дамма", "example": "عَبْدُ اللَّهِ", "lam": "толстая" },
+              { "before": "кясра", "example": "بِسْمِ اللَّهِ", "lam": "тонкая" }
+            ],
+            "mnemonic": "«Кясра — единственная, кто делает Лям тонкой». Бисми-лля-hи — слышишь, как мягко? А «қāла-Ллāhу» — толсто и величественно."
+          }
+        },
+        {
+          "id": "m4_l17_s2",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Слушай разницу в толщине",
+            "items": [
+              { "arabic": "بِسْمِ اللَّهِ", "translit": "бисмилляh (тонко)", "audioFile": "m4_l17_lam_thin_1.mp3", "type": "таркик" },
+              { "arabic": "الْحَمْدُ لِلَّهِ", "translit": "аль-хамду лилляh (тонко)", "audioFile": "m4_l17_lam_thin_2.mp3", "type": "таркик" },
+              { "arabic": "قُلْ هُوَ اللَّهُ", "translit": "қул hуваЛлāh (толсто)", "audioFile": "m4_l17_lam_thick_1.mp3", "type": "тафхим" },
+              { "arabic": "شَهِدَ اللَّهُ", "translit": "шаhидаЛлāh (толсто)", "audioFile": "m4_l17_lam_thick_2.mp3", "type": "тафхим" },
+              { "arabic": "نَصْرُ اللَّهِ", "translit": "насруЛлāh (толсто)", "audioFile": "m4_l17_lam_thick_3.mp3", "type": "тафхим" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l17_s3",
+          "type": "quiz_choice",
+          "content": {
+            "question": "بِاللَّهِ — Лям толстая или тонкая?",
+            "options": ["Тонкая — перед ней кясра (بِ)", "Толстая", "Зависит от чтеца"],
+            "correctIndex": 0,
+            "explanation": "بِ несёт кясру → Лям тонкая: «билляhи»."
+          }
+        },
+        {
+          "id": "m4_l17_s4",
+          "type": "quiz_match",
+          "content": {
+            "instruction": "Определи толщину Ляма",
+            "pairs": [
+              { "left": "إِنَّ اللَّهَ", "right": "толстая" },
+              { "left": "لِلَّهِ", "right": "тонкая" },
+              { "left": "رَسُولُ اللَّهِ", "right": "толстая" },
+              { "left": "أَفِي اللَّهِ شَكٌّ", "right": "тонкая" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l17_s5",
+          "type": "reading_check",
+          "content": {
+            "instruction": "Прочитай Басмалу и первый аят Фатихи",
+            "ayah": "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ ۝ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+            "audioFile": "m4_l17_basmala_model.mp3",
+            "checkPoints": [
+              { "label": "بِسْمِ اللَّهِ — Лям ТОНКАЯ", "errorCode": "lam_tafkheem_wrong" },
+              { "label": "الرَّحْمَنِ — Ра толстая", "errorCode": "ra_tarqeeq_wrong" },
+              { "label": "لِلَّهِ — Лям тонкая", "errorCode": "lam_tafkheem_wrong" },
+              { "label": "رَبِّ — Ра толстая", "errorCode": "ra_tarqeeq_wrong" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l18",
+      "order": 18,
+      "title": "Лям сакина: шамсия и камария",
+      "description": "Почему الشَّمْس читается «аш-шамс», а الْقَمَر — «аль-камар».",
+      "estimatedMinutes": 4,
+      "xpReward": 40,
+      "steps": [
+        {
+          "id": "m4_l18_s1",
+          "type": "theory",
+          "content": {
+            "title": "Лям определённого артикля (ال)",
+            "text": "Артикль ال ведёт себя двумя способами. Если следующая буква «солнечная» (шамсия) — Лям ИСЧЕЗАЕТ и следующая буква удваивается. Если «лунная» (камария) — Лям читается ясно.",
+            "mnemonic": "Название взято из самих слов: الشَّمْس (солнце) — «аш-шамс», Лям исчез. الْقَمَر (луна) — «аль-қамар», Лям звучит. Слово-подсказка встроено в правило!",
+            "tajweedRule": "idgham"
+          }
+        },
+        {
+          "id": "m4_l18_s2",
+          "type": "theory",
+          "content": {
+            "title": "14 лунных букв — легче запомнить их",
+            "text": "Лунные (Лям ясный): ء ب غ ح ج ك و خ ف ع ق ي م ه. Мнемоника учёных: «ابْغِ حَجَّكَ وَخَفْ عَقِيمَهُ». Все остальные 14 — солнечные, и их проще определять по остатку. Признак солнечной буквы в мусхафе: шадда на букве после ال.",
+            "mnemonic": "Не учи 28 букв — учи один визуальный признак: увидел шадду после ال → Лям молчит.",
+            "letters": ["ء", "ب", "غ", "ح", "ج", "ك", "و", "خ", "ف", "ع", "ق", "ي", "م", "ه"]
+          }
+        },
+        {
+          "id": "m4_l18_s3",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Слушай: где Лям слышно, а где нет",
+            "items": [
+              { "arabic": "الشَّمْسِ", "translit": "аш-шамси", "audioFile": "m4_l18_shamsiya_1.mp3", "type": "шамсия", "tajweedRule": "idgham" },
+              { "arabic": "الرَّحْمَنِ", "translit": "ар-рахмāни", "audioFile": "m4_l18_shamsiya_2.mp3", "type": "шамсия", "tajweedRule": "idgham" },
+              { "arabic": "النَّاسِ", "translit": "ан-нāси (+ гунна!)", "audioFile": "m4_l18_shamsiya_3.mp3", "type": "шамсия", "tajweedRule": "ghunna", "maddDuration": 2 },
+              { "arabic": "الْقَمَرِ", "translit": "аль-қамари", "audioFile": "m4_l18_qamariya_1.mp3", "type": "камария", "tajweedRule": "izhar" },
+              { "arabic": "الْحَمْدُ", "translit": "аль-хамду", "audioFile": "m4_l18_qamariya_2.mp3", "type": "камария", "tajweedRule": "izhar" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l18_s4",
+          "type": "theory",
+          "content": {
+            "title": "Бонус: Лям в هَلْ и بَلْ",
+            "text": "В словах هَلْ и بَلْ Лям сливается (Идгам), если дальше идёт ر или ل: بَلْ رَفَعَهُ → «баррафа'аhу», هَلْ لَكُمْ → «hаллакум». Перед остальными буквами — Изхар: بَلْ هُمْ.",
+            "examples": [
+              { "arabic": "بَلْ رَانَ", "note": "Идгам, но! с сактом — см. урок 21", "tajweedRule": "idgham" },
+              { "arabic": "هَلْ لَكُمْ", "note": "Идгам", "tajweedRule": "idgham" },
+              { "arabic": "بَلْ هُمْ", "note": "Изхар", "tajweedRule": "izhar" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l18_s5",
+          "type": "quiz_match",
+          "content": {
+            "instruction": "Шамсия или камария?",
+            "pairs": [
+              { "left": "الطَّارِقُ", "right": "шамсия" },
+              { "left": "الْفَلَقِ", "right": "камария" },
+              { "left": "الصَّمَدُ", "right": "шамсия" },
+              { "left": "الْكَوْثَرَ", "right": "камария" },
+              { "left": "الضَّالِّينَ", "right": "шамсия" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l18_s6",
+          "type": "quiz_choice",
+          "content": {
+            "question": "В النَّاسِ кроме Идгама шамсия есть ещё одно правило. Какое?",
+            "options": ["Гунна 2 хараката на نّ", "Калькаля", "Иклаб"],
+            "correctIndex": 0,
+            "explanation": "Слияние Ляма дало نّ со шаддой → обязательная гунна 2 хараката. «Ан-н~~āси»."
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l19",
+      "order": 19,
+      "title": "Знаки Вакфа: дорожные знаки Корана",
+      "description": "مـ، لا، ج، قلى، صلى и знак «объятия». Учимся читать разметку мусхафа.",
+      "estimatedMinutes": 4,
+      "xpReward": 40,
+      "steps": [
+        {
+          "id": "m4_l19_s1",
+          "type": "theory",
+          "content": {
+            "title": "Зачем нужны знаки остановки",
+            "text": "Знаки вакфа придумали учёные, чтобы читатель не остановился там, где смысл ломается. Это не часть Откровения — это заботливая «навигация» в мусхафе.",
+            "mnemonic": "Знаки вакфа = дорожные знаки. Красный — стой. Перечёркнутый — не останавливайся. Остальные — «на твоё усмотрение, но…»."
+          }
+        },
+        {
+          "id": "m4_l19_s2",
+          "type": "theory",
+          "content": {
+            "title": "Основные знаки",
+            "table": [
+              { "sign": "مـ (ۘ)", "name": "вакф лязим", "action": "ОСТАНОВИСЬ. Продолжишь — смысл искажается", "example": "إِنَّمَا يَسْتَجِيبُ الَّذِينَ يَسْمَعُونَ ۘ" },
+              { "sign": "لا (ۙ)", "name": "ля вакфа", "action": "НЕ останавливайся. Если дыхание кончилось — вернись назад и перечитай", "example": "وَمَا هُمْ بِخَارِجِينَ مِنْهَا ۙ" },
+              { "sign": "ج (ۚ)", "name": "вакф джаиз", "action": "Можно и остановиться, и продолжить — равноценно", "example": "ذَلِكَ الْكِتَابُ لَا رَيْبَ ۚ فِيهِ" },
+              { "sign": "قلى (ۗ)", "name": "аль-вакфу авля", "action": "Лучше остановиться", "example": "وَاللَّهُ يَعْلَمُ ۗ" },
+              { "sign": "صلى (ۖ)", "name": "аль-васлу авля", "action": "Лучше продолжить", "example": "إِنَّ اللَّهَ غَفُورٌ رَحِيمٌ ۖ" },
+              { "sign": "∴ … ∴", "name": "вакф муанака (объятие)", "action": "Остановись ТОЛЬКО на одном из двух — не на обоих", "example": "لَا رَيْبَ ∴ فِيهِ ∴ هُدًى" },
+              { "sign": "س / سكتة (ۜ)", "name": "сакт", "action": "Короткая пауза БЕЗ дыхания — 4 места в Коране, урок 21", "example": "عِوَجًا ۜ قَيِّمًا" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l19_s3",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Ты дошёл до знака ۙ (لا), а дыхание закончилось. Что делать?",
+            "options": ["Вдохнуть и вернуться на несколько слов назад, потом продолжить", "Остановиться — раз дыхания нет, ничего страшного", "Читать до конца без воздуха"],
+            "correctIndex": 0,
+            "explanation": "Правило вежливости к смыслу: остановился — вернись и «пересобери» фразу заново."
+          }
+        },
+        {
+          "id": "m4_l19_s4",
+          "type": "quiz_match",
+          "content": {
+            "instruction": "Соедини знак и действие",
+            "pairs": [
+              { "left": "ۘ", "right": "обязательно остановиться" },
+              { "left": "ۙ", "right": "не останавливаться" },
+              { "left": "ۖ", "right": "лучше продолжить" },
+              { "left": "ۗ", "right": "лучше остановиться" },
+              { "left": "∴ ∴", "right": "остановка только на одном из двух" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l19_s5",
+          "type": "find_the_rule",
+          "content": {
+            "task": "Где здесь ОБЯЗАТЕЛЬНАЯ остановка?",
+            "ayah": "وَمَا يُعَلِّمُ أَحَدًا ۖ حَتَّى يَقُولَا ۚ إِنَّمَا نَحْنُ فِتْنَةٌ",
+            "tokens": [
+              { "text": "أَحَدًا ۖ", "sign": "صلى", "isTarget": false, "label": "лучше продолжить" },
+              { "text": "يَقُولَا ۚ", "sign": "ج", "isTarget": false, "label": "на выбор" }
+            ],
+            "explanation": "Обязательной (مـ) здесь нет. Знак مـ встречается редко — примерно 50 раз во всём Коране, и каждый раз это важно."
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l20",
+      "order": 20,
+      "title": "Как правильно останавливаться и начинать",
+      "description": "Техника вакфа: сукун, ة → ه, танвин фатх → мадд 2, шадда + калькаля, и хамзат аль-васл.",
+      "estimatedMinutes": 5,
+      "xpReward": 45,
+      "steps": [
+        {
+          "id": "m4_l20_s1",
+          "type": "theory",
+          "content": {
+            "title": "Закон вакфа: последняя буква обнуляется",
+            "text": "Когда ты останавливаешься, последняя буква слова теряет огласовку и получает сукун. Это универсальный закон:",
+            "table": [
+              { "written": "الرَّحِيمُ", "waqf": "الرَّحِيمْ — «ар-рахӥм»" },
+              { "written": "نَسْتَعِينُ", "waqf": "نَسْتَعِينْ — «наста'ӥн»" },
+              { "written": "الْعَالَمِينَ", "waqf": "الْعَالَمِينْ — «аль-'āламӥн»" }
+            ],
+            "mnemonic": "Остановка = «выключить свет» на последней букве. Никаких «ун», «ин», «а» на конце."
+          }
+        },
+        {
+          "id": "m4_l20_s2",
+          "type": "theory",
+          "content": {
+            "title": "Четыре особых случая",
+            "table": [
+              { "case": "Танвин фатх (ً)", "rule": "превращается в алиф — мадд 2 хараката", "example": "عَلِيمًا → عَلِيمَا («'алӥмā»)", "maddDuration": 2, "tajweedRule": "madd" },
+              { "case": "Танвин дамм/кясра", "rule": "просто исчезает, сукун", "example": "رَحِيمٌ → رَحِيمْ", "maddDuration": 0 },
+              { "case": "Та марбута (ة)", "rule": "читается как ه сакина", "example": "الْجَنَّةِ → الْجَنَّهْ («аль-джанна(h)»)", "maddDuration": 0 },
+              { "case": "Шадда в конце", "rule": "шадда СОХРАНЯЕТСЯ (двойная задержка)", "example": "الْحَقُّ → الْحَقّْ + калькаля акба", "tajweedRule": "qalqalah" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l20_s3",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Тренировка остановок",
+            "items": [
+              { "arabic": "غَفُورًا رَحِيمًا", "waqf": "рахӥмā", "translit": "мадд 2 хараката вместо танвина", "audioFile": "m4_l20_waqf_tanwin_fath.mp3", "maddDuration": 2, "tajweedRule": "madd" },
+              { "arabic": "بِسْمِ اللَّهِ", "waqf": "билляh", "translit": "кясра уходит", "audioFile": "m4_l20_waqf_kasra.mp3" },
+              { "arabic": "فِي جَنَّةٍ عَالِيَةٍ", "waqf": "'āлия(h)", "translit": "та марбута → ha", "audioFile": "m4_l20_waqf_ta_marbuta.mp3" },
+              { "arabic": "هُوَ الْحَقُّ", "waqf": "аль-хаққ'", "translit": "шадда + калькаля акба", "audioFile": "m4_l20_waqf_shadda.mp3", "tajweedRule": "qalqalah", "qalqalahLevel": "akba" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l20_s4",
+          "type": "theory",
+          "content": {
+            "title": "Ибтида: как НАЧАТЬ после остановки",
+            "text": "Если слово начинается с хамзат аль-васл (ٱ), при начале чтения ей нужна огласовка: обычно кясра (ٱسْمُ → «исм»), но если третья буква корня несёт дамму — берём дамму (ٱدْخُلُوا → «удхулӯ»). В артикле ال — всегда фатха: «аль-».",
+            "examples": [
+              { "arabic": "ٱلْحَمْدُ", "start": "«аль-хамду»" },
+              { "arabic": "ٱهْدِنَا", "start": "«иhдинā»" },
+              { "arabic": "ٱنْظُرْ", "start": "«унзур» — дамма!" }
+            ],
+            "mnemonic": "Хамзат аль-васл — «немая» буква. В середине речи её не слышно, в начале — она берёт огласовку взаймы."
+          }
+        },
+        {
+          "id": "m4_l20_s5",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Как остановиться на слове خَبِيرًا?",
+            "options": ["«хабӥрā» — мадд 2 хараката", "«хабӥран» — с нун", "«хабӥр» — с сукуном на ر"],
+            "correctIndex": 0,
+            "explanation": "Танвин фатх при вакфе становится алифом → мадд 2 хараката. И Ра здесь толстая (фатха)."
+          }
+        },
+        {
+          "id": "m4_l20_s6",
+          "type": "reading_check",
+          "content": {
+            "instruction": "Прочитай суру Аль-'Аср, останавливаясь на каждом аяте",
+            "ayah": "وَالْعَصْرِ ۝ إِنَّ الْإِنْسَانَ لَفِي خُسْرٍ ۝ إِلَّا الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ وَتَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا بِالصَّبْرِ",
+            "audioFile": "m4_l20_asr_model.mp3",
+            "checkPoints": [
+              { "label": "وَالْعَصْرِ при вакфе — «валь-'аср'», Ра тонкая (кясра ушла, но таркик сохраняется)", "errorCode": "ra_tarqeeq_wrong" },
+              { "label": "إِنَّ — гунна 2 хараката", "tajweedRule": "ghunna", "maddDuration": 2 },
+              { "label": "الْإِنْسَانَ — Ихфа (س)", "tajweedRule": "ikhfa", "maddDuration": 2 },
+              { "label": "خُسْرٍ при вакфе — «хуср'», Ра толстая (перед ней сукун после даммы)", "errorCode": "ra_tarqeeq_wrong" },
+              { "label": "بِالْحَقِّ при вакфе — калькаля АКБА", "tajweedRule": "qalqalah", "qalqalahLevel": "akba", "errorCode": "qalqalah_vowel_added" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l21",
+      "order": 21,
+      "title": "Редкости риваята Хафс: сакт, ималя, ишмам, тасхиль",
+      "description": "Четыре жемчужины, которые встречаются в Коране буквально по одному разу. Знать их — признак настоящего чтеца.",
+      "estimatedMinutes": 5,
+      "xpReward": 55,
+      "isRareRules": true,
+      "steps": [
+        {
+          "id": "m4_l21_s1",
+          "type": "theory",
+          "content": {
+            "title": "Сакт (السكت) — 4 места",
+            "text": "Сакт — это короткая пауза БЕЗ вдоха, примерно на 2 хараката, после которой чтение продолжается. Обозначается маленькой س над словом. В риваяте Хафса по тарику аш-Шатыбийя сакт обязателен в 4 местах:",
+            "table": [
+              { "sura": "Аль-Кахф, 18:1", "arabic": "عِوَجًا ۜ قَيِّمًا", "note": "чтобы не подумали, что «қаййиман» относится к «'иваджан»" },
+              { "sura": "Ясин, 36:52", "arabic": "مَرْقَدِنَا ۜ هَذَا", "note": "разделение речи грешников и ангелов" },
+              { "sura": "Аль-Кыяма, 75:27", "arabic": "مَنْ ۜ رَاقٍ", "note": "без сакта прозвучало бы «мар-рāқ» — Идгам, и смысл терялся бы" },
+              { "sura": "Аль-Мутаффифин, 83:14", "arabic": "بَلْ ۜ رَانَ", "note": "без сакта — «баррāна», слово стало бы неузнаваемым" }
+            ],
+            "maddDuration": 2,
+            "hafsNote": "Обрати внимание: сакт в مَنْ رَاقٍ и بَلْ رَانَ ОТМЕНЯЕТ Идгам, который был бы по общему правилу. Правило риваята сильнее общего правила. Пятое место — مَالِيَهْ ۚ هَلَكَ (Аль-Хакка 69:28–29) — по аш-Шатыбийя читается с Изхаром; сакт там передаётся другими путями."
+          }
+        },
+        {
+          "id": "m4_l21_s2",
+          "type": "listen_and_repeat",
+          "content": {
+            "instruction": "Послушай все 4 сакта. Пауза короткая — воздух НЕ набираем!",
+            "items": [
+              { "arabic": "عِوَجًا ۜ قَيِّمًا", "translit": "'иваджā [пауза] қаййиман", "audioFile": "m4_l21_sakt_kahf.mp3", "maddDuration": 2 },
+              { "arabic": "مِنْ مَرْقَدِنَا ۜ هَذَا", "translit": "мим~марқадинā [пауза] hāзā", "audioFile": "m4_l21_sakt_yasin.mp3", "maddDuration": 2 },
+              { "arabic": "وَقِيلَ مَنْ ۜ رَاقٍ", "translit": "ман [пауза] рāқин", "audioFile": "m4_l21_sakt_qiyama.mp3", "maddDuration": 2 },
+              { "arabic": "بَلْ ۜ رَانَ عَلَى قُلُوبِهِمْ", "translit": "баль [пауза] рāна", "audioFile": "m4_l21_sakt_mutaffifin.mp3", "maddDuration": 2 }
+            ]
+          }
+        },
+        {
+          "id": "m4_l21_s3",
+          "type": "theory",
+          "content": {
+            "title": "Ималя (الإمالة) — одно место во всём Коране",
+            "text": "Ималя — наклон звука «ā» в сторону «ē» (между фатхой и кясрой). У Хафса это ровно ОДНО слово: مَجْرَاهَا в суре Худ, 11:41 — «бисмилляhи маджрēhā ва мурсāhā». И раз алиф наклоняется к кясре, буква ر в этом слове становится ТОНКОЙ (таркик).",
+            "arabic": "بِسْمِ اللَّهِ مَجْرَاهَا وَمُرْسَاهَا",
+            "audioFile": "m4_l21_imala_majraha.mp3",
+            "mnemonic": "Ноев ковчег «плывёт» — и звук тоже «наклоняется», как корабль на волне. Одно слово, один раз, на всю жизнь.",
+            "hafsNote": "Это ималя кубра. مُرْسَاهَا читается БЕЗ ималя — только مَجْرَاهَا."
+          }
+        },
+        {
+          "id": "m4_l21_s4",
+          "type": "theory",
+          "content": {
+            "title": "Ишмам (الإشمام) — тоже одно место",
+            "text": "Сура Юсуф, 12:11: تَأْمَنَّا (изначально تَأْمَنُنَا). Здесь произошёл Идгам, но чтобы намекнуть на исчезнувшую дамму, губы округляются БЕЗ звука — сразу после произнесения نّ. Это как беззвучное «у» губами.",
+            "arabic": "لَا تَأْمَنَّا عَلَى يُوسُفَ",
+            "audioFile": "m4_l21_ishmam_tamanna.mp3",
+            "cameraHintEnabled": true,
+            "cameraHint": "Включи фронталку: скажи «та'манн~~ā» и в момент гунны сложи губы в трубочку. Звука быть не должно — только жест губ.",
+            "hafsNote": "У Хафса допускаются два варианта: ишмам (жест губ) и рaум/ихфа (легчайший призвук даммы). Оба верны; для приложения по умолчанию учим ишмам. Гунна на نّ при этом обязательна — 2 хараката."
+          }
+        },
+        {
+          "id": "m4_l21_s5",
+          "type": "theory",
+          "content": {
+            "title": "Тасхиль (التسهيل) — облегчение хамзы",
+            "text": "Сура Фуссылят, 41:44: أَ أَعْجَمِيٌّ — две хамзы подряд. Произнести их одну за другой тяжело, поэтому вторая хамза читается «облегчённо» — звук между хамзой и алифом, мягкий, как выдох. Получается «а-'аджамийюн» с плавным переходом, без резкого щелчка.",
+            "arabic": "قُرْآنٌ أَعْجَمِيٌّ وَعَرَبِيٌّ",
+            "audioFile": "m4_l21_tashil_ajamiyy.mp3",
+            "mnemonic": "Две хамзы — как две одинаковые ступеньки подряд: вторую делаем пониже, чтобы не споткнуться.",
+            "hafsNote": "Тасхиль второй хамзы — путь аш-Шатыбийя. Обрати внимание также на يٌّ со шаддой — гунна там не нужна (ي, не ن/م), но шадда держится."
+          }
+        },
+        {
+          "id": "m4_l21_s6",
+          "type": "quiz_match",
+          "content": {
+            "instruction": "Соедини редкость и её единственное место",
+            "pairs": [
+              { "left": "Ималя", "right": "مَجْرَاهَا — Худ 11:41" },
+              { "left": "Ишмам", "right": "تَأْمَنَّا — Юсуф 12:11" },
+              { "left": "Тасхиль", "right": "أَعْجَمِيٌّ — Фуссылят 41:44" },
+              { "left": "Сакт (4 места)", "right": "عِوَجًا / مَرْقَدِنَا / مَنْ رَاقٍ / بَلْ رَانَ" }
+            ]
+          }
+        },
+        {
+          "id": "m4_l21_s7",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Почему в مَنْ ۜ رَاقٍ нет Идгама, хотя после نْ стоит ر?",
+            "options": ["Потому что сакт разрывает связь между словами", "Потому что ر тут тонкая", "Идгам там всё-таки есть"],
+            "correctIndex": 0,
+            "explanation": "Сакт — это остановка без дыхания, а Идгам требует непрерывного соединения. Пауза отменяет слияние. Читаем «ман» → пауза → «рāқин»."
+          }
+        },
+        {
+          "id": "m4_l21_s8",
+          "type": "theory",
+          "content": {
+            "title": "Бонусные тонкости Хафса (для любознательных)",
+            "text": "Ещё несколько мест, где мусхаф ставит подсказку мелким шрифтом: يَبْصُۜطُ (Аль-Бакара 2:245) и بَصْۜطَةً (Аль-А'раф 7:69) — по аш-Шатыбийя читаем с ص; ٱلْمُصَۣيْطِرُونَ и بِمُصَۣيْطِرٍ — тоже с ص; ضَعْفٍ (Ар-Рум 30:54) допускается с фатхой и с даммой; سَلَاسِلَ — с танвином и без.",
+            "hafsNote": "Эти места помечены в мусхафе мелкой буквой س или сноской. Для базового курса достаточно узнавать пометку и знать: «читаю основной вариант мусхафа»."
+          }
+        }
+      ]
+    },
+    {
+      "moduleId": "m4",
+      "moduleTitle": "Полный курс Таджвида",
+      "lessonId": "m4_l22",
+      "order": 22,
+      "title": "ЭКЗАМЕН: полный Таджвид",
+      "description": "Итоговая проверка модуля. Все правила нун, мим, калькаля, Ра, Лям, вакф — в живом чтении.",
+      "estimatedMinutes": 5,
+      "xpReward": 100,
+      "isExam": true,
+      "passingScore": 85,
+      "masteryGate": {
+        "minimumScore": 85,
+        "criticalErrors": [
+          { "code": "ghunna_missing_iqlab", "label": "Нет гунны в Иклабе", "severity": "lahn_jali", "remediationLessonId": "m4_l6" },
+          { "code": "ghunna_missing_idgham", "label": "Нет гунны в Идгаме с гунной", "severity": "lahn_jali", "remediationLessonId": "m4_l3" },
+          { "code": "ghunna_missing_shadda", "label": "Нет гунны на نّ / مّ со шаддой", "severity": "lahn_jali", "remediationLessonId": "m4_l9" },
+          { "code": "qalqalah_vowel_added", "label": "Добавлена гласная к калькаля", "severity": "lahn_jali", "remediationLessonId": "m4_l14" },
+          { "code": "qalqalah_missing", "label": "Пропущена калькаля кубра/акба при остановке", "severity": "lahn_jali", "remediationLessonId": "m4_l15" },
+          { "code": "shadda_lost_at_waqf", "label": "Потеряна шадда при остановке", "severity": "lahn_jali", "remediationLessonId": "m4_l20" },
+          { "code": "madd_cut", "label": "Обрезан мадд (менее 4 / 6 харакатов там, где положено)", "severity": "lahn_jali", "remediationLessonId": "m3_l12" },
+          { "code": "ikhfa_as_izhar", "label": "Ихфа прочитан как Изхар", "severity": "lahn_khafi", "remediationLessonId": "m4_l7" },
+          { "code": "ghunna_added_lam_ra", "label": "Гунна перед ل / ر", "severity": "lahn_khafi", "remediationLessonId": "m4_l4" },
+          { "code": "mim_hidden_before_waw", "label": "Мим спрятан перед و / ف", "severity": "lahn_khafi", "remediationLessonId": "m4_l12" },
+          { "code": "ra_tarqeeq_wrong", "label": "Ошибка в толщине Ра", "severity": "lahn_khafi", "remediationLessonId": "m4_l16" },
+          { "code": "lam_tafkheem_wrong", "label": "Ошибка в толщине Ляма в имени Аллаха", "severity": "lahn_khafi", "remediationLessonId": "m4_l17" }
+        ],
+        "criticalConfusions": [["ب", "م"], ["ن", "م"], ["ط", "ت"], ["ص", "س"], ["ض", "د"]],
+        "remediationMap": {
+          "izhar": "m4_l2",
+          "idgham": "m4_l3",
+          "idgham_no_ghunna": "m4_l4",
+          "iqlab": "m4_l6",
+          "ikhfa": "m4_l7",
+          "ghunna": "m4_l9",
+          "mim_sakinah": "m4_l11",
+          "qalqalah": "m4_l15",
+          "ra": "m4_l16",
+          "lam": "m4_l17",
+          "waqf": "m4_l20",
+          "madd": "m3_l12"
+        },
+        "fallbackRemediationLessonId": "m4_l10",
+        "rules": {
+          "twoJaliErrorsForceRemediation": true,
+          "note": "Любые 2 ошибки severity=lahn_jali → экзамен не сдан независимо от общего балла, и ученик отправляется в соответствующие уроки по remediationMap."
+        }
+      },
+      "steps": [
+        {
+          "id": "m4_l22_s1",
+          "type": "rule_paint",
+          "content": {
+            "instruction": "Раскрась все правила в аяте",
+            "ayah": "إِنَّ الَّذِينَ كَفَرُوا سَوَاءٌ عَلَيْهِمْ أَنْذَرْتَهُمْ أَمْ لَمْ تُنْذِرْهُمْ",
+            "tokens": [
+              { "text": "إِنَّ", "expectedRule": "ghunna", "maddDuration": 2 },
+              { "text": "سَوَاءٌ عَلَيْهِمْ", "expectedRule": "izhar" },
+              { "text": "أَنْذَرْتَهُمْ", "expectedRule": "ikhfa", "maddDuration": 2 },
+              { "text": "أَمْ لَمْ", "expectedRule": "izhar" },
+              { "text": "تُنْذِرْهُمْ", "expectedRule": "ikhfa", "maddDuration": 2 }
+            ],
+            "errorCode": "mixed"
+          }
+        },
+        {
+          "id": "m4_l22_s2",
+          "type": "quiz_choice",
+          "content": {
+            "question": "أَنْبَاءُ — сколько харакатов держим носовой звук?",
+            "options": ["2", "4", "0 — гунны нет"],
+            "correctIndex": 0,
+            "errorCode": "ghunna_missing_iqlab",
+            "explanation": "Иклаб: нун → мим, гунна ровно 2 хараката. Помни: 4 хараката бывают у мадда, а не у гунны."
+          }
+        },
+        {
+          "id": "m4_l22_s3",
+          "type": "quiz_choice",
+          "content": {
+            "question": "Остановка на слове ٍمَّسَد (сура Аль-Масад). Как звучит конец?",
+            "options": ["«масад'» — сукун + чистый отскок د", "«масадин» — сохраняем танвин", "«масадэ» — с призвуком"],
+            "correctIndex": 0,
+            "errorCode": "qalqalah_vowel_added",
+            "explanation": "Калькаля кубра. Отскок без гласной — челюсть не открывается."
+          }
+        },
+        {
+          "id": "m4_l22_s4",
+          "type": "rhythm_compare",
+          "content": {
+            "instruction": "Определи длительность в каждом случае (проверка связки M3 + M4)",
+            "variants": [
+              { "arabic": "مِنْ قَبْلِ", "label": "гунна Ихфа", "maddDuration": 2, "audioFile": "m4_l22_cmp_ghunna.mp3", "tajweedRule": "ikhfa" },
+              { "arabic": "جَاءَ", "label": "мадд муттасыль", "maddDuration": 4, "audioFile": "m4_l22_cmp_muttasil.mp3", "tajweedRule": "madd" },
+              { "arabic": "الضَّالِّينَ", "label": "мадд лязим", "maddDuration": 6, "audioFile": "m4_l22_cmp_lazim.mp3", "tajweedRule": "madd" }
+            ],
+            "question": "Расставь по возрастанию длительности",
+            "answer": "Гунна 2 → Муттасыль 4 → Лязим 6",
+            "errorCode": "madd_cut"
+          }
+        },
+        {
+          "id": "m4_l22_s5",
+          "type": "find_the_rule",
+          "content": {
+            "task": "Найди ОШИБКУ в чтении",
+            "audioFile": "m4_l22_error_hunt.mp3",
+            "ayah": "وَمَا هُمْ بِمُؤْمِنِينَ",
+            "options": [
+              "Мим прочитан плотно, без гунны — нужен Ихфа шафави",
+              "Мадд в مُؤْمِنِينَ слишком долгий",
+              "Ошибок нет"
+            ],
+            "correctIndex": 0,
+            "errorCode": "ghunna_missing_iqlab",
+            "explanation": "هُمْ بِـ = Ихфа шафави: губы в мягком контакте, гунна 2 хараката."
+          }
+        },
+        {
+          "id": "m4_l22_s6",
+          "type": "quiz_match",
+          "content": {
+            "instruction": "Финальный разбор: правило для каждого фрагмента",
+            "pairs": [
+              { "left": "مِنْ عِلْمٍ", "right": "Изхар" },
+              { "left": "عَنْ نَفْسٍ", "right": "Идгам с гунной" },
+              { "left": "مِنْ بَقْلِهَا", "right": "Иклаб" },
+              { "left": "أَنْدَادًا", "right": "Ихфа" },
+              { "left": "لَهُمْ مَثَلًا", "right": "Идгам мисляйн" },
+              { "left": "قُلْ رَبِّي", "right": "Идгам мутакарибайн" }
+            ],
+            "errorCode": "mixed"
+          }
+        },
+        {
+          "id": "m4_l22_s7",
+          "type": "reading_check",
+          "content": {
+            "instruction": "ИТОГОВОЕ ЧТЕНИЕ. Прочитай суру Аль-Кяфирун полностью. Приложение проверит все правила.",
+            "ayah": "قُلْ يَا أَيُّهَا الْكَافِرُونَ ۝ لَا أَعْبُدُ مَا تَعْبُدُونَ ۝ وَلَا أَنْتُمْ عَابِدُونَ مَا أَعْبُدُ ۝ وَلَا أَنَا عَابِدٌ مَا عَبَدْتُمْ ۝ وَلَا أَنْتُمْ عَابِدُونَ مَا أَعْبُدُ ۝ لَكُمْ دِينُكُمْ وَلِيَ دِينِ",
+            "audioFile": "m4_l22_kafirun_model.mp3",
+            "checkPoints": [
+              { "label": "قُلْ يَا — Изхар Ляма (ي не из ل/ر)", "tajweedRule": "izhar" },
+              { "label": "أَيُّهَا — шадда на ي, гунны нет", "tajweedRule": null },
+              { "label": "الْكَافِرُونَ — Лям камария + Ра толстая (дамма)", "errorCode": "ra_tarqeeq_wrong" },
+              { "label": "أَعْبُدُ — калькаля сугра на ب", "tajweedRule": "qalqalah", "errorCode": "qalqalah_vowel_added" },
+              { "label": "أَنْتُمْ — Ихфа, гунна 2 хараката", "tajweedRule": "ikhfa", "maddDuration": 2, "errorCode": "ikhfa_as_izhar" },
+              { "label": "عَابِدٌ مَا — Идгам мисляйн? Нет: танвин + م → Идгам с гунной", "tajweedRule": "idgham", "maddDuration": 2, "errorCode": "ghunna_missing_idgham" },
+              { "label": "عَبَدْتُمْ — калькаля сугра на د", "tajweedRule": "qalqalah", "errorCode": "qalqalah_vowel_added" },
+              { "label": "لَكُمْ دِينُكُمْ — Изхар шафави, мим ясный", "tajweedRule": "izhar", "errorCode": "mim_hidden_before_waw" },
+              { "label": "دِينِ при вакфе — «дӥн'», мадд 2 хараката", "tajweedRule": "madd", "maddDuration": 2 }
+            ],
+            "rubric": {
+              "excellent": "Все правила соблюдены, ни одной ошибки ляхн джали. Ты читаешь по-настоящему!",
+              "good": "Хорошо! Точечные шероховатости — повтори указанные уроки.",
+              "needsWork": "Есть критические ошибки. Приложение отправит тебя в нужные уроки — это нормально, все через это проходят."
+            }
+          }
+        },
+        {
+          "id": "m4_l22_s8",
+          "type": "theory",
+          "content": {
+            "title": "Ты прошёл Таджвид 🎓",
+            "text": "Серьёзно: то, что ты сейчас знаешь, раньше учили годами у устаза. Правила нун и мим, три уровня калькаля, характер Ра и Ляма, знаки вакфа и даже редкости Хафса — это полный базовый комплект. Дальше — Модуль 5: применяем всё на коротких сурах, аят за аятом, пока правила не станут просто твоим голосом.",
+            "nextModuleId": "m5",
+            "reminder": "И помни главное: Таджвид — не про правила. Он про уважение к Слову. А правила — просто способ это уважение выразить."
+          }
+        }
+      ]
+    }
+  ]
+}
