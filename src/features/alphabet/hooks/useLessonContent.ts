@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useCallback } from 'react';
 import { useLessonContentStore } from '@/stores/lessonContentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -60,7 +61,7 @@ export const useModuleDetail = (moduleId: number) => {
   }, [isInitialized, initialize]);
 
   const rawModule = useMemo(() => {
-    return modules.find((m) => m.moduleId === moduleId) ?? modules[0];
+    return modules.find((m) => m.moduleId === moduleId);
   }, [modules, moduleId]);
 
   const localizedModule = useMemo(() => {
@@ -72,8 +73,7 @@ export const useModuleDetail = (moduleId: number) => {
     if (Array.isArray(list) && list.length > 0) {
       return list;
     }
-    // Fallback to bundled lessons if store not yet populated
-    return lessonContentService.getBundledLessons(moduleId);
+    return [];
   }, [lessonsByModule, moduleId]);
 
   const localizedLessons = useMemo(() => {
@@ -94,40 +94,26 @@ export const useModuleDetail = (moduleId: number) => {
  * Hook to get a single lesson by its ID, localized for the current language.
  */
 export const useLessonDetail = (lessonId: string) => {
-  const lessonsById = useLessonContentStore((s) => s.lessonsById);
   const isInitialized = useLessonContentStore((s) => s.isInitialized);
-  const isLoading = useLessonContentStore((s) => s.isLoading);
+  const contentVersion = useLessonContentStore((s) => s.contentVersion);
   const initialize = useLessonContentStore((s) => s.initialize);
   const language = useSettingsStore((s) => s.language);
-
-  useEffect(() => {
-    if (!isInitialized) {
-      void initialize();
-    }
-  }, [isInitialized, initialize]);
-
-  const rawLesson = useMemo(() => {
-    if (lessonsById[lessonId]) {
-      return lessonsById[lessonId];
-    }
-    // Synchronous fallback lookup across bundled lessons
-    for (const modId of [1, 2, 3, 4, 5]) {
-      const bundled = lessonContentService.getBundledLessons(modId);
-      const found = bundled.find((l) => l.lessonId === lessonId);
-      if (found) return found;
-    }
-    return undefined;
-  }, [lessonsById, lessonId]);
-
-  const localizedLesson = useMemo(() => {
-    return rawLesson ? localizeLesson(rawLesson, language) : undefined;
-  }, [rawLesson, language]);
-
-  return {
-    lesson: localizedLesson,
-    rawLesson,
-    isLoading,
-  };
+  useEffect(() => { void initialize(); }, [initialize]);
+  const result = useQuery({
+    queryKey: ['lesson', lessonId, contentVersion],
+    queryFn: async () => {
+      const lesson = await lessonContentService.getLessonById(lessonId);
+      if (!lesson) throw new Error('Lesson not found');
+      return lesson;
+    },
+    enabled: isInitialized,
+    staleTime: Infinity,
+    gcTime: 5 * 60 * 1000,
+    retry: false,
+  });
+  const lesson = useMemo(() => result.data ? localizeLesson(result.data, language) : undefined,
+    [result.data, language]);
+  return { lesson, rawLesson: result.data, isLoading: result.isPending, error: result.error, retry: result.refetch };
 };
 
 /**

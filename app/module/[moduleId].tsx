@@ -3,7 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
+  FlatList,
   Platform,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { Polygon, Line } from 'react-native-svg';
 import Animated, {
-  FadeInDown,
   useSharedValue,
   useAnimatedStyle,
   withRepeat,
@@ -24,8 +23,8 @@ import * as Haptics from 'expo-haptics';
 
 import { useTheme } from '@/shared/theme';
 import { GlassView, AnimatedPressable } from '@/shared/components';
-import { useModuleDetail } from '@/features/alphabet';
-import { useLessonStore } from '@/stores';
+import { useModuleDetail } from '@/features/alphabet/hooks/useLessonContent';
+import { useLessonStore } from '@/stores/lessonStore';
 import type { Lesson, LessonModule } from '@/features/alphabet/types';
 
 interface PulsingRingsProps {
@@ -344,7 +343,12 @@ export default function ModuleDetailScreen() {
       </View>
 
       {/* Lesson Path Timeline */}
-      <ScrollView
+      <FlatList
+        data={lessons}
+        keyExtractor={(lesson) => lesson.lessonId}
+        initialNumToRender={6}
+        maxToRenderPerBatch={4}
+        windowSize={5}
         style={styles.scrollView}
         contentContainerStyle={[
           styles.scrollContent,
@@ -354,9 +358,7 @@ export default function ModuleDetailScreen() {
         ]}
         showsVerticalScrollIndicator={false}
         overScrollMode="never"
-      >
-        <View style={styles.timelineList}>
-          {lessons.map((lesson, index) => {
+        renderItem={({ item: lesson, index }) => {
             const isCompleted = checkLessonCompleted(lesson.lessonId);
             const isUnlocked = checkLessonUnlocked(index);
             const isCurrent = isUnlocked && !isCompleted;
@@ -386,7 +388,6 @@ export default function ModuleDetailScreen() {
             return (
               <Animated.View
                 key={lesson.lessonId}
-                entering={FadeInDown.delay(Math.min(index * 45, 600)).duration(380)}
                 style={styles.lessonRowWrapper}
               >
                 {/* Connected Path Left Column (76px wide) */}
@@ -647,9 +648,8 @@ export default function ModuleDetailScreen() {
                 </View>
               </Animated.View>
             );
-          })}
-        </View>
-      </ScrollView>
+        }}
+      />
     </View>
   );
 }

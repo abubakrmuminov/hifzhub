@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, Alert, StatusBar, Button } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '@/shared/theme';
-import { useLessonStore } from '@/stores';
+import { useLessonStore } from '@/stores/lessonStore';
 import type { Lesson, LessonStep } from '@/features/alphabet/types';
 
 import { TheoryCard } from '@/features/alphabet/components/TheoryCard';
@@ -18,44 +18,28 @@ import { ReadingCheck } from '@/features/alphabet/components/ReadingCheck';
 import { StepProgressBar } from '@/features/alphabet/components/StepProgressBar';
 import { XPPopup } from '@/features/alphabet/components/XPPopup';
 import { LessonComplete } from '@/features/alphabet/components/LessonComplete';
-import { useLessonDetail } from '@/features/alphabet';
-
-// Fallback sample lesson for edge cases
-const sampleLesson: Lesson = {
-  moduleId: 1,
-  moduleTitle: 'Арабский алфавит',
-  lessonId: 'sample',
-  order: 1,
-  title: 'Пример урока',
-  description: 'Тестовый урок',
-  estimatedMinutes: 3,
-  xpReward: 20,
-  steps: [
-    {
-      id: 's1',
-      type: 'theory',
-      title: 'Добро пожаловать!',
-      content: 'Это тестовый урок для проверки движка.',
-    },
-    {
-      id: 's2',
-      type: 'quiz_choice',
-      question: 'Какая буква имеет одну точку снизу?',
-      options: ['ا', 'ب', 'ت', 'ث'],
-      correctIndex: 1,
-      explanation: 'Буква Ба имеет одну точку снизу.',
-    },
-  ],
-};
+import { useLessonDetail } from '@/features/alphabet/hooks/useLessonContent';
 
 export default function LessonScreen() {
+  const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
+  const { lesson, isLoading, error, retry } = useLessonDetail(lessonId ?? '');
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  if (!lesson) {
+    return <SafeAreaView style={[styles.errorContainer, { backgroundColor: colors.background }]}>
+      <Text style={{ color: colors.text }}>{t(isLoading ? 'common.loading' : 'common.error')}</Text>
+      {error && <Button title={t('common.retry')} onPress={() => { void retry(); }} />}
+      <Button title={t('common.back')} onPress={() => router.back()} />
+    </SafeAreaView>;
+  }
+  return <LessonRunner key={lesson.lessonId} lesson={lesson} />;
+}
+
+interface LessonRunnerProps { lesson: Lesson }
+
+function LessonRunner({ lesson }: LessonRunnerProps) {
   const { t } = useTranslation();
   const { isDark, colors } = useTheme();
-  const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
-
-  const currentLessonId = typeof lessonId === 'string' ? lessonId : Array.isArray(lessonId) ? lessonId[0] : '';
-  const { lesson: loadedLesson } = useLessonDetail(currentLessonId);
-  const lesson: Lesson = useMemo(() => loadedLesson ?? sampleLesson, [loadedLesson]);
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);

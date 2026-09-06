@@ -40,7 +40,7 @@ export const useLessonContentStore = create<LessonContentState>((set, get) => ({
   contentVersion: 1,
 
   initialize: async () => {
-    if (get().isInitialized) return;
+    if (get().isInitialized || get().isLoading) return;
     await get().refresh();
   },
 
@@ -48,7 +48,7 @@ export const useLessonContentStore = create<LessonContentState>((set, get) => ({
     set({ isLoading: true });
     try {
       const modules = await lessonContentService.getEffectiveModules();
-      const allLessons = await lessonContentService.getEffectiveLessons();
+      const allLessons = await lessonContentService.getLessonSummaries();
 
       const lessonsByModule: Record<number, StoredLesson[]> = {};
       const lessonsById: Record<string, StoredLesson> = {};
