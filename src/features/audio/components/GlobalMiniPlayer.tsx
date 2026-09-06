@@ -19,7 +19,7 @@ import { useTheme } from '@/shared/theme';
 import { useAudioStore } from '@/stores/audioStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useTabBarStore } from '@/stores/tabBarStore';
-import { usePlayer } from '../hooks/usePlayer';
+import { playAudio, pauseAudio } from '../services/trackPlayer';
 import { stopAudio } from '../services/trackPlayer';
 import { SURAHS_DATA } from '@/features/quran/data/surahsData';
 import { getSurahName } from '@/features/quran/utils/quranUtils';
@@ -59,7 +59,8 @@ export const GlobalMiniPlayer: React.FC = () => {
   const isPlaying = useAudioStore((s) => s.isPlaying);
   const isTabBarVisible = useTabBarStore((s) => s.isTabBarVisible);
   const language = useSettingsStore((s) => s.language);
-  const { play, pause } = usePlayer();
+  const play = playAudio;
+  const pause = pauseAudio;
 
   const isClosing = React.useRef(false);
   const translateY = useSharedValue(0);

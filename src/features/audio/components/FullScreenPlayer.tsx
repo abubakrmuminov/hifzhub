@@ -94,6 +94,17 @@ const formatRemainingTime = (seconds: number): string => {
 };
 
 export const FullScreenPlayer: React.FC = () => {
+  const visible = useAudioStore((s) => s.isFullScreenPlayerVisible || s.isFullPlayerVisible);
+  const [retained, setRetained] = useState(false);
+  useEffect(() => {
+    if (visible) { setRetained(true); return; }
+    const timeout = setTimeout(() => setRetained(false), 300);
+    return () => clearTimeout(timeout);
+  }, [visible]);
+  return visible || retained ? <FullScreenPlayerContent /> : null;
+};
+
+const FullScreenPlayerContent: React.FC = () => {
   const insets = useSafeAreaInsets();
   const miniBottom = Math.max(insets.bottom, 10) + 76;
   const miniTop = SCREEN_HEIGHT - (miniBottom + MINI_HEIGHT);
