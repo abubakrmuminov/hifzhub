@@ -1,9 +1,10 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -79,26 +80,25 @@ export default function MemorizeScreen() {
     [router]
   );
 
+  const addingRef = useRef(false);
   const handleConfirmAyahs = useCallback(
-    (surahId: number, fromAyah: number, toAyah: number) => {
-      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      const ayahsToAdd = getAyahsForMemorization(surahId, fromAyah, toAyah);
-      addAyahs(ayahsToAdd);
-      setPickerVisible(false);
-      router.push(`/memorize/session?category=sabaq&surahId=${surahId}` as any);
-    },
-    [addAyahs, router]
+    async (surahId: number, fromAyah: number, toAyah: number) => {
+      if (addingRef.current) return;
+      addingRef.current = true;
+      try {
+        const ayahsToAdd = await getAyahsForMemorization(surahId, fromAyah, toAyah);
+        addAyahs(ayahsToAdd);
+        setPickerVisible(false);
+        router.push(`/memorize/session?category=sabaq&surahId=${surahId}` as any);
+      } catch (error) {
+        console.warn('Unable to start memorization:', error);
+        Alert.alert(t('common.error'), t('common.retry'));
+      } finally {
+        addingRef.current = false;
+      }
+    }, [addAyahs, router, t]
   );
-
-  const handleQuickStartSelect = useCallback(
-    (surahId: number, fromAyah: number, toAyah: number) => {
-      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      const ayahsToAdd = getAyahsForMemorization(surahId, fromAyah, toAyah);
-      addAyahs(ayahsToAdd);
-      router.push(`/memorize/session?category=sabaq&surahId=${surahId}` as any);
-    },
-    [addAyahs, router]
-  );
+  const handleQuickStartSelect = handleConfirmAyahs;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -218,13 +218,13 @@ export default function MemorizeScreen() {
       </AnimatedPressable>
 
       {/* Surah & Ayah Range Picker Sheet */}
-      <SurahPickerSheet
+      {pickerVisible && <SurahPickerSheet
         visible={pickerVisible}
         onClose={() => setPickerVisible(false)}
         onConfirm={handleConfirmAyahs}
         surahs={SURAH_LIST}
         alreadyMemorized={memorizedCardIds}
-      />
+      />}
     </View>
   );
 }
