@@ -13,7 +13,7 @@ import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/shared/theme';
-import { GlobalMiniPlayer } from '@/features/audio';
+import { GlobalMiniPlayer } from '@/features/audio/components/GlobalMiniPlayer';
 import { useTabBarStore } from '@/stores/tabBarStore';
 
 export interface TabLayoutProps {}
@@ -24,7 +24,6 @@ export function TabLayout({}: TabLayoutProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
 
-  const isTabBarVisible = useTabBarStore((s) => s.isTabBarVisible);
   const setTabBarVisible = useTabBarStore((s) => s.setTabBarVisible);
 
   // Restore tab bar whenever active tab changes
@@ -32,32 +31,13 @@ export function TabLayout({}: TabLayoutProps) {
     setTabBarVisible(true);
   }, [pathname, setTabBarVisible]);
 
-  const translateY = useSharedValue(0);
-
-  useEffect(() => {
-    translateY.value = withSpring(isTabBarVisible ? 0 : 130, {
-      damping: 20,
-      stiffness: 170,
-      mass: 0.8,
-    });
-  }, [isTabBarVisible, translateY]);
-
-  const animTabBarStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
-  }));
-
   return (
     <View style={styles.targetContainer}>
       <Tabs
-        tabBar={(props: BottomTabBarProps) => (
-          <Animated.View
-            style={[styles.animatedTabBarWrapper, animTabBarStyle]}
-            pointerEvents={isTabBarVisible ? 'auto' : 'none'}
-          >
-            <BottomTabBar {...props} />
-          </Animated.View>
-        )}
+        tabBar={renderTabBar}
         screenOptions={{
+          lazy: true,
+          freezeOnBlur: true,
           tabBarActiveTintColor: colors.primary,
           tabBarInactiveTintColor: isDark ? '#A6A6BC' : '#52545A',
           tabBarShowLabel: true,
@@ -205,6 +185,30 @@ export function TabLayout({}: TabLayoutProps) {
     </View>
   );
 }
+
+// Only the floating bar responds to scroll visibility; the navigator does not rerender.
+function FloatingTabBar(props: BottomTabBarProps) {
+  const isTabBarVisible = useTabBarStore((state) => state.isTabBarVisible);
+  const translateY = useSharedValue(0);
+
+  useEffect(() => {
+    translateY.value = withSpring(isTabBarVisible ? 0 : 130, {
+      damping: 20,
+      stiffness: 170,
+      mass: 0.8,
+    });
+  }, [isTabBarVisible, translateY]);
+
+  const animTabBarStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  return <Animated.View style={[styles.animatedTabBarWrapper, animTabBarStyle]}
+    pointerEvents={isTabBarVisible ? 'auto' : 'none'}>
+    <BottomTabBar {...props} />
+  </Animated.View>;
+}
+const renderTabBar = (props: BottomTabBarProps) => <FloatingTabBar {...props} />;
 
 const styles = StyleSheet.create({
   targetContainer: {
