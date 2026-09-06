@@ -203,15 +203,7 @@ export const SurahListItem = React.memo<SurahListItemProps>(
         </View>
       </Pressable>
     );
-  },
-  (prev, next) =>
-    prev.surah.id === next.surah.id &&
-    prev.lang === next.lang &&
-    prev.isDark === next.isDark &&
-    prev.onPress === next.onPress &&
-    prev.meccanText === next.meccanText &&
-    prev.medinanText === next.medinanText &&
-    prev.versesText === next.versesText
+  }
 );
 
 const styles = StyleSheet.create({

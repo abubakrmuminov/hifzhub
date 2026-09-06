@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useDeferredValue, useMemo, useCallback } from 'react';
 import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FlashList } from '@shopify/flash-list';
@@ -24,6 +24,7 @@ export const SurahList: React.FC<SurahListProps> = () => {
   const router = useRouter();
   const { surahs, isLoading } = useSurahs();
   const [searchQuery, setSearchQuery] = useState('');
+  const deferredSearch = useDeferredValue(searchQuery);
 
   const lang = i18n.language;
   const meccanText = useMemo(() => t('quran.meccan', { defaultValue: 'Мекканская' }), [t]);
@@ -48,7 +49,7 @@ export const SurahList: React.FC<SurahListProps> = () => {
   );
 
   const filteredSurahs = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
+    const q = deferredSearch.trim().toLowerCase();
     if (!q) return surahs;
     return surahs.filter((s) => {
       const arabicMatch = s.nameArabic.includes(q);
@@ -56,7 +57,7 @@ export const SurahList: React.FC<SurahListProps> = () => {
       const trans = getSurahName(s.nameTranslation, lang).toLowerCase();
       return arabicMatch || idMatch || trans.includes(q);
     });
-  }, [surahs, searchQuery, lang]);
+  }, [surahs, deferredSearch, lang]);
 
   const handleSelectSurah = useCallback(
     (surahId: number) => {

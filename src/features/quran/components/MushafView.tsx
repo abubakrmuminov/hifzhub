@@ -79,7 +79,7 @@ export const MushafView = React.memo<MushafViewProps>(({
             const isActive = isPlaying || activeAyahNumber === ayah.ayahNumber;
 
             const segments: TajweedSegment[] = showTajweed
-              ? getAyahTajweedSegments(ayah.surahId, ayah.ayahNumber, ayah.textUthmani)
+              ? getAyahTajweedSegments(ayah.surahId, ayah.ayahNumber, ayah.textUthmani, ayah.textTajweed)
               : [{ text: ayah.textUthmani }];
 
             return (

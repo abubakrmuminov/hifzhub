@@ -35,17 +35,7 @@ export interface Theme {
   fontSizes: typeof FontSizes;
 }
 
-export const useTheme = (): Theme => {
-  const systemScheme = useColorScheme();
-  const userTheme = useSettingsStore((s) => s.theme);
-
-  const isDark =
-    userTheme === 'dark'
-      ? true
-      : userTheme === 'light'
-      ? false
-      : systemScheme === 'dark';
-
+const createTheme = (isDark: boolean): Theme => {
   const currentColors = isDark ? Colors.dark : Colors.light;
 
   return {
@@ -71,4 +61,14 @@ export const useTheme = (): Theme => {
     fontFamilies: FontFamilies,
     fontSizes: FontSizes,
   };
+};
+
+const lightTheme = createTheme(false);
+const darkTheme = createTheme(true);
+
+export const useTheme = (): Theme => {
+  const systemScheme = useColorScheme();
+  const preference = useSettingsStore((state) => state.theme);
+  return (preference === 'dark' || (preference === 'system' && systemScheme === 'dark'))
+    ? darkTheme : lightTheme;
 };

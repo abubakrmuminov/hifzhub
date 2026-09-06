@@ -32,13 +32,14 @@ const DEFAULT_OVERRIDES: StoredOverrides = {
   contentVersion: 1,
 };
 
-// Bundled lessons map
-const BUNDLED_LESSONS_MAP: Record<number, Lesson[]> = {
-  1: require('../../../../assets/data/lessons/module1.json'),
-  2: require('../../../../assets/data/lessons/module2.json'),
-  3: require('../../../../assets/data/lessons/module3.json'),
-  4: require('../../../../assets/data/lessons/module4.json'),
-  5: require('../../../../assets/data/lessons/module5.json'),
+// Metadata only; full lesson steps load on demand.
+const BUNDLED_CATALOG: Record<number, StoredLesson[]> = require('../../../../assets/data/lessons/catalog.json');
+const BUNDLED_LESSONS_MAP: Record<number, () => unknown> = {
+  1: () => require('../../../../assets/data/lessons/module1.json'),
+  2: () => require('../../../../assets/data/lessons/module2.json'),
+  3: () => require('../../../../assets/data/lessons/module3.json'),
+  4: () => require('../../../../assets/data/lessons/module4.json'),
+  5: () => require('../../../../assets/data/lessons/module5.json'),
 };
 
 export class LessonContentService {
@@ -104,7 +105,7 @@ export class LessonContentService {
    * Get bundled lessons for a given module.
    */
   public getBundledLessons(moduleId: number): StoredLesson[] {
-    const list = BUNDLED_LESSONS_MAP[moduleId];
+    const list = BUNDLED_LESSONS_MAP[moduleId]?.();
     return Array.isArray(list) ? [...list] : [];
   }
 
@@ -112,6 +113,19 @@ export class LessonContentService {
    * Get all effective modules:
    * Merges bundled modules with custom modules, excludes deleted ones, and dynamically counts lessons.
    */
+  public async getLessonSummaries(): Promise<StoredLesson[]> {
+    const overrides = await this.loadOverrides();
+    const deletedLessons = new Set(overrides.deletedLessonIds);
+    const deletedModules = new Set(overrides.deletedModuleIds);
+    const effective = new Map(Object.values(BUNDLED_CATALOG).flat().map((lesson) => [lesson.lessonId, lesson]));
+    for (const lesson of Object.values(overrides.customLessons)) {
+      effective.set(lesson.lessonId, { ...lesson, steps: [] });
+    }
+    return [...effective.values()].filter((lesson) =>
+      !deletedLessons.has(lesson.lessonId) && !deletedModules.has(lesson.moduleId)
+    ).sort((a, b) => a.order - b.order);
+  }
+
   public async getEffectiveModules(): Promise<StoredModule[]> {
     const overrides = await this.loadOverrides();
     const deletedModuleSet = new Set(overrides.deletedModuleIds);
@@ -134,8 +148,9 @@ export class LessonContentService {
     const allModules = Array.from(moduleMap.values()).sort((a, b) => a.moduleId - b.moduleId);
 
     // Compute dynamic lessonsCount and totalXP for each module based on effective lessons
+    const summaries = await this.getLessonSummaries();
     for (const mod of allModules) {
-      const lessons = await this.getEffectiveLessons(mod.moduleId);
+      const lessons = summaries.filter((lesson) => lesson.moduleId === mod.moduleId);
       mod.lessonsCount = lessons.length;
       const sumXP = lessons.reduce((sum, l) => sum + (l.xpReward || 0), 0);
       if (sumXP > 0) {
@@ -211,19 +226,13 @@ export class LessonContentService {
 
     // Check custom lessons first (has priority)
     if (overrides.customLessons[lessonId]) {
-      return overrides.customLessons[lessonId];
+      const lesson = overrides.customLessons[lessonId];
+      return overrides.deletedModuleIds.includes(lesson.moduleId) ? undefined : lesson;
     }
 
-    // Check bundled lessons across all modules
-    for (const modIdStr of Object.keys(BUNDLED_LESSONS_MAP)) {
-      const list = this.getBundledLessons(Number(modIdStr));
-      const found = list.find((l) => l.lessonId === lessonId);
-      if (found) {
-        return found;
-      }
-    }
-
-    return undefined;
+    const summary = Object.values(BUNDLED_CATALOG).flat().find((lesson) => lesson.lessonId === lessonId);
+    if (!summary || overrides.deletedModuleIds.includes(summary.moduleId)) return undefined;
+    return this.getBundledLessons(summary.moduleId).find((lesson) => lesson.lessonId === lessonId);
   }
 
   /**

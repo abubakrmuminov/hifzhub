@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   View,
+  FlatList,
   Text,
   Pressable,
   StyleSheet,
@@ -126,15 +127,7 @@ const MushafWordTile = React.memo<MushafWordTileProps>(
         )}
       </Pressable>
     );
-  },
-  (prev, next) =>
-    prev.isRevealed === next.isRevealed &&
-    prev.isPeeked === next.isPeeked &&
-    prev.isAyahPlaying === next.isAyahPlaying &&
-    prev.isDark === next.isDark &&
-    prev.textColor === next.textColor &&
-    prev.primaryColor === next.primaryColor &&
-    prev.secondaryColor === next.secondaryColor
+  }
 );
 
 interface AyahRosetteProps {
@@ -169,12 +162,7 @@ const AyahRosette = React.memo<AyahRosetteProps>(
         )}
       </Pressable>
     );
-  },
-  (prev, next) =>
-    prev.ayahNumber === next.ayahNumber &&
-    prev.isAyahPlaying === next.isAyahPlaying &&
-    prev.primaryColor === next.primaryColor &&
-    prev.secondaryColor === next.secondaryColor
+  }
 );
 
 export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
@@ -205,7 +193,7 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
 
   // Preload audio for all cards in this Mushaf page
   useEffect(() => {
-    cards.forEach((c) => {
+    cards.slice(0, 2).forEach((c) => {
       void preloadAyahAudio(c.surahId, c.ayahNumber, defaultReciter);
     });
     return () => {
@@ -232,6 +220,21 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
       };
     });
   }, [cards]);
+
+  // Bound native word layout to a small training page, not all session cards.
+  const pages = useMemo(() => {
+    const result: (typeof ayahStreams)[] = [];
+    let count = 0;
+    for (const stream of ayahStreams) {
+      if (!result.length || count + stream.words.length > 80) {
+        result.push([]);
+        count = 0;
+      }
+      result[result.length - 1].push(stream);
+      count += stream.words.length;
+    }
+    return result;
+  }, [ayahStreams]);
 
   const handleModeChange = useCallback((newMode: MushafMaskMode) => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -293,7 +296,14 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
     surahId !== 9;
 
   return (
-    <View style={styles.container}>
+    <FlatList
+      data={pages}
+      keyExtractor={(page) => page[0].card.id}
+      initialNumToRender={1}
+      maxToRenderPerBatch={1}
+      windowSize={3}
+      contentContainerStyle={{ paddingHorizontal: spacing.md, paddingBottom: spacing.xl }}
+      ListHeaderComponent={<View style={styles.container}>
       {/* 1. Symmetrical, Centered 3-Mode Segmented Control */}
       <View
         style={[
@@ -489,9 +499,12 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
           </Text>
         )}
 
+      </View>
+    </View>}
+      renderItem={({ item }) => (<View style={[styles.mushafPaper, { padding: spacing.lg, backgroundColor: isDark ? '#1C1C2E' : '#FCF9F2' }]}>
         {/* Continuous Flow of Ayahs with Inset Verse Markers */}
         <View style={styles.continuousAyahFlow}>
-          {ayahStreams.map(({ card, words, ayahNumber }) => {
+          {item.map(({ card, words, ayahNumber }) => {
             const isAyahPlaying =
               isStorePlaying &&
               currentTrack?.surahId === card.surahId &&
@@ -538,7 +551,8 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
         </View>
       </View>
 
-      {/* 5. Bottom CTA: Finish & Return */}
+)}
+      ListFooterComponent={<View>      {/* 5. Bottom CTA: Finish & Return */}
       <View style={[styles.bottomActions, { marginTop: spacing.xl }]}>
         <AnimatedPressable
           onPress={() => {
@@ -571,8 +585,8 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
             </Text>
           </AnimatedPressable>
         )}
-      </View>
-    </View>
+      </View></View>}
+    />
   );
 };
 

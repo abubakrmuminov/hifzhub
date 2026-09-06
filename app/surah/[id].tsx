@@ -3,13 +3,13 @@ import {
   View,
   Text,
   StyleSheet,
-  type NativeSyntheticEvent,
-  type NativeScrollEvent,
+  Button,
 } from 'react-native';
 import Animated, {
   FadeIn,
   FadeOut,
   useSharedValue,
+  useAnimatedScrollHandler,
   useAnimatedStyle,
   withTiming,
   withSpring,
@@ -23,6 +23,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { FlashList, type FlashListRef } from '@shopify/flash-list';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/shared/theme';
 import { AyahSkeleton } from '@/shared/components/Skeleton';
 import { GlassView } from '@/shared/components/GlassView';
@@ -283,6 +284,8 @@ const TranslationAyahCard = React.memo<TranslationAyahCardProps>(
   }
 );
 
+const AnimatedFlashList = Animated.createAnimatedComponent(FlashList) as typeof FlashList;
+
 export interface SurahDetailScreenProps {}
 
 export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
@@ -292,16 +295,15 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
   const insets = useSafeAreaInsets();
   const { colors, spacing, radius, shadows, fontFamilies, isDark } = useTheme();
 
-  const {
-    readingMode,
-    setReadingMode,
-    language,
-    quranFontSize,
-    showTajweed,
-    showTranslation,
-    defaultReciter,
-    setLastRead,
-  } = useSettingsStore();
+  const readingMode = useSettingsStore((state) => state.readingMode);
+  const setReadingMode = useSettingsStore((state) => state.setReadingMode);
+  const language = useSettingsStore((state) => state.language);
+  const quranFontSize = useSettingsStore((state) => state.quranFontSize);
+  const showTajweed = useSettingsStore((state) => state.showTajweed);
+  const showTranslation = useSettingsStore((state) => state.showTranslation);
+  const defaultReciter = useSettingsStore((state) => state.defaultReciter);
+  const setLastRead = useSettingsStore((state) => state.setLastRead);
+  const { t } = useTranslation();
 
   const recordAyahRead = useProgressStore((s) => s.recordAyahRead);
   const currentTrack = useAudioStore((s) => s.currentTrack);
@@ -366,24 +368,21 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
     [surahId, setLastRead, recordAyahRead]
   );
 
-  const handlePlayAyah = useCallback(
-    (ayahNumber: number) => {
-      if (isPlaying && isCurrentSurah && playingAyahNumber === ayahNumber) {
-        void pauseAudio();
-      } else {
-        void playAyah(surahId, ayahNumber, defaultReciter);
-        recordAyahRead(1);
-      }
-    },
-    [isPlaying, isCurrentSurah, playingAyahNumber, surahId, defaultReciter, recordAyahRead]
-  );
+  const handlePlayAyah = useCallback((ayahNumber: number) => {
+    const { currentTrack: track, isPlaying: playing } = useAudioStore.getState();
+    if (playing && track?.surahId === surahId && track.ayahNumber === ayahNumber) {
+      void pauseAudio();
+    } else {
+      void playAyah(surahId, ayahNumber, defaultReciter);
+    }
+  }, [surahId, defaultReciter]);
 
   const surah = useMemo(
     () => SURAHS_DATA.find((s) => s.id === surahId) ?? null,
     [surahId]
   );
 
-  const { ayahs, translationsMap, isLoading } = useAyahs({
+  const { ayahs, translationsMap, isLoading, error, refetch } = useAyahs({
     surahId,
     language,
   });
@@ -444,46 +443,27 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
   // 1 = fully visible, 0 = hidden off-screen
   const controlsVisible = useSharedValue(1);
   const headerScrolledPast = useSharedValue(0);
-  const prevScrollY = useRef(0);
-
-  const handleScroll = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const currentY = event.nativeEvent.contentOffset.y;
-      const diff = currentY - prevScrollY.current;
-
-      if (currentY <= 20) {
-        // At the very top: show back button, hide center title
-        controlsVisible.value = withSpring(1, { damping: 18, stiffness: 160 });
-        headerScrolledPast.value = withTiming(0, { duration: 150 });
-      } else if (diff > 6) {
-        // Scrolling DOWN -> smoothly hide controls; do NOT flash center title
-        if (controlsVisible.value !== 0) {
-          controlsVisible.value = withTiming(0, { duration: 200 });
-        }
-        if (headerScrolledPast.value !== 0) {
-          headerScrolledPast.value = withTiming(0, { duration: 100 });
-        }
-      } else if (diff < -6) {
-        // Scrolling UP -> reveal controls
-        if (controlsVisible.value !== 1) {
-          controlsVisible.value = withTiming(1, { duration: 200 });
-        }
-        // Only show center surah title if big green card has passed (~200px)
-        if (currentY > 200) {
-          if (headerScrolledPast.value !== 1) {
-            headerScrolledPast.value = withTiming(1, { duration: 200 });
-          }
-        } else {
-          if (headerScrolledPast.value !== 0) {
-            headerScrolledPast.value = withTiming(0, { duration: 150 });
-          }
-        }
-      }
-
-      prevScrollY.current = currentY;
-    },
-    [controlsVisible, headerScrolledPast]
-  );
+  const previousY = useSharedValue(0);
+  const controlsTarget = useSharedValue(1);
+  const titleTarget = useSharedValue(0);
+  const handleScroll = useAnimatedScrollHandler((event) => {
+    const y = event.contentOffset.y;
+    const delta = y - previousY.value;
+    let controls = controlsTarget.value;
+    let title = titleTarget.value;
+    if (y <= 20) { controls = 1; title = 0; }
+    else if (delta > 6) { controls = 0; title = 0; }
+    else if (delta < -6) { controls = 1; title = y > 200 ? 1 : 0; }
+    if (controls !== controlsTarget.value) {
+      controlsTarget.value = controls;
+      controlsVisible.value = withTiming(controls, { duration: 200 });
+    }
+    if (title !== titleTarget.value) {
+      titleTarget.value = title;
+      headerScrolledPast.value = withTiming(title, { duration: 150 });
+    }
+    previousY.value = y;
+  });
 
   const centerTitleStyle = useAnimatedStyle(() => ({
     opacity: headerScrolledPast.value * controlsVisible.value,
@@ -637,9 +617,9 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
           pageNumber={item.pageNumber}
           showDivider={true}
           showTajweed={showTajweed}
-          selectedAyahId={selectedAyah?.id}
+          selectedAyahId={item.ayahs.some((ayah) => ayah.id === selectedAyah?.id) ? selectedAyah?.id : null}
           playingAyahNumber={
-            isPlaying && isCurrentSurah ? playingAyahNumber : null
+            isPlaying && isCurrentSurah && item.ayahs.some((ayah) => ayah.ayahNumber === playingAyahNumber) ? playingAyahNumber : null
           }
           onSelectAyah={handleSelectAyah}
           onPressRule={handleRulePress}
@@ -732,7 +712,12 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
         </AnimatedPressable>
       </Animated.View>
 
-      {isLoading ? (
+      {error ? (
+        <View style={{ paddingTop: insets.top + 64, paddingHorizontal: spacing.md }}>
+          <Text style={{ color: colors.text }} accessibilityRole="alert">{t('common.error')}</Text>
+          <Button title={t('common.retry')} onPress={() => { void refetch(); }} />
+        </View>
+      ) : isLoading ? (
         <View style={{ paddingTop: insets.top + 64, paddingHorizontal: spacing.md }}>
           <AyahSkeleton />
           <AyahSkeleton />
@@ -744,12 +729,12 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
           entering={FadeIn.duration(240)}
           exiting={FadeOut.duration(160)}
         >
-          <FlashList<MushafPageData>
+          <AnimatedFlashList<MushafPageData>
             ref={mushafListRef}
             data={mushafPages}
             renderItem={renderMushafItem}
             keyExtractor={(item) => `mushaf-page-${item.pageNumber}`}
-            drawDistance={800}
+            drawDistance={250}
             ListHeaderComponent={renderHeader}
             ListFooterComponent={renderFooter}
             onScroll={handleScroll}
@@ -766,12 +751,12 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
           entering={FadeIn.duration(240)}
           exiting={FadeOut.duration(160)}
         >
-          <FlashList<Ayah>
+          <AnimatedFlashList<Ayah>
             ref={translationListRef}
             data={ayahs}
             renderItem={renderTranslationItem}
             keyExtractor={(item) => `ayah-${item.id}`}
-            drawDistance={800}
+            drawDistance={250}
             ListHeaderComponent={renderHeader}
             ListFooterComponent={renderFooter}
             onScroll={handleScroll}

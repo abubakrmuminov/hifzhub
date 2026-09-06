@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { Activity, useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -339,26 +339,18 @@ export default function MemorizationSessionScreen() {
         </View>
       )}
 
-      {/* Main Interactive Stage Area */}
-      <ScrollView
-        style={styles.scrollArea}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingHorizontal: spacing.md, paddingVertical: spacing.sm },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.modeContainer}>
-          {sessionMode === 'mushaf' ? (
-            <MushafBlindTrainer
-              cards={allSessionCards}
-              surahName={surahName}
-              surahId={currentSurah?.id || allSessionCards[0]?.surahId || 1}
-              onFinishSession={handleFinishMushaf}
-              onSwitchToDrillMode={() => handleSwitchMode('drill')}
-            />
-          ) : (
-            currentCard && (
+      {/* Activity retains mask/scroll state and disconnects effects in hidden mode. */}
+      <Activity mode={sessionMode === 'mushaf' ? 'visible' : 'hidden'}>
+        <MushafBlindTrainer
+          cards={allSessionCards}
+          surahName={surahName}
+          surahId={currentSurah?.id || allSessionCards[0]?.surahId || 1}
+          onFinishSession={handleFinishMushaf}
+          onSwitchToDrillMode={() => handleSwitchMode('drill')}
+        />
+      </Activity>
+      {sessionMode === 'drill' && currentCard && (
+        <ScrollView style={styles.scrollArea} contentContainerStyle={styles.scrollContent}>
               <Animated.View
                 key={`${currentCard.id}_${trainingStage}`}
                 entering={FadeInDown.duration(350)}
@@ -402,10 +394,8 @@ export default function MemorizationSessionScreen() {
                   />
                 )}
               </Animated.View>
-            )
-          )}
-        </View>
-      </ScrollView>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }

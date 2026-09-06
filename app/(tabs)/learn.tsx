@@ -16,8 +16,9 @@ import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/shared/theme';
 import { GlassView, AnimatedPressable } from '@/shared/components';
 import { useScrollTabBar } from '@/shared/hooks/useScrollTabBar';
-import { useLessonModules, LessonManagerModal } from '@/features/alphabet';
-import { useLessonStore } from '@/stores';
+import { useLessonModules } from '@/features/alphabet/hooks/useLessonContent';
+import { LessonManagerModal } from '@/features/alphabet/components/LessonManagerModal';
+import { useLessonStore } from '@/stores/lessonStore';
 import type { LessonModule } from '@/features/alphabet/types';
 
 export default function LearnScreen() {

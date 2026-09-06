@@ -494,30 +494,6 @@ export const TAJWEED_FAMILY_GUIDES: TajweedFamilyGuide[] = [
   },
 ];
 
-// Lazy cached dataset
-let tajweedCache: Record<string, string> | null = null;
-
-export function getTajweedDataset(): Record<string, string> {
-  if (!tajweedCache) {
-    try {
-      tajweedCache = require('../../../../assets/data/quran-tajweed.json');
-    } catch (e) {
-      console.warn('Failed to load quran-tajweed.json dataset:', e);
-      tajweedCache = {};
-    }
-  }
-  return tajweedCache || {};
-}
-
-/**
- * Retrieves the raw tagged Tajweed text for a specific surah and ayah.
- */
-export function getTajweedForAyah(surahId: number, ayahNumber: number): string | null {
-  const dataset = getTajweedDataset();
-  const key = `${surahId}_${ayahNumber}`;
-  return dataset[key] || null;
-}
-
 const IS_COMBINING_MARK = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7-\u06E8\u06EA-\u06ED]/;
 const TAFKHEEM_LETTERS = new Set(['خ', 'ص', 'ض', 'غ', 'ط', 'ق', 'ظ']);
 const NON_FORWARD_CONNECTORS = new Set(['ا', 'أ', 'إ', 'آ', 'ٱ', 'د', 'ذ', 'ر', 'ز', 'و', 'ؤ', 'ة', 'ء']);
@@ -532,8 +508,18 @@ function isTafkheemRa(followingDiacritics: string): boolean {
  * detects Tafkheem (heavy letters) matching Quran.com standard, and applies ZWJ
  * to guarantee seamless cursive joining across color boundaries on Android and iOS.
  */
+// Bounded LRU: reuse parsing across reader modes without retaining the entire Quran.
+const parsedSegments = new Map<string, TajweedSegment[]>();
+const MAX_PARSED_AYAHS = 256;
+
 export function parseTajweedText(rawText: string): TajweedSegment[] {
   if (!rawText) return [];
+  const cached = parsedSegments.get(rawText);
+  if (cached) {
+    parsedSegments.delete(rawText);
+    parsedSegments.set(rawText, cached);
+    return cached;
+  }
 
   // 1. Normalize obsolete or problematic glyphs:
   // - U+0672 (wavy alef rendered as orange emoji circle on Android) -> U+0670 (standard dagger alef)
@@ -732,6 +718,10 @@ export function parseTajweedText(rawText: string): TajweedSegment[] {
     return { ...seg, text };
   });
 
+  parsedSegments.set(rawText, segments);
+  if (parsedSegments.size > MAX_PARSED_AYAHS) {
+    parsedSegments.delete(parsedSegments.keys().next().value!);
+  }
   return segments;
 }
 
@@ -741,9 +731,9 @@ export function parseTajweedText(rawText: string): TajweedSegment[] {
 export function getAyahTajweedSegments(
   surahId: number,
   ayahNumber: number,
-  fallbackUthmani?: string
+  fallbackUthmani?: string,
+  taggedText?: string | null
 ): TajweedSegment[] {
-  const taggedText = getTajweedForAyah(surahId, ayahNumber);
   if (taggedText) {
     return parseTajweedText(taggedText);
   }
@@ -963,9 +953,9 @@ export function parseTajweedWords(rawText: string): TajweedWord[] {
 export function getAyahTajweedWords(
   surahId: number,
   ayahNumber: number,
-  fallbackUthmani?: string
+  fallbackUthmani?: string,
+  taggedText?: string | null
 ): TajweedWord[] {
-  const taggedText = getTajweedForAyah(surahId, ayahNumber);
   if (taggedText) {
     return parseTajweedWords(taggedText);
   }

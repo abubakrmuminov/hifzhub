@@ -76,141 +76,102 @@ export const buildTrackUrl = (
   return `https://cdn.islamic.network/quran/audio/128/${reciterId}/${absoluteAyahNumber}.mp3`;
 };
 
-const verifiedAudioCache = new Map<string, string>();
-
-export const clearAudioCache = (): void => {
-  verifiedAudioCache.clear();
-};
-
+// Playback resolves a local file or streams; it never waits for a download.
 export const getAyahAudioUri = async (
-  surahId: number,
-  ayahNumber: number,
-  reciter: string
+  surahId: number, ayahNumber: number, reciter: string
 ): Promise<string> => {
   const reciterId = resolveReciterId(reciter);
-  const cacheKey = `${reciterId}_${surahId}_${ayahNumber}`;
-  const memoryUri = verifiedAudioCache.get(cacheKey);
-  if (memoryUri) {
-    return memoryUri;
-  }
-
-  const remoteUrl = buildTrackUrl(surahId, ayahNumber, reciterId);
-
   if (FileSystem.documentDirectory) {
-    const dir = `${FileSystem.documentDirectory}audio/${reciterId}/${surahId}/`;
-    const localUri = `${dir}${ayahNumber}.mp3`;
+    const uri = `${FileSystem.documentDirectory}audio/${reciterId}/${surahId}/${ayahNumber}.mp3`;
     try {
-      const info = await FileSystem.getInfoAsync(localUri);
-      if (info.exists && (info as any).size > 1000) {
-        verifiedAudioCache.set(cacheKey, localUri);
-        return localUri;
-      }
-
-      // Ensure directory exists
-      await FileSystem.makeDirectoryAsync(dir, { intermediates: true }).catch(() => {});
-
-      // Download and cache locally so subsequent playback has 0 latency
-      const downloadResult = await FileSystem.downloadAsync(remoteUrl, localUri);
-      if (downloadResult && downloadResult.status === 200) {
-        verifiedAudioCache.set(cacheKey, downloadResult.uri);
-        return downloadResult.uri;
-      }
-    } catch (err) {
-      console.warn('Audio caching error, falling back to remote URL:', err);
-    }
+      const info = await FileSystem.getInfoAsync(uri);
+      if (info.exists && !info.isDirectory && info.size > 1000) return uri;
+    } catch { /* Streaming remains available when storage is inaccessible. */ }
   }
-  return remoteUrl;
+  return buildTrackUrl(surahId, ayahNumber, reciterId);
 };
 
-/**
- * Preloads and caches an ayah audio file in the background so it starts instantly on tap
- */
-export const preloadAyahAudio = async (
-  surahId: number,
-  ayahNumber: number,
-  reciter: string
+const preloads = new Map<string, Promise<void>>();
+let preloadGeneration = 0;
+let activePreloads = 0;
+
+export const clearAudioCache = (): void => { preloadGeneration += 1; };
+
+export const preloadAyahAudio = (
+  surahId: number, ayahNumber: number, reciter: string
 ): Promise<void> => {
-  try {
-    await getAyahAudioUri(surahId, ayahNumber, reciter);
-  } catch {}
-};
-
-let activePlayer: any = null;
-let isAudioConfigured = false;
-
-export const setupPlayer = async (): Promise<boolean> => {
-  if (isAudioConfigured) return true;
-  if (!ExpoAudio) return false;
-
-  try {
-    if (ExpoAudio.setAudioModeAsync) {
-      await ExpoAudio.setAudioModeAsync({
-        playsInSilentMode: true,
-        shouldPlayInBackground: true,
-      });
-    }
-    if (!isExpoGo && ExpoAudio.requestNotificationPermissionsAsync) {
-      try {
-        await ExpoAudio.requestNotificationPermissionsAsync();
-      } catch {}
-    }
-    isAudioConfigured = true;
-    return true;
-  } catch (err) {
-    console.warn('Failed to configure audio mode:', err);
-    return false;
-  }
-};
-
-export const isPlayerReady = (): boolean => activePlayer != null;
-
-export const playAudio = async (): Promise<void> => {
-  if (activePlayer) {
+  const key = `${resolveReciterId(reciter)}_${surahId}_${ayahNumber}`;
+  const existing = preloads.get(key);
+  if (existing) return existing;
+  // Speculative work is expendable; never queue a whole surah on the playback path.
+  if (activePreloads >= 2 || !FileSystem.documentDirectory) return Promise.resolve();
+  const generation = preloadGeneration;
+  activePreloads += 1;
+  const task = (async () => {
+    const uri = await getAyahAudioUri(surahId, ayahNumber, reciter);
+    if (!uri.startsWith('http') || generation !== preloadGeneration) return;
+    const dir = `${FileSystem.documentDirectory}audio/${resolveReciterId(reciter)}/${surahId}/`;
+    const temporary = `${dir}${ayahNumber}.prefetch.mp3`;
     try {
-      activePlayer.play();
-      useAudioStore.getState().setIsPlaying(true);
-    } catch (err) {
-      console.warn('playAudio error:', err);
+      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+      const download = await FileSystem.downloadAsync(uri, temporary);
+      const info = await FileSystem.getInfoAsync(temporary);
+      if (generation === preloadGeneration && download.status === 200 &&
+          info.exists && !info.isDirectory && info.size > 1000) {
+        await FileSystem.moveAsync({ from: temporary, to: `${dir}${ayahNumber}.mp3` });
+      }
+    } finally {
+      await FileSystem.deleteAsync(temporary, { idempotent: true }).catch(() => {});
     }
-  }
+  })().catch((error: unknown) => {
+    console.warn('Audio prefetch failed:', error);
+  }).finally(() => {
+    activePreloads -= 1;
+    preloads.delete(key);
+  });
+  preloads.set(key, task);
+  return task;
 };
 
+let activePlayer: import('expo-audio').AudioPlayer | null = null;
+let statusSubscription: { remove(): void } | null = null;
+let configuration: Promise<boolean> | null = null;
+let playbackRequest = 0;
+let requestedNotificationPermission = false;
+
+export const setupPlayer = (): Promise<boolean> => {
+  if (!ExpoAudio) return Promise.resolve(false);
+  if (!configuration) {
+    configuration = ExpoAudio.setAudioModeAsync({
+      playsInSilentMode: true, shouldPlayInBackground: true,
+    }).then(() => true).catch((error: unknown) => {
+      configuration = null;
+      console.warn('Audio setup failed:', error);
+      return false;
+    });
+  }
+  return configuration;
+};
+
+export const isPlayerReady = (): boolean => activePlayer !== null;
+export const playAudio = async (): Promise<void> => { activePlayer?.play(); };
 export const pauseAudio = async (): Promise<void> => {
-  if (activePlayer) {
-    try {
-      activePlayer.pause();
-      useAudioStore.getState().setIsPlaying(false);
-    } catch (err) {
-      console.warn('pauseAudio error:', err);
-    }
-  }
+  // Cancel pending replacements, but retain the loaded player's completion listener.
+  pendingRequest = ++playbackRequest;
+  activePlayer?.pause();
+  useAudioStore.getState().setIsPlaying(false);
 };
+let pendingRequest = 0;
 
 export const setPlaybackSpeed = async (speed: number): Promise<void> => {
   useAudioStore.getState().setPlaybackSpeed(speed);
-  if (activePlayer) {
-    try {
-      if (typeof activePlayer.setPlaybackRate === 'function') {
-        activePlayer.setPlaybackRate(speed);
-      } else {
-        activePlayer.playbackRate = speed;
-      }
-    } catch (err) {
-      console.warn('setPlaybackRate error:', err);
-    }
-  }
+  activePlayer?.setPlaybackRate(speed);
 };
 
 export const seekAudio = async (positionSeconds: number): Promise<void> => {
   if (activePlayer) {
-    try {
-      if (activePlayer.seekTo) {
-        await activePlayer.seekTo(positionSeconds);
-      }
-      useAudioStore.getState().setPlaybackPosition(positionSeconds);
-    } catch (err) {
-      console.warn('seekAudio error:', err);
-    }
+    await activePlayer.seekTo(positionSeconds);
+    useAudioStore.getState().setPlaybackPosition(positionSeconds);
   }
 };
 
@@ -274,28 +235,26 @@ export const setSleepTimer = (minutes: number | null): void => {
 };
 
 export const releaseActivePlayer = async (): Promise<void> => {
-  if (activePlayer) {
+  pendingRequest = ++playbackRequest;
+  statusSubscription?.remove();
+  statusSubscription = null;
+  const player = activePlayer;
+  activePlayer = null;
+  if (player) {
     try {
-      if (!isExpoGo && typeof activePlayer.clearLockScreenControls === 'function') {
-        activePlayer.clearLockScreenControls();
-      }
-    } catch {}
-    try {
-      activePlayer.pause();
-      if (activePlayer.release) {
-        activePlayer.release();
-      }
-    } catch {}
-    activePlayer = null;
+      if (!isExpoGo) player.clearLockScreenControls();
+      player.pause();
+    } finally {
+      player.remove(); // expo-audio uses remove(), not release().
+    }
   }
 };
 
 export const stopAudio = async (): Promise<void> => {
   await releaseActivePlayer();
-  useAudioStore.getState().setIsPlaying(false);
-  useAudioStore.getState().setPlaybackPosition(0);
-  useAudioStore.getState().setCurrentRepeatIndex(0);
-  useAudioStore.getState().setCurrentTrack(null);
+  useAudioStore.setState({
+    isPlaying: false, currentTrack: null, playbackPosition: 0, duration: 0, currentRepeatIndex: 0,
+  });
 };
 
 export interface PlayAyahOptions {
@@ -304,213 +263,69 @@ export interface PlayAyahOptions {
 }
 
 export const playAyah = async (
-  surahId: number,
-  ayahNumber: number,
-  reciterId: string,
+  surahId: number, ayahNumber: number, reciterId: string,
   optionsOrAyahCount?: number | PlayAyahOptions
 ): Promise<void> => {
-  await setupPlayer();
-  const options: PlayAyahOptions =
-    typeof optionsOrAyahCount === 'number'
-      ? { ayahCount: optionsOrAyahCount, autoPlayNext: true }
-      : { autoPlayNext: true, ...optionsOrAyahCount };
-
-  const autoPlayNext = options.autoPlayNext ?? true;
-  const ayahCount = options.ayahCount;
-
-  const resolvedReciter = resolveReciterId(reciterId);
-  const total = ayahCount ?? getAyahCountForSurah(surahId);
-
-  const getNextAyah = (): number | null => {
-    const activeLoop = useAudioStore.getState().loopRange;
-    if (activeLoop && activeLoop.startAyah && activeLoop.endAyah) {
-      if (ayahNumber >= activeLoop.endAyah) {
-        return activeLoop.startAyah;
-      }
-      return ayahNumber + 1;
-    }
-    if (ayahNumber < total) {
-      return ayahNumber + 1;
-    }
-    return null;
-  };
-
-  // Preload next ayah right when current starts so next ayah starts instantly with 0ms gap
-  const nextAyah = getNextAyah();
-  if (nextAyah !== null) {
-    void preloadAyahAudio(surahId, nextAyah, resolvedReciter);
-  }
-
-  // Fast path: if the requested ayah is already loaded in activePlayer, seek to 0 and play instantly (0ms delay!)
-  const store = useAudioStore.getState();
-  const currentTrack = store.currentTrack;
-  if (
-    activePlayer &&
-    currentTrack?.surahId === surahId &&
-    currentTrack?.ayahNumber === ayahNumber &&
-    currentTrack?.reciter === resolvedReciter
-  ) {
-    try {
-      if (activePlayer.seekTo) {
-        await activePlayer.seekTo(0);
-      }
-      activePlayer.play();
-      store.setIsPlaying(true);
-      store.setPlaybackPosition(0);
-      store.setCurrentRepeatIndex(0);
-      return;
-    } catch {
-      // Fall through to full initialization if seek/play failed
-    }
-  }
-
-  const audioUri = await getAyahAudioUri(surahId, ayahNumber, resolvedReciter);
-
-  await releaseActivePlayer();
-
-  store.setCurrentRepeatIndex(0);
-  store.setCurrentTrack({
-    surahId,
-    ayahNumber,
-    reciter: resolvedReciter,
-    title: `Surah ${surahId}, Ayah ${ayahNumber}`,
-    audioUrl: audioUri,
-  });
-  store.setIsPlaying(true);
+  const request = ++playbackRequest;
+  pendingRequest = request;
+  const options = typeof optionsOrAyahCount === 'number'
+    ? { ayahCount: optionsOrAyahCount, autoPlayNext: true } : optionsOrAyahCount;
+  const total = options?.ayahCount ?? getAyahCountForSurah(surahId);
+  if (!Number.isInteger(ayahNumber) || ayahNumber < 1 || ayahNumber > total) return;
+  const reciter = resolveReciterId(reciterId);
   try {
-    useProgressStore.getState().recordAyahRead(1);
-  } catch {}
-
-  if (!ExpoAudio || !ExpoAudio.createAudioPlayer) {
-    return;
-  }
-
-  try {
-    const player = ExpoAudio.createAudioPlayer(audioUri);
+    const [ready, uri] = await Promise.all([setupPlayer(), getAyahAudioUri(surahId, ayahNumber, reciter)]);
+    if (!ready || !ExpoAudio || pendingRequest !== request) return;
+    statusSubscription?.remove();
+    const player = activePlayer ?? ExpoAudio.createAudioPlayer(null, { updateInterval: 250 });
     activePlayer = player;
-
-    // Apply speed setting
-    try {
-      if (typeof player.setPlaybackRate === 'function') {
-        player.setPlaybackRate(store.playbackSpeed);
-      } else {
-        player.playbackRate = store.playbackSpeed;
+    player.pause();
+    player.replace(uri);
+    player.setPlaybackRate(useAudioStore.getState().playbackSpeed);
+    useAudioStore.setState({
+      currentTrack: { surahId, ayahNumber, reciter, audioUrl: uri, title: `Surah ${surahId}, Ayah ${ayahNumber}` },
+      isPlaying: false, playbackPosition: 0, duration: 0, currentRepeatIndex: 0,
+    });
+    let finishing = false;
+    statusSubscription = player.addListener('playbackStatusUpdate', (status) => {
+      if (activePlayer !== player || useAudioStore.getState().currentTrack?.audioUrl !== uri) return;
+      const state = useAudioStore.getState();
+      // One notification per native event, not three independent store broadcasts.
+      const position = Math.floor(status.currentTime * 4) / 4;
+      if (state.isPlaying !== status.playing || state.playbackPosition !== position || state.duration !== status.duration) {
+        useAudioStore.setState({ isPlaying: status.playing, playbackPosition: position, duration: status.duration });
       }
-    } catch {}
-
-    // Lock screen media controls (enabled in dev client & production builds, disabled in Expo Go)
-    if (!isExpoGo && typeof player.setActiveForLockScreen === 'function') {
-      try {
-        const reciterNames: Record<string, string> = {
-          'ar.alafasy': 'Мишари Рашид',
-          'ar.dussary': 'Ясир ад-Даусари',
-          'ar.abdulbasetmurattal': 'Абдул-Басит',
-          'ar.husary': 'Аль-Хусари',
-          'ar.abdurrahmaansudais': 'Ас-Судейс',
-        };
-        const artistName = reciterNames[resolvedReciter] ?? resolvedReciter;
-
-        player.setActiveForLockScreen(true, {
-          title: `Сура ${surahId}, Аят ${ayahNumber}`,
-          artist: artistName,
-          albumTitle: 'HifzHub — Священный Коран',
-        });
-      } catch (e) {
-        // Ignored
+      if (!status.didJustFinish || finishing) return;
+      finishing = true;
+      if (state.currentRepeatIndex < state.repeatCount - 1) {
+        state.setCurrentRepeatIndex(state.currentRepeatIndex + 1);
+        void player.seekTo(0).then(() => {
+          if (activePlayer === player && pendingRequest === request) player.play();
+        }).catch((error: unknown) => console.warn('Audio repeat failed:', error)).finally(() => { finishing = false; });
+      } else if (options?.autoPlayNext !== false) {
+        const loop = state.loopRange;
+        const next = loop && ayahNumber >= loop.endAyah ? loop.startAyah : ayahNumber + 1;
+        if (next <= total) void playAyah(surahId, next, reciter, { ayahCount: total, autoPlayNext: true });
       }
-    }
-
-    if (player.addListener) {
-      player.addListener('playbackStatusUpdate', (status: any) => {
-        if (!status) return;
-
-        if (typeof status.playing === 'boolean') {
-          useAudioStore.getState().setIsPlaying(status.playing);
-        }
-        if (typeof status.currentTime === 'number') {
-          useAudioStore.getState().setPlaybackPosition(status.currentTime);
-        }
-        if (typeof status.duration === 'number' && status.duration > 0) {
-          useAudioStore.getState().setDuration(status.duration);
-
-          // Preload next ayah 2 seconds before end
-          if (
-            typeof status.currentTime === 'number' &&
-            status.duration - status.currentTime <= 2 &&
-            status.duration - status.currentTime > 0
-          ) {
-            const next = getNextAyah();
-            if (next !== null) {
-              void preloadAyahAudio(surahId, next, resolvedReciter);
-            }
-          }
-        }
-
-        if (status.didJustFinish) {
-          const currentStore = useAudioStore.getState();
-          const repeatCount = currentStore.repeatCount ?? 1;
-          const currentRep = currentStore.currentRepeatIndex ?? 0;
-
-          if (currentRep < repeatCount - 1) {
-            // Replay current ayah and increment currentRepeatIndex
-            currentStore.setCurrentRepeatIndex(currentRep + 1);
-            if (activePlayer) {
-              try {
-                if (activePlayer.seekTo) {
-                  activePlayer.seekTo(0);
-                }
-                activePlayer.play();
-                currentStore.setIsPlaying(true);
-                currentStore.setPlaybackPosition(0);
-              } catch (err) {
-                console.warn('Replay repeat error:', err);
-              }
-            }
-          } else {
-            // Finished all repeats, reset currentRepeatIndex to 0 and proceed to next ayah
-            currentStore.setCurrentRepeatIndex(0);
-
-            if (!autoPlayNext) {
-              useAudioStore.getState().setIsPlaying(false);
-              useAudioStore.getState().setPlaybackPosition(0);
-              return;
-            }
-
-            const activeLoop = currentStore.loopRange;
-            if (activeLoop && activeLoop.startAyah && activeLoop.endAyah) {
-              if (ayahNumber >= activeLoop.endAyah) {
-                // Loop back to startAyah!
-                void playAyah(surahId, activeLoop.startAyah, resolvedReciter, {
-                  ayahCount: total,
-                  autoPlayNext: true,
-                });
-                return;
-              } else {
-                void playAyah(surahId, ayahNumber + 1, resolvedReciter, {
-                  ayahCount: total,
-                  autoPlayNext: true,
-                });
-                return;
-              }
-            }
-
-            if (ayahNumber < total) {
-              void playAyah(surahId, ayahNumber + 1, resolvedReciter, {
-                ayahCount: total,
-                autoPlayNext: true,
-              });
-            } else {
-              useAudioStore.getState().setIsPlaying(false);
-              useAudioStore.getState().setPlaybackPosition(0);
-            }
-          }
-        }
-      });
-    }
-
+    });
     player.play();
-  } catch (err) {
-    console.warn('Failed to play ayah audio:', err);
-    useAudioStore.getState().setIsPlaying(false);
+    // Optional OS controls and downloads are not prerequisites for local playback.
+    if (!isExpoGo) {
+      try {
+        player.setActiveForLockScreen(true, { title: `Surah ${surahId}, Ayah ${ayahNumber}`, artist: reciter });
+      } catch (error) { console.warn('Lock screen controls unavailable:', error); }
+      if (!requestedNotificationPermission) {
+        requestedNotificationPermission = true;
+        void ExpoAudio.requestNotificationPermissionsAsync?.().catch(() => {});
+      }
+    }
+    useProgressStore.getState().recordAyahRead(1);
+    void preloadAyahAudio(surahId, ayahNumber, reciter);
+    if (options?.autoPlayNext !== false && ayahNumber < total) {
+      void preloadAyahAudio(surahId, ayahNumber + 1, reciter);
+    }
+  } catch (error) {
+    if (pendingRequest === request) useAudioStore.getState().setIsPlaying(false);
+    console.warn('Audio playback failed:', error);
   }
 };
