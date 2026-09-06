@@ -4,7 +4,6 @@ import * as Haptics from 'expo-haptics';
 import { useTheme, getQuranLineHeight } from '@/shared/theme';
 import { toArabicDigits } from '@/features/quran/utils/quranUtils';
 import {
-  getTajweedForAyah,
   parseTajweedText,
   type TajweedRuleInfo,
   type TajweedSegment,
@@ -38,10 +37,7 @@ export const AyahText = React.memo<AyahTextProps>(({
   const segments: TajweedSegment[] | null = useMemo(() => {
     if (!showTajweed) return null;
 
-    let rawTagged = textTajweed;
-    if (!rawTagged && surahId) {
-      rawTagged = getTajweedForAyah(surahId, ayahNumber);
-    }
+    const rawTagged = textTajweed;
 
     if (!rawTagged) return null;
     return parseTajweedText(rawTagged);
