@@ -1,16 +1,17 @@
 import * as SQLite from 'expo-sqlite';
 import { SURAHS_DATA } from '@/features/quran/data/surahsData';
-import { SEED_AYAHS, SEED_TRANSLATIONS } from '@/features/quran/data/seedAyahs';
 
-let isDbInitialized = false;
-let isInitializing = false;
+let persistentSqliteDb: SQLite.SQLiteDatabase | null = null;
+let initialization: Promise<void> | null = null;
 
-export const initDatabaseTables = (sqliteDb: SQLite.SQLiteDatabase): void => {
-  if (isDbInitialized || isInitializing) return;
-  isInitializing = true;
-  try {
+// Never open or seed a database from a component render. The root awaits this promise.
+export function getPersistentSqliteDb(): SQLite.SQLiteDatabase {
+  if (!persistentSqliteDb) throw new Error('Database is not ready');
+  return persistentSqliteDb;
+}
 
-  sqliteDb.execSync(`
+export async function initDatabaseTables(db: SQLite.SQLiteDatabase): Promise<void> {
+  await db.execAsync(`
     CREATE TABLE IF NOT EXISTS surahs (
       id INTEGER PRIMARY KEY,
       name_arabic TEXT NOT NULL,
@@ -99,106 +100,61 @@ export const initDatabaseTables = (sqliteDb: SQLite.SQLiteDatabase): void => {
     CREATE INDEX IF NOT EXISTS idx_ayahs_surah_id ON ayahs(surah_id);
     CREATE INDEX IF NOT EXISTS idx_ayahs_surah_num ON ayahs(surah_id, ayah_number);
     CREATE INDEX IF NOT EXISTS idx_translations_ayah_lang ON translations(ayah_id, language);
+
+    CREATE TABLE IF NOT EXISTS content_versions (name TEXT PRIMARY KEY, version INTEGER NOT NULL);
   `);
-
-  const surahCountResult = sqliteDb.getFirstSync<{ count: number }>(
-    'SELECT COUNT(*) as count FROM surahs;'
+  const version = await db.getFirstAsync<{ version: number }>(
+    "SELECT version FROM content_versions WHERE name = 'quran'"
   );
+  if (version?.version === 1) return;
 
-  if (!surahCountResult || surahCountResult.count === 0) {
-    sqliteDb.withTransactionSync(() => {
-      const insertSurah = sqliteDb.prepareSync(
-        'INSERT OR REPLACE INTO surahs (id, name_arabic, name_translation, revelation_type, ayah_count, juz_start, page_start) VALUES (?, ?, ?, ?, ?, ?, ?);'
-      );
-      try {
-        for (const s of SURAHS_DATA) {
-          insertSurah.executeSync([
-            s.id,
-            s.nameArabic,
-            s.nameTranslation,
-            s.revelationType,
-            s.ayahCount,
-            s.juzStart,
-            s.pageStart,
-          ]);
-        }
-      } finally {
-        insertSurah.finalizeSync();
+  // Import/copy in native SQLite, not 18,708 synchronous JS-to-native inserts.
+  const seedName = 'quran-content-v1.db';
+  await SQLite.importDatabaseFromAssetAsync(seedName, {
+    assetId: require('../../assets/data/quran-content-v1.db'),
+  });
+  const seed = await SQLite.openDatabaseAsync(seedName);
+  const seedPath = seed.databasePath;
+  await seed.closeAsync();
+  await db.runAsync('ATTACH DATABASE ? AS bundled', seedPath);
+  try {
+    await db.withTransactionAsync(async () => {
+      for (const s of SURAHS_DATA) {
+        await db.runAsync(
+          'INSERT OR IGNORE INTO surahs VALUES (?, ?, ?, ?, ?, ?, ?)',
+          s.id, s.nameArabic, s.nameTranslation, s.revelationType, s.ayahCount, s.juzStart, s.pageStart
+        );
       }
+      // DO NOT REPLACE parent rows: that would cascade-delete bookmarks/progress.
+      await db.execAsync(`
+        INSERT OR IGNORE INTO ayahs SELECT * FROM bundled.ayahs;
+        INSERT OR IGNORE INTO translations SELECT * FROM bundled.translations;
+        UPDATE ayahs SET text_tajweed = (
+          SELECT text_tajweed FROM bundled.ayahs b WHERE b.id = ayahs.id
+        );
+        INSERT OR REPLACE INTO content_versions VALUES ('quran', 1);
+      `);
     });
-  }
-
-  const ayahCountResult = sqliteDb.getFirstSync<{ count: number }>(
-    'SELECT COUNT(*) as count FROM ayahs;'
-  );
-
-  if (!ayahCountResult || ayahCountResult.count < 6236) {
-    const fullAyahs = require('../../assets/data/quran-full-ayahs.json');
-    const fullTranslations = require('../../assets/data/quran-full-translations.json');
-
-    sqliteDb.withTransactionSync(() => {
-      const insertAyah = sqliteDb.prepareSync(
-        'INSERT OR REPLACE INTO ayahs (id, surah_id, ayah_number, text_uthmani, text_tajweed, juz, hizb, page) VALUES (?, ?, ?, ?, ?, ?, ?, ?);'
-      );
-      try {
-        for (const a of fullAyahs) {
-          insertAyah.executeSync([
-            a.id,
-            a.surahId,
-            a.ayahNumber,
-            a.textUthmani,
-            a.textTajweed ?? null,
-            a.juz,
-            a.hizb,
-            a.page,
-          ]);
-        }
-      } finally {
-        insertAyah.finalizeSync();
-      }
-
-      const insertTranslation = sqliteDb.prepareSync(
-        'INSERT OR REPLACE INTO translations (id, ayah_id, language, translator, text) VALUES (?, ?, ?, ?, ?);'
-      );
-      try {
-        for (const t of fullTranslations) {
-          insertTranslation.executeSync([
-            t.id,
-            t.ayahId,
-            t.language,
-            t.translator,
-            t.text,
-          ]);
-        }
-      } finally {
-        insertTranslation.finalizeSync();
-      }
-    });
-  }
-
-  isDbInitialized = true;
   } finally {
-    isInitializing = false;
+    await db.execAsync('DETACH DATABASE bundled');
   }
-};
+}
 
-let persistentSqliteDb: SQLite.SQLiteDatabase | null = null;
-
-export const getPersistentSqliteDb = (): SQLite.SQLiteDatabase => {
-  if (!persistentSqliteDb) {
-    persistentSqliteDb = SQLite.openDatabaseSync('hifzhub.db');
+export function initializeDatabase(): Promise<void> {
+  if (initialization) return initialization;
+  initialization = (async () => {
+    const db = await SQLite.openDatabaseAsync('hifzhub.db');
     try {
-      persistentSqliteDb.execSync('PRAGMA journal_mode = WAL;');
-    } catch {}
-    try {
-      persistentSqliteDb.execSync('PRAGMA foreign_keys = ON;');
-    } catch {}
-    initDatabaseTables(persistentSqliteDb);
-  }
-  return persistentSqliteDb;
-};
-
-export const initializeDatabase = async (): Promise<void> => {
-  if (isDbInitialized && persistentSqliteDb) return;
-  getPersistentSqliteDb();
-};
+      await db.execAsync('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
+      await initDatabaseTables(db);
+      persistentSqliteDb = db;
+    } catch (error) {
+      await db.closeAsync();
+      throw error;
+    }
+  })().catch((error: unknown) => {
+    initialization = null; // A failed initialization must be retryable.
+    throw error;
+  });
+  return initialization;
+}

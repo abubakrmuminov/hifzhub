@@ -56,3 +56,6 @@ scratch/
 # generated native folders
 /ios
 /android
+
+# Local validation caches
+.cache/
