@@ -222,9 +222,9 @@ const styles = StyleSheet.create({
   },
   optionCard: {
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 14,
     borderRadius: 16,
-    minHeight: 58,
+    minHeight: 62,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -242,9 +242,9 @@ const styles = StyleSheet.create({
   },
   optionCardGrid: {
     paddingHorizontal: 16,
-    paddingVertical: 18,
+    paddingVertical: 14,
     borderRadius: 20,
-    minHeight: 110,
+    minHeight: 116,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -291,15 +291,28 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   arabicText: {
-    fontSize: 34,
+    fontSize: 32,
     textAlign: 'center',
     writingDirection: 'rtl',
+    lineHeight: 52,
+    paddingVertical: 2,
+    ...Platform.select({
+      android: {
+        includeFontPadding: true,
+      },
+    }),
   },
   arabicTextGrid: {
-    fontSize: 52,
+    fontSize: 46,
     textAlign: 'center',
     writingDirection: 'rtl',
-    lineHeight: 64,
+    lineHeight: 76,
+    paddingVertical: 4,
+    ...Platform.select({
+      android: {
+        includeFontPadding: true,
+      },
+    }),
   },
   iconContainer: {
     position: 'absolute',

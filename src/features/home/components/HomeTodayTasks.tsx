@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import React, { useMemo, useEffect } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
@@ -13,6 +13,7 @@ import { useProgressStore, getTodayDateString } from '@/stores/progressStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useLessonStore } from '@/stores/lessonStore';
 import { useMemorizationStore } from '@/stores/memorizationStore';
+import { useBookmarkStore } from '@/stores/bookmarkStore';
 import {
   generateDailyQuests,
   type DailyQuest,
@@ -32,18 +33,29 @@ export const HomeTodayTasks: React.FC<HomeTodayTasksProps> = () => {
   const dailyTarget = useProgressStore((s) => s.dailyTarget);
   const completedMap = useProgressStore((s) => s.tasksCompleted);
   const toggleTaskStore = useProgressStore((s) => s.toggleTask);
+  const dailyHistory = useProgressStore((s) => s.dailyHistory);
+  const dailyActivities = useProgressStore((s) => s.dailyActivities);
   const addXP = useLessonStore((s) => s.addXP);
 
   const completedLessons = useLessonStore((s) => s.completedLessons);
   const unlockedModules = useLessonStore((s) => s.unlockedModules);
   const memorizationCards = useMemorizationStore((s) => s.cards);
+  const memorizationSessions = useMemorizationStore((s) => s.sessions);
+  const memorizationCurrentSession = useMemorizationStore((s) => s.currentSession);
+  const bookmarks = useBookmarkStore((s) => s.bookmarks);
 
   const todayKey = getTodayDateString();
 
-  // Construct current player progress profile for the adaptive quest generator
+  // Construct current player progress profile with real activity metrics
   const profile: UserProgressProfile = useMemo(() => {
-    const completedLessonsCount = Object.keys(completedLessons).length;
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const startOfDayMs = startOfDay.getTime();
+
+    const completedLessonsList = Object.values(completedLessons);
+    const completedLessonsCount = completedLessonsList.length;
     const memorizedAyahsCount = Object.keys(memorizationCards).length;
+
     let dueCardsCount = 0;
     try {
       dueCardsCount = useMemorizationStore.getState().getDueCards().length;
@@ -56,6 +68,40 @@ export const HomeTodayTasks: React.FC<HomeTodayTasksProps> = () => {
         ? unlockedModules[unlockedModules.length - 1]
         : 1;
 
+    // 1. Quran Ayahs read today
+    const ayahsReadToday = dailyHistory[todayKey] ?? 0;
+
+    // 2. Hifz cards reviewed today
+    let cardsReviewedToday = 0;
+    try {
+      cardsReviewedToday = useMemorizationStore.getState().getTodayStats().cardsReviewed;
+    } catch {
+      cardsReviewedToday = 0;
+    }
+
+    // 3. New Hifz cards added today
+    const cardsAddedToday = Object.values(memorizationCards).filter(
+      (c) => (c.addedAt ?? 0) >= startOfDayMs
+    ).length;
+
+    // 4. Lessons completed today
+    const completedLessonsToday = completedLessonsList.filter(
+      (l) => (l.completedAt ?? 0) >= startOfDayMs
+    ).length;
+
+    // 5. 100% perfect quiz completed today
+    const perfectQuizzesToday = completedLessonsList.filter(
+      (l) => (l.completedAt ?? 0) >= startOfDayMs && l.score === 100
+    ).length;
+
+    // 6. Bookmarks added today
+    const bookmarksAddedToday = Object.values(bookmarks).filter(
+      (b) => (b.addedAt ?? 0) >= startOfDayMs
+    ).length;
+
+    // 7. Interactive audio and daily reflection activities
+    const todayActivities = dailyActivities?.[todayKey] || {};
+
     return {
       userSeed,
       todayDateKey: todayKey,
@@ -65,6 +111,17 @@ export const HomeTodayTasks: React.FC<HomeTodayTasksProps> = () => {
       dueCardsCount,
       currentStreak,
       dailyTargetAyahs: dailyTarget,
+
+      ayahsReadToday,
+      cardsReviewedToday,
+      cardsAddedToday,
+      completedLessonsToday,
+      perfectQuizzesToday,
+      bookmarksAddedToday,
+      readDailyAyahToday: Boolean(todayActivities.readDailyAyah),
+      listenedAudioToday: Boolean(todayActivities.listenedAudio),
+      usedRepeatToday: Boolean(todayActivities.usedRepeat),
+      usedRangeLoopToday: Boolean(todayActivities.usedRangeLoop),
     };
   }, [
     userSeed,
@@ -72,33 +129,48 @@ export const HomeTodayTasks: React.FC<HomeTodayTasksProps> = () => {
     completedLessons,
     unlockedModules,
     memorizationCards,
+    memorizationSessions,
+    memorizationCurrentSession,
     currentStreak,
     dailyTarget,
+    dailyHistory,
+    dailyActivities,
+    bookmarks,
   ]);
 
-  // Generate the 3 personalized daily quests using the Mulberry32 PRNG
+  // Generate the 3 personalized daily quests with real progress
   const quests: DailyQuest[] = useMemo(() => {
     return generateDailyQuests(profile, completedMap);
   }, [profile, completedMap]);
 
+  // Automatically award XP and record task completion in store when criteria are met
+  useEffect(() => {
+    let newlyCompleted = false;
+    for (const q of quests) {
+      if (q.completed && !completedMap[q.id]) {
+        toggleTaskStore(q.id);
+        addXP(q.xpReward);
+        newlyCompleted = true;
+      }
+    }
+    if (newlyCompleted) {
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+  }, [quests, completedMap, toggleTaskStore, addXP]);
+
   const completedCount = quests.filter((q) => Boolean(completedMap[q.id])).length;
   const isAllDone = quests.length > 0 && completedCount === quests.length;
 
-  const handleToggleQuest = (quest: DailyQuest) => {
-    const isCurrentlyDone = Boolean(completedMap[quest.id]);
-    if (!isCurrentlyDone) {
-      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      addXP(quest.xpReward);
-    } else {
-      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  const handlePressQuest = (quest: DailyQuest) => {
+    if (quest.completed) {
+      void Haptics.selectionAsync();
+      return;
     }
-    toggleTaskStore(quest.id);
-  };
 
-  const handleNavigate = (route?: string) => {
-    if (!route) return;
-    void Haptics.selectionAsync();
-    router.push(route as any);
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (quest.route) {
+      router.push(quest.route as any);
+    }
   };
 
   return (
@@ -145,13 +217,18 @@ export const HomeTodayTasks: React.FC<HomeTodayTasksProps> = () => {
           const description =
             language === 'uz' ? quest.descriptionUz : quest.descriptionRu;
           const badgeText = language === 'uz' ? quest.badgeUz : quest.badgeRu;
+          const progressPercent = Math.min(
+            100,
+            Math.max(0, Math.round((quest.current / quest.target) * 100))
+          );
 
           return (
             <Animated.View
               key={quest.id}
               entering={FadeInDown.delay(200 + index * 70).springify()}
             >
-              <View
+              <AnimatedPressable
+                onPress={() => handlePressQuest(quest)}
                 style={[
                   styles.taskRow,
                   index > 0 && {
@@ -162,103 +239,135 @@ export const HomeTodayTasks: React.FC<HomeTodayTasksProps> = () => {
                   },
                 ]}
               >
-                {/* Checkbox Touch Area */}
-                <Pressable
-                  onPress={() => handleToggleQuest(quest)}
-                  hitSlop={{ top: 12, bottom: 12, left: 10, right: 10 }}
-                  style={styles.checkboxContainer}
-                  accessibilityRole="checkbox"
-                  accessibilityLabel={title}
-                  accessibilityState={{ checked: isDone }}
-                >
+                {/* Left Status Badge */}
+                <View style={styles.statusCol}>
+                  {isDone ? (
+                    <View
+                      style={[
+                        styles.statusBadgeDone,
+                        {
+                          backgroundColor: isDark
+                            ? 'rgba(212, 175, 55, 0.20)'
+                            : 'rgba(212, 175, 55, 0.16)',
+                          borderColor: '#D4AF37',
+                        },
+                      ]}
+                    >
+                      <Ionicons name="checkmark-sharp" size={15} color="#D4AF37" />
+                    </View>
+                  ) : (
+                    <View
+                      style={[
+                        styles.statusBadgePending,
+                        {
+                          backgroundColor: `${quest.color}15`,
+                          borderColor: `${quest.color}35`,
+                        },
+                      ]}
+                    >
+                      <Feather name={quest.icon as any} size={14} color={quest.color} />
+                    </View>
+                  )}
+                </View>
+
+                {/* Main Content */}
+                <View style={styles.textContainer}>
+                  {/* Tags row: Category badge + XP reward + Progress fraction */}
+                  <View style={styles.tagRow}>
+                    <View
+                      style={[
+                        styles.categoryBadge,
+                        { backgroundColor: `${quest.color}18` },
+                      ]}
+                    >
+                      <Text style={[styles.categoryText, { color: quest.color }]}>
+                        {badgeText}
+                      </Text>
+                    </View>
+
+                    <View style={styles.xpBadge}>
+                      <Ionicons name="sparkles" size={10} color="#D4AF37" />
+                      <Text style={styles.xpBadgeText}>+{quest.xpReward} XP</Text>
+                    </View>
+
+                    {/* Dynamic progress counter */}
+                    <View style={styles.progressCounterBox}>
+                      <Text
+                        style={[
+                          styles.progressCounterText,
+                          {
+                            color: isDone
+                              ? '#D4AF37'
+                              : isDark
+                              ? 'rgba(255, 255, 255, 0.65)'
+                              : 'rgba(0, 0, 0, 0.55)',
+                          },
+                        ]}
+                      >
+                        {quest.current} / {quest.target}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Quest Title */}
+                  <Text
+                    style={[
+                      styles.taskTitle,
+                      {
+                        color: isDone ? colors.textTertiary : colors.text,
+                        textDecorationLine: isDone ? 'line-through' : 'none',
+                      },
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {title}
+                  </Text>
+
+                  {/* Quest Subtitle / Tip */}
+                  <Text
+                    style={[
+                      styles.taskSubtitle,
+                      { color: colors.textSecondary },
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {description}
+                  </Text>
+
+                  {/* Real-time Progress Bar */}
                   <View
                     style={[
-                      styles.checkbox,
+                      styles.progressBarTrack,
                       {
-                        borderColor: isDone
-                          ? colors.primary
-                          : isDark
-                          ? 'rgba(255,255,255,0.25)'
-                          : 'rgba(13, 107, 78, 0.25)',
-                        backgroundColor: isDone ? colors.primary : 'transparent',
+                        backgroundColor: isDark
+                          ? 'rgba(255, 255, 255, 0.08)'
+                          : 'rgba(0, 0, 0, 0.06)',
                       },
                     ]}
                   >
-                    {isDone ? (
-                      <Ionicons name="checkmark" size={15} color="#FFFFFF" />
-                    ) : null}
-                  </View>
-                </Pressable>
-
-                {/* Quest Details & Clickable Area */}
-                <Pressable
-                  onPress={() => {
-                    if (!isDone && quest.route) {
-                      handleNavigate(quest.route);
-                    } else {
-                      handleToggleQuest(quest);
-                    }
-                  }}
-                  style={styles.contentPressable}
-                >
-                  <View style={styles.textContainer}>
-                    {/* Tags row: Pillar category badge + XP reward */}
-                    <View style={styles.tagRow}>
-                      <View
-                        style={[
-                          styles.categoryBadge,
-                          { backgroundColor: `${quest.color}18` },
-                        ]}
-                      >
-                        <Text style={[styles.categoryText, { color: quest.color }]}>
-                          {badgeText}
-                        </Text>
-                      </View>
-
-                      <View style={styles.xpBadge}>
-                        <Ionicons name="sparkles" size={10} color="#D4AF37" />
-                        <Text style={styles.xpBadgeText}>+{quest.xpReward} XP</Text>
-                      </View>
-                    </View>
-
-                    {/* Quest Title */}
-                    <Text
+                    <View
                       style={[
-                        styles.taskTitle,
+                        styles.progressBarFill,
                         {
-                          color: isDone ? colors.textTertiary : colors.text,
-                          textDecorationLine: isDone ? 'line-through' : 'none',
+                          width: `${progressPercent}%`,
+                          backgroundColor: isDone ? '#D4AF37' : quest.color,
                         },
                       ]}
-                      numberOfLines={1}
-                    >
-                      {title}
-                    </Text>
-
-                    {/* Quest Subtitle / Tip */}
-                    <Text
-                      style={[
-                        styles.taskSubtitle,
-                        { color: colors.textSecondary },
-                      ]}
-                      numberOfLines={1}
-                    >
-                      {description}
-                    </Text>
+                    />
                   </View>
+                </View>
 
-                  {/* Navigation chevron if task has a link */}
-                  {!isDone && quest.route && (
-                    <View style={styles.actionChevron}>
-                      <Feather
-                        name="chevron-right"
-                        size={16}
-                        color={colors.textTertiary}
-                      />
-                    </View>
-                  )}
-                </Pressable>
-              </View>
+                {/* Right Action Button / Chevron */}
+                {!isDone && quest.route ? (
+                  <View style={styles.actionChevron}>
+                    <Feather
+                      name="chevron-right"
+                      size={18}
+                      color={colors.textTertiary}
+                    />
+                  </View>
+                ) : null}
+              </AnimatedPressable>
             </Animated.View>
           );
         })}
@@ -331,24 +440,28 @@ const styles = StyleSheet.create({
   taskRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 12,
   },
-  checkboxContainer: {
-    paddingVertical: 4,
-    paddingEnd: 10,
-  },
-  checkbox: {
-    width: 22,
-    height: 22,
-    borderRadius: 7,
-    borderWidth: 2,
+  statusCol: {
+    paddingEnd: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  contentPressable: {
-    flex: 1,
-    flexDirection: 'row',
+  statusBadgeDone: {
+    width: 28,
+    height: 28,
+    borderRadius: 9,
+    borderWidth: 1.5,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  statusBadgePending: {
+    width: 28,
+    height: 28,
+    borderRadius: 9,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   textContainer: {
     flex: 1,
@@ -357,7 +470,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginBottom: 3,
+    marginBottom: 4,
   },
   categoryBadge: {
     paddingHorizontal: 7,
@@ -383,6 +496,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#D4AF37',
   },
+  progressCounterBox: {
+    marginStart: 'auto',
+  },
+  progressCounterText: {
+    fontSize: 11,
+    fontWeight: '700',
+    fontVariant: ['tabular-nums'],
+  },
   taskTitle: {
     fontSize: 14,
     fontWeight: '600',
@@ -393,9 +514,20 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontWeight: '400',
   },
+  progressBarTrack: {
+    height: 4,
+    borderRadius: 2,
+    overflow: 'hidden',
+    marginTop: 6,
+    width: '100%',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 2,
+  },
   actionChevron: {
-    marginStart: 8,
-    paddingStart: 4,
+    marginStart: 10,
+    paddingStart: 2,
   },
   completedBanner: {
     flexDirection: 'row',

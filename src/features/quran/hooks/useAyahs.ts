@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { getSqliteDb } from '@/db/client';
 import type { Ayah, Translation } from '@/db/schema';
 
@@ -15,6 +15,39 @@ export interface UseAyahsResult {
   error: Error | null;
   refetch: () => Promise<void>;
 }
+
+interface CachedAyahData {
+  ayahs: Ayah[];
+  translations: Translation[];
+  translationsMap: Record<number, Translation>;
+}
+
+const ayahsDataCache = new Map<string, CachedAyahData>();
+
+let fallbackAyahsCache: Ayah[] | null = null;
+let fallbackTranslationsCache: Translation[] | null = null;
+
+const getFallbackAyahs = (): Ayah[] => {
+  if (!fallbackAyahsCache) {
+    try {
+      fallbackAyahsCache = require('../../../../assets/data/quran-full-ayahs.json');
+    } catch {
+      fallbackAyahsCache = [];
+    }
+  }
+  return fallbackAyahsCache || [];
+};
+
+const getFallbackTranslations = (): Translation[] => {
+  if (!fallbackTranslationsCache) {
+    try {
+      fallbackTranslationsCache = require('../../../../assets/data/quran-full-translations.json');
+    } catch {
+      fallbackTranslationsCache = [];
+    }
+  }
+  return fallbackTranslationsCache || [];
+};
 
 const fetchAyahsSync = (surahId: number): Ayah[] => {
   if (!surahId) return [];
@@ -34,9 +67,9 @@ const fetchAyahsSync = (surahId: number): Ayah[] => {
     console.warn('SQLite fetchAyahsSync error:', err);
   }
 
-  // Lazy fallback only if SQLite returned empty
+  // Lazy memoized fallback only if SQLite returned empty
   try {
-    const allAyahs: Ayah[] = require('../../../../assets/data/quran-full-ayahs.json');
+    const allAyahs = getFallbackAyahs();
     return allAyahs.filter((a) => a.surahId === surahId);
   } catch (jsonErr) {
     console.warn('Fallback JSON load failed:', jsonErr);
@@ -71,10 +104,10 @@ const fetchTranslationsSync = (
     console.warn('SQLite fetchTranslationsSync error:', err);
   }
 
-  // Lazy fallback only if SQLite returned empty
+  // Lazy memoized fallback only if SQLite returned empty
   try {
-    const allAyahs: Ayah[] = require('../../../../assets/data/quran-full-ayahs.json');
-    const allTrans: Translation[] = require('../../../../assets/data/quran-full-translations.json');
+    const allAyahs = getFallbackAyahs();
+    const allTrans = getFallbackTranslations();
     const targetAyahs = allAyahs.filter((a) => a.surahId === surahId);
     const ayahIds = new Set(targetAyahs.map((a) => a.id));
     return allTrans.filter(
@@ -90,52 +123,63 @@ export const useAyahs = ({
   surahId,
   language,
 }: UseAyahsParams): UseAyahsResult => {
-  const [ayahs, setAyahs] = useState<Ayah[]>(() => fetchAyahsSync(surahId));
-  const [translations, setTranslations] = useState<Translation[]>(() =>
-    fetchTranslationsSync(surahId, language)
-  );
+  const cacheKey = `${surahId}_${language || 'all'}`;
+
+  const loadData = useCallback((): CachedAyahData => {
+    if (!surahId) {
+      return { ayahs: [], translations: [], translationsMap: {} };
+    }
+    const cached = ayahsDataCache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+    const ayahs = fetchAyahsSync(surahId);
+    const translations = fetchTranslationsSync(surahId, language);
+    const translationsMap: Record<number, Translation> = {};
+    for (const t of translations) {
+      translationsMap[t.ayahId] = t;
+    }
+    const result: CachedAyahData = { ayahs, translations, translationsMap };
+    ayahsDataCache.set(cacheKey, result);
+    return result;
+  }, [surahId, language, cacheKey]);
+
+  const [data, setData] = useState<CachedAyahData>(loadData);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
+  const prevKeyRef = useRef(cacheKey);
+
   useEffect(() => {
+    if (prevKeyRef.current === cacheKey) {
+      return; // Already initialized with loadData in useState! No double query on mount!
+    }
+    prevKeyRef.current = cacheKey;
     try {
-      const loadedAyahs = fetchAyahsSync(surahId);
-      const loadedTrans = fetchTranslationsSync(surahId, language);
-      setAyahs(loadedAyahs);
-      setTranslations(loadedTrans);
+      setData(loadData());
     } catch (err) {
       setError(err instanceof Error ? err : new Error(String(err)));
     }
-  }, [surahId, language]);
+  }, [cacheKey, loadData]);
 
   const refetch = useCallback(async () => {
     if (!surahId) return;
     try {
       setIsLoading(true);
       setError(null);
-      const loadedAyahs = fetchAyahsSync(surahId);
-      const loadedTrans = fetchTranslationsSync(surahId, language);
-      setAyahs(loadedAyahs);
-      setTranslations(loadedTrans);
+      ayahsDataCache.delete(cacheKey);
+      setData(loadData());
     } catch (err) {
       setError(err instanceof Error ? err : new Error(String(err)));
     } finally {
       setIsLoading(false);
     }
-  }, [surahId, language]);
-
-  const translationsMap = useMemo(() => {
-    const map: Record<number, Translation> = {};
-    for (const t of translations) {
-      map[t.ayahId] = t;
-    }
-    return map;
-  }, [translations]);
+  }, [surahId, cacheKey, loadData]);
 
   return {
-    ayahs,
-    translations,
-    translationsMap,
+    ayahs: data.ayahs,
+    translations: data.translations,
+    translationsMap: data.translationsMap,
     isLoading,
     error,
     refetch,

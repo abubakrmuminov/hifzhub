@@ -32,18 +32,19 @@ const DEFAULT_OVERRIDES: StoredOverrides = {
   contentVersion: 1,
 };
 
-// Bundled lessons map
-const BUNDLED_LESSONS_MAP: Record<number, Lesson[]> = {
-  1: require('../../../../assets/data/lessons/module1.json'),
-  2: require('../../../../assets/data/lessons/module2.json'),
-  3: require('../../../../assets/data/lessons/module3.json'),
-  4: require('../../../../assets/data/lessons/module4.json'),
-  5: require('../../../../assets/data/lessons/module5.json'),
+// Lazy static loaders for Metro bundler (only requested module is required and parsed on demand)
+const BUNDLED_LESSON_LOADERS: Record<number, () => any> = {
+  1: () => require('../../../../assets/data/lessons/module1.json'),
+  2: () => require('../../../../assets/data/lessons/module2.json'),
+  3: () => require('../../../../assets/data/lessons/module3.json'),
+  4: () => require('../../../../assets/data/lessons/module4.json'),
+  5: () => require('../../../../assets/data/lessons/module5.json'),
 };
 
 export class LessonContentService {
   private static instance: LessonContentService;
   private memoryCache: StoredOverrides | null = null;
+  private bundledCache = new Map<number, StoredLesson[]>();
 
   public static getInstance(): LessonContentService {
     if (!LessonContentService.instance) {
@@ -101,11 +102,32 @@ export class LessonContentService {
   }
 
   /**
-   * Get bundled lessons for a given module.
+   * Get bundled lessons for a given module (lazy, cached, handles both array and { lessons: [] }).
    */
   public getBundledLessons(moduleId: number): StoredLesson[] {
-    const list = BUNDLED_LESSONS_MAP[moduleId];
-    return Array.isArray(list) ? [...list] : [];
+    if (this.bundledCache.has(moduleId)) {
+      return this.bundledCache.get(moduleId)!;
+    }
+    const loader = BUNDLED_LESSON_LOADERS[moduleId];
+    if (!loader) return [];
+    try {
+      const raw = loader();
+      let lessons: StoredLesson[] = [];
+      if (Array.isArray(raw)) {
+        lessons = raw;
+      } else if (raw && Array.isArray(raw.lessons)) {
+        lessons = raw.lessons;
+      }
+      // Normalize lesson.moduleId to be a number matching moduleId
+      lessons = lessons.map((l) =>
+        typeof l.moduleId === 'number' ? l : { ...l, moduleId }
+      );
+      this.bundledCache.set(moduleId, lessons);
+      return lessons;
+    } catch (e) {
+      console.warn(`[LessonContentService] Failed to load bundled lessons for module ${moduleId}:`, e);
+      return [];
+    }
   }
 
   /**
@@ -114,6 +136,17 @@ export class LessonContentService {
    */
   public async getEffectiveModules(): Promise<StoredModule[]> {
     const overrides = await this.loadOverrides();
+    const hasCustomOverrides =
+      overrides.customModules.length > 0 ||
+      overrides.deletedModuleIds.length > 0 ||
+      overrides.deletedLessonIds.length > 0 ||
+      Object.keys(overrides.customLessons).length > 0;
+
+    if (!hasCustomOverrides) {
+      // 0ms fast-path: bundled module metadata in LESSON_MODULES is already precalculated
+      return this.getBundledModules();
+    }
+
     const deletedModuleSet = new Set(overrides.deletedModuleIds);
 
     // Start with bundled modules that are not deleted
@@ -133,7 +166,7 @@ export class LessonContentService {
 
     const allModules = Array.from(moduleMap.values()).sort((a, b) => a.moduleId - b.moduleId);
 
-    // Compute dynamic lessonsCount and totalXP for each module based on effective lessons
+    // Compute dynamic lessonsCount and totalXP for overridden modules only
     for (const mod of allModules) {
       const lessons = await this.getEffectiveLessons(mod.moduleId);
       mod.lessonsCount = lessons.length;
@@ -173,7 +206,7 @@ export class LessonContentService {
         }
       }
     } else {
-      for (const idStr of Object.keys(BUNDLED_LESSONS_MAP)) {
+      for (const idStr of Object.keys(BUNDLED_LESSON_LOADERS)) {
         const id = Number(idStr);
         const bundled = this.getBundledLessons(id);
         for (const l of bundled) {
@@ -214,8 +247,17 @@ export class LessonContentService {
       return overrides.customLessons[lessonId];
     }
 
-    // Check bundled lessons across all modules
-    for (const modIdStr of Object.keys(BUNDLED_LESSONS_MAP)) {
+    // Fast-path: targeted lookup by module prefix if available, e.g. m1_l1 -> module 1
+    const match = lessonId.match(/^m(\d+)_/);
+    if (match) {
+      const targetModId = Number(match[1]);
+      const list = this.getBundledLessons(targetModId);
+      const found = list.find((l) => l.lessonId === lessonId);
+      if (found) return found;
+    }
+
+    // Fallback scan across bundled modules
+    for (const modIdStr of Object.keys(BUNDLED_LESSON_LOADERS)) {
       const list = this.getBundledLessons(Number(modIdStr));
       const found = list.find((l) => l.lessonId === lessonId);
       if (found) {

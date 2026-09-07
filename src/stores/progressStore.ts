@@ -43,9 +43,16 @@ export interface ProgressState {
   // Today's checklist tasks persistence
   tasksCompleted: Record<string, boolean>;
   lastTasksDate: string | null;
+  dailyActivities: Record<string, {
+    readDailyAyah?: boolean;
+    listenedAudio?: boolean;
+    usedRepeat?: boolean;
+    usedRangeLoop?: boolean;
+  }>;
 
   // Actions
   recordAyahRead: (count?: number) => void;
+  recordDailyActivity: (key: 'readDailyAyah' | 'listenedAudio' | 'usedRepeat' | 'usedRangeLoop') => void;
   setDailyTarget: (target: number) => void;
   toggleTask: (taskId: string) => void;
   getTodayCompleted: () => number;
@@ -70,6 +77,7 @@ export const useProgressStore = create<ProgressState>()(
       lastActiveDate: getTodayDateString(),
       tasksCompleted: {},
       lastTasksDate: getTodayDateString(),
+      dailyActivities: {},
 
       checkAndRefreshDay: () => {
         const today = getTodayDateString();
@@ -148,6 +156,23 @@ export const useProgressStore = create<ProgressState>()(
       setDailyTarget: (target: number) => {
         const safeTarget = Math.max(1, target);
         set({ dailyTarget: safeTarget });
+      },
+
+      recordDailyActivity: (key) => {
+        const today = getTodayDateString();
+        const currentActivities = get().dailyActivities || {};
+        const todayActivities = currentActivities[today] || {};
+        if (todayActivities[key]) return; // Already recorded today
+
+        set({
+          dailyActivities: {
+            ...currentActivities,
+            [today]: {
+              ...todayActivities,
+              [key]: true,
+            },
+          },
+        });
       },
 
       toggleTask: (taskId: string) => {
@@ -239,6 +264,7 @@ export const useProgressStore = create<ProgressState>()(
           lastActiveDate: today,
           tasksCompleted: {},
           lastTasksDate: today,
+          dailyActivities: {},
         });
       },
     }),

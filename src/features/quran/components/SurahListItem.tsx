@@ -40,10 +40,16 @@ export const SurahListItem = React.memo<SurahListItemProps>(
     versesText,
   }) => {
     const transliteratedName = getSurahName(surah.nameTranslation, lang);
-    const isDownloaded = useDownloadStore((s) => s.isSurahDownloaded(surah.id));
-    const downloadInfo = useDownloadStore((s) => s.downloads[surah.id]);
-    const isDownloading = downloadInfo?.status === 'downloading';
-    const downloadProgress = downloadInfo?.progress ?? 0;
+    const isDownloaded = useDownloadStore(
+      (s) => s.downloads[surah.id]?.status === 'completed'
+    );
+    const downloadStatus = useDownloadStore(
+      (s) => s.downloads[surah.id]?.status
+    );
+    const isDownloading = downloadStatus === 'downloading';
+    const downloadProgress = useDownloadStore(
+      (s) => (s.downloads[surah.id]?.status === 'downloading' ? s.downloads[surah.id]?.progress ?? 0 : 0)
+    );
 
     const revelation =
       surah.revelationType === 'Meccan' || surah.revelationType === 'meccan'

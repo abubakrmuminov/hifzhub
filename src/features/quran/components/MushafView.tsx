@@ -1,10 +1,17 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useMemo } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { useTheme, getQuranLineHeight } from '@/shared/theme';
+import { useTheme } from '@/shared/theme';
 import { toArabicDigits } from '@/features/quran/utils/quranUtils';
+import { SURAHS_DATA } from '@/features/quran/data/surahsData';
 import type { Ayah } from '@/db/schema';
-import { PageDivider } from './PageDivider';
 import {
   getAyahTajweedSegments,
   type TajweedRuleInfo,
@@ -13,178 +20,396 @@ import {
 
 export interface MushafViewProps {
   ayahs: Ayah[];
+  pageNumber: number;
+  width: number;
+  height?: number;
   fontSize?: number;
-  pageNumber?: number;
-  showDivider?: boolean;
   showTajweed?: boolean;
   selectedAyahId?: number | null;
   activeAyahNumber?: number | null;
   playingAyahNumber?: number | null;
   onSelectAyah?: (ayah: Ayah) => void;
   onPressRule?: (rule: TajweedRuleInfo, matchedText: string) => void;
+  style?: StyleProp<ViewStyle>;
 }
 
-export const MushafView = React.memo<MushafViewProps>(({
-  ayahs,
-  fontSize = 28,
-  pageNumber,
-  showDivider = true,
-  showTajweed = true,
-  selectedAyahId,
-  activeAyahNumber,
-  playingAyahNumber,
-  onSelectAyah,
-  onPressRule,
-}) => {
-  const { colors, fontFamilies, shadows, radius, spacing, isDark } = useTheme();
-  const lineHeight = getQuranLineHeight(fontSize);
+export const MushafView = React.memo<MushafViewProps>(
+  ({
+    ayahs,
+    pageNumber,
+    width,
+    height,
+    fontSize = 24,
+    showTajweed = true,
+    selectedAyahId,
+    activeAyahNumber,
+    playingAyahNumber,
+    onSelectAyah,
+    onPressRule,
+    style,
+  }) => {
+    const { colors, fontFamilies, shadows, radius, isDark } = useTheme();
 
-  const handleRulePress = (rule: TajweedRuleInfo, matchedText: string) => {
-    if (!onPressRule) return;
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onPressRule(rule, matchedText);
-  };
+    const firstAyah = ayahs[0];
+    const surahId = firstAyah?.surahId ?? 1;
+    const juzNumber = firstAyah?.juz ?? 1;
 
-  return (
-    <View style={{ marginBottom: spacing.md }}>
-      <View
-        style={[
-          styles.pageContainer,
-          shadows.soft,
-          {
-            backgroundColor: colors.surface,
-            borderWidth: isDark ? 1 : 0,
-            borderColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
-            borderRadius: radius.xl,
-            marginHorizontal: spacing.md,
-            padding: spacing.lg,
-          },
-        ]}
-      >
+    const surah = useMemo(
+      () => SURAHS_DATA.find((s) => s.id === surahId) ?? null,
+      [surahId]
+    );
+
+    // Dynamic line height for Quranic text
+    const textFontSize = Math.min(fontSize, 25);
+    const lineHeight = Math.round(textFontSize * 2.2);
+
+    const handleRulePress = (rule: TajweedRuleInfo, matchedText: string) => {
+      if (!onPressRule) return;
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      onPressRule(rule, matchedText);
+    };
+
+    // Check if this page contains the start of a Surah
+    const startAyah = ayahs.find((a) => a.ayahNumber === 1);
+    const hasSurahStart = Boolean(startAyah);
+    const showBismillah = hasSurahStart && surahId !== 9 && surahId !== 1;
+
+    // Separate ayahs before Surah start (if page spans across two surahs)
+    const ayahsBeforeStart = hasSurahStart
+      ? ayahs.filter((a) => a.surahId < startAyah!.surahId)
+      : [];
+    const ayahsFromStart = hasSurahStart
+      ? ayahs.filter((a) => a.surahId >= startAyah!.surahId)
+      : ayahs;
+
+    const renderAyahText = (ayah: Ayah) => {
+      const isSelected = selectedAyahId === ayah.id;
+      const isPlaying =
+        playingAyahNumber != null && playingAyahNumber === ayah.ayahNumber;
+      const isActive = isPlaying || activeAyahNumber === ayah.ayahNumber;
+
+      const segments: TajweedSegment[] = showTajweed
+        ? getAyahTajweedSegments(ayah.surahId, ayah.ayahNumber, ayah.textUthmani)
+        : [{ text: ayah.textUthmani }];
+
+      return (
         <Text
+          key={ayah.id}
+          onPress={() => {
+            if (selectedAyahId != null) {
+              void Haptics.selectionAsync();
+              onSelectAyah?.(isSelected ? (null as any) : ayah);
+            }
+          }}
+          onLongPress={() => {
+            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            onSelectAyah?.(ayah);
+          }}
           style={[
-            styles.continuousText,
-            {
-              fontFamily: fontFamilies.quran,
-              fontSize,
-              lineHeight,
-              color: colors.quranText,
-            },
+            styles.ayahSpan,
+            (isSelected || isActive) && [
+              styles.ayahSelected,
+              {
+                backgroundColor: isSelected
+                  ? isDark
+                    ? 'rgba(212, 167, 69, 0.38)'
+                    : 'rgba(212, 167, 69, 0.28)'
+                  : isPlaying
+                  ? isDark
+                    ? 'rgba(212, 167, 69, 0.25)'
+                    : 'rgba(212, 167, 69, 0.18)'
+                  : isDark
+                  ? 'rgba(212, 167, 69, 0.22)'
+                  : 'rgba(212, 167, 69, 0.14)',
+              },
+            ],
           ]}
         >
-          {ayahs.map((ayah) => {
-            const isSelected = selectedAyahId === ayah.id;
-            const isPlaying =
-              playingAyahNumber != null && playingAyahNumber === ayah.ayahNumber;
-            const isActive = isPlaying || activeAyahNumber === ayah.ayahNumber;
-
-            const segments: TajweedSegment[] = showTajweed
-              ? getAyahTajweedSegments(ayah.surahId, ayah.ayahNumber, ayah.textUthmani)
-              : [{ text: ayah.textUthmani }];
+          {segments.map((seg, sIdx) => {
+            const isRule = showTajweed && seg.rule != null;
+            const ruleColor = isRule
+              ? isDark
+                ? seg.rule!.darkColor
+                : seg.rule!.lightColor
+              : colors.quranText;
 
             return (
               <Text
-                key={ayah.id}
-                onPress={() => {
-                  if (selectedAyahId != null) {
-                    void Haptics.selectionAsync();
-                    onSelectAyah?.(isSelected ? (null as any) : ayah);
-                  }
+                key={sIdx}
+                onPress={
+                  isRule && onPressRule
+                    ? () => handleRulePress(seg.rule!, seg.text)
+                    : undefined
+                }
+                suppressHighlighting={true}
+                style={{
+                  color: ruleColor,
+                  fontFamily: fontFamilies.quran,
                 }}
-                onLongPress={() => {
-                  void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  onSelectAyah?.(ayah);
-                }}
-                style={[
-                  styles.ayahSpan,
-                  (isSelected || isActive) && [
-                    styles.ayahSelected,
-                    {
-                      backgroundColor: isSelected
-                        ? isDark
-                          ? 'rgba(212, 167, 69, 0.38)'
-                          : 'rgba(212, 167, 69, 0.28)'
-                        : isPlaying
-                        ? isDark
-                          ? 'rgba(212, 167, 69, 0.22)'
-                          : 'rgba(212, 167, 69, 0.16)'
-                        : isDark
-                        ? 'rgba(212, 167, 69, 0.22)'
-                        : 'rgba(212, 167, 69, 0.14)',
-                    },
-                  ],
-                  isPlaying && [
-                    styles.ayahPlaying,
-                    {
-                      textDecorationLine: 'underline',
-                      textDecorationColor: colors.secondary,
-                    },
-                  ],
-                ]}
               >
-                {segments.map((seg, sIdx) => {
-                  const isRule = showTajweed && seg.rule != null;
-                  const ruleColor = isRule
-                    ? (isDark ? seg.rule!.darkColor : seg.rule!.lightColor)
-                    : colors.quranText;
-
-                  return (
-                    <Text
-                      key={sIdx}
-                      onPress={isRule && onPressRule ? () => handleRulePress(seg.rule!, seg.text) : undefined}
-                      suppressHighlighting={true}
-                      style={{
-                        color: ruleColor,
-                        fontFamily: fontFamilies.quran,
-                      }}
-                    >
-                      {seg.text}
-                    </Text>
-                  );
-                })}
-                <Text
-                  style={[
-                    styles.ayahBadge,
-                    {
-                      color:
-                        isSelected || isPlaying
-                          ? colors.secondary
-                          : colors.secondary,
-                      fontFamily: fontFamilies.arabic,
-                      fontSize: Math.round(fontSize * 0.75),
-                    },
-                  ]}
-                >
-                  {` ﴿${toArabicDigits(ayah.ayahNumber)}﴾ `}
-                </Text>
+                {seg.text}
               </Text>
             );
           })}
+          <Text
+            style={[
+              styles.ayahBadge,
+              {
+                color: colors.secondary,
+                fontFamily: fontFamilies.arabic,
+                fontSize: Math.round(textFontSize * 0.76),
+              },
+            ]}
+          >
+            {` ﴿${toArabicDigits(ayah.ayahNumber)}﴾ `}
+          </Text>
         </Text>
-      </View>
+      );
+    };
 
-      {showDivider && pageNumber != null ? (
-        <PageDivider pageNumber={pageNumber} />
-      ) : null}
-    </View>
-  );
-});
+    const cardBgColor = isDark ? '#141C18' : '#FBF9F5';
+    const cardBorderColor = isDark
+      ? 'rgba(212, 167, 69, 0.26)'
+      : 'rgba(212, 167, 69, 0.38)';
+
+    return (
+      <View style={[{ width, paddingHorizontal: 12 }, style]}>
+        <View
+          style={[
+            styles.bookPageCard,
+            shadows.medium,
+            {
+              backgroundColor: cardBgColor,
+              borderColor: cardBorderColor,
+              borderRadius: radius.xl,
+              height: height ? height - 12 : undefined,
+            },
+          ]}
+        >
+          {/* Top Medina Page Header: Juz on Left, Surah on Right */}
+          <View style={styles.pageHeaderRow}>
+            <Text
+              style={[
+                styles.pageHeaderMeta,
+                { color: colors.secondary, fontFamily: fontFamilies.arabic },
+              ]}
+            >
+              الجزء {toArabicDigits(juzNumber)}
+            </Text>
+
+            <View
+              style={[
+                styles.headerDiamond,
+                { borderColor: colors.secondary + '60' },
+              ]}
+            />
+
+            <Text
+              style={[
+                styles.pageHeaderMeta,
+                { color: colors.secondary, fontFamily: fontFamilies.arabic },
+              ]}
+            >
+              {surah?.nameArabic ? `سُورَةُ ${surah.nameArabic}` : ''}
+            </Text>
+          </View>
+
+          <View
+            style={[
+              styles.headerDividerLine,
+              { backgroundColor: colors.secondary + '30' },
+            ]}
+          />
+
+          {/* Main Book Page Content */}
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+            bounces={false}
+          >
+            {/* Any ayahs before new Surah starts */}
+            {ayahsBeforeStart.length > 0 ? (
+              <Text
+                style={[
+                  styles.continuousText,
+                  {
+                    fontFamily: fontFamilies.quran,
+                    fontSize: textFontSize,
+                    lineHeight,
+                    color: colors.quranText,
+                  },
+                ]}
+              >
+                {ayahsBeforeStart.map(renderAyahText)}
+              </Text>
+            ) : null}
+
+            {/* Decorative Surah Banner if Ayah 1 is on this page */}
+            {hasSurahStart && surah ? (
+              <View style={styles.surahBannerWrap}>
+                <View
+                  style={[
+                    styles.surahBannerFrame,
+                    {
+                      borderColor: colors.secondary,
+                      backgroundColor: isDark
+                        ? 'rgba(212, 167, 69, 0.12)'
+                        : 'rgba(212, 167, 69, 0.10)',
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.surahBannerTitle,
+                      {
+                        color: colors.secondary,
+                        fontFamily: fontFamilies.arabic,
+                      },
+                    ]}
+                  >
+                    سُورَةُ {surah.nameArabic}
+                  </Text>
+                </View>
+
+                {showBismillah ? (
+                  <Text
+                    style={[
+                      styles.bismillahText,
+                      {
+                        color: colors.quranText,
+                        fontFamily: fontFamilies.quran,
+                        fontSize: Math.round(textFontSize * 1.05),
+                      },
+                    ]}
+                  >
+                    بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
+                  </Text>
+                ) : null}
+              </View>
+            ) : null}
+
+            {/* Main continuous text of the page */}
+            <Text
+              style={[
+                styles.continuousText,
+                {
+                  fontFamily: fontFamilies.quran,
+                  fontSize: textFontSize,
+                  lineHeight,
+                  color: colors.quranText,
+                },
+              ]}
+            >
+              {ayahsFromStart.map(renderAyahText)}
+            </Text>
+          </ScrollView>
+
+          {/* Bottom Medina Page Footer */}
+          <View
+            style={[
+              styles.footerDividerLine,
+              { backgroundColor: colors.secondary + '30' },
+            ]}
+          />
+
+          <View style={styles.pageFooterRow}>
+            <Text
+              style={[
+                styles.pageNumberText,
+                { color: colors.secondary, fontFamily: fontFamilies.arabic },
+              ]}
+            >
+              — {toArabicDigits(pageNumber)} —
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
-  pageContainer: {},
+  bookPageCard: {
+    borderWidth: 1.5,
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 8,
+    flex: 1,
+    overflow: 'hidden',
+  },
+  pageHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+  },
+  pageHeaderMeta: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  headerDiamond: {
+    width: 6,
+    height: 6,
+    borderWidth: 1,
+    transform: [{ rotate: '45deg' }],
+  },
+  headerDividerLine: {
+    height: StyleSheet.hairlineWidth * 1.5,
+    marginVertical: 4,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingVertical: 8,
+  },
   continuousText: {
-    textAlign: 'right',
+    textAlign: 'justify',
     writingDirection: 'rtl',
   },
   ayahSpan: {},
   ayahSelected: {
-    borderRadius: 8,
-  },
-  ayahPlaying: {
-    borderRadius: 8,
+    borderRadius: 6,
   },
   ayahBadge: {
     fontWeight: '600',
     includeFontPadding: false,
   },
+  surahBannerWrap: {
+    alignItems: 'center',
+    marginVertical: 8,
+  },
+  surahBannerFrame: {
+    width: '100%',
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  surahBannerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  bismillahText: {
+    textAlign: 'center',
+    writingDirection: 'rtl',
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  footerDividerLine: {
+    height: StyleSheet.hairlineWidth * 1.5,
+    marginVertical: 4,
+  },
+  pageFooterRow: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 4,
+  },
+  pageNumberText: {
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
 });
+

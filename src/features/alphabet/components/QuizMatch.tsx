@@ -340,13 +340,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   card: {
-    height: 72,
+    minHeight: 76,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
     position: 'relative',
     ...Platform.select({
       ios: {
@@ -389,12 +388,12 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   arabicText: {
-    fontSize: 32,
+    fontSize: 28,
     textAlign: 'center',
-    lineHeight: 40,
+    lineHeight: 48,
     ...Platform.select({
       android: {
-        includeFontPadding: false,
+        includeFontPadding: true,
         textAlignVertical: 'center',
       },
     }),

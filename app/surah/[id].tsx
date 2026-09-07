@@ -3,12 +3,13 @@ import {
   View,
   Text,
   StyleSheet,
+  useWindowDimensions,
+  FlatList,
+  Platform,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
 } from 'react-native';
 import Animated, {
-  FadeIn,
-  FadeOut,
   useSharedValue,
   useAnimatedStyle,
   withTiming,
@@ -20,9 +21,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { FlashList, type FlashListRef } from '@shopify/flash-list';
 import { useTheme } from '@/shared/theme';
 import { AyahSkeleton } from '@/shared/components/Skeleton';
 import { GlassView } from '@/shared/components/GlassView';
@@ -41,6 +42,7 @@ import {
   type TajweedRuleInfo,
   useAyahs,
   getSurahName,
+  preloadMushafPagesAudio,
 } from '@/features/quran';
 import { playAyah, pauseAudio } from '@/features/audio';
 import { useAudioStore } from '@/stores/audioStore';
@@ -60,6 +62,7 @@ interface TranslationAyahCardProps {
   translation?: { text: string; translator: string };
   isLastOnPage: boolean;
   isCurrentPlaying: boolean;
+  isHighlighted?: boolean;
   quranFontSize: number;
   showTajweed: boolean;
   showTranslation: boolean;
@@ -76,6 +79,7 @@ interface TranslationAyahCardProps {
   onPlayAyah: (ayahNumber: number) => void;
   onSelectAyah?: (ayah: Ayah) => void;
   onPressRule?: (rule: TajweedRuleInfo, matchedText: string) => void;
+  onLayout?: (e: any) => void;
 }
 
 const TranslationAyahCard = React.memo<TranslationAyahCardProps>(
@@ -84,6 +88,7 @@ const TranslationAyahCard = React.memo<TranslationAyahCardProps>(
     translation,
     isLastOnPage,
     isCurrentPlaying,
+    isHighlighted = false,
     quranFontSize,
     showTajweed,
     showTranslation,
@@ -100,6 +105,7 @@ const TranslationAyahCard = React.memo<TranslationAyahCardProps>(
     onPlayAyah,
     onSelectAyah,
     onPressRule,
+    onLayout,
   }) => {
     const pulseAnim = useSharedValue(1);
 
@@ -126,12 +132,20 @@ const TranslationAyahCard = React.memo<TranslationAyahCardProps>(
       ? isDark
         ? 'rgba(212, 167, 69, 0.10)'
         : 'rgba(255, 248, 230, 0.95)'
+      : isHighlighted
+      ? isDark
+        ? 'rgba(212, 167, 69, 0.14)'
+        : 'rgba(255, 248, 225, 0.95)'
       : surfaceColor;
 
-    const cardBorderColor = isCurrentPlaying ? secondaryColor : borderColor;
-    const cardBorderWidth = isCurrentPlaying ? 2 : 1;
+    const cardBorderColor = isCurrentPlaying
+      ? secondaryColor
+      : isHighlighted
+      ? secondaryColor
+      : borderColor;
+    const cardBorderWidth = isCurrentPlaying || isHighlighted ? 2 : 1;
 
-    const cardShadow = isCurrentPlaying
+    const cardShadow = isCurrentPlaying || isHighlighted
       ? {
           shadowColor: secondaryColor,
           shadowOffset: { width: 0, height: 4 },
@@ -142,7 +156,7 @@ const TranslationAyahCard = React.memo<TranslationAyahCardProps>(
       : shadowSoft;
 
     return (
-      <View style={{ paddingHorizontal: paddingHorizontalMd }}>
+      <View onLayout={onLayout} style={{ paddingHorizontal: paddingHorizontalMd }}>
         <View
           style={[
             styles.ayahCard,
@@ -286,22 +300,25 @@ const TranslationAyahCard = React.memo<TranslationAyahCardProps>(
 export interface SurahDetailScreenProps {}
 
 export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, ayah: initialAyahParam } = useLocalSearchParams<{ id: string; ayah?: string }>();
   const surahId = parseInt(id ?? '1', 10);
+  const targetAyahNumber = initialAyahParam ? parseInt(initialAyahParam, 10) : null;
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { colors, spacing, radius, shadows, fontFamilies, isDark } = useTheme();
+  const { t } = useTranslation();
 
-  const {
-    readingMode,
-    setReadingMode,
-    language,
-    quranFontSize,
-    showTajweed,
-    showTranslation,
-    defaultReciter,
-    setLastRead,
-  } = useSettingsStore();
+  const { height: windowHeight, width: windowWidth } = useWindowDimensions();
+  const [headerHeight, setHeaderHeight] = useState<number>(insets.top + 348);
+
+  const readingMode = useSettingsStore((s) => s.readingMode);
+  const setReadingMode = useSettingsStore((s) => s.setReadingMode);
+  const language = useSettingsStore((s) => s.language);
+  const quranFontSize = useSettingsStore((s) => s.quranFontSize);
+  const showTajweed = useSettingsStore((s) => s.showTajweed);
+  const showTranslation = useSettingsStore((s) => s.showTranslation);
+  const defaultReciter = useSettingsStore((s) => s.defaultReciter);
+  const setLastRead = useSettingsStore((s) => s.setLastRead);
 
   const recordAyahRead = useProgressStore((s) => s.recordAyahRead);
   const currentTrack = useAudioStore((s) => s.currentTrack);
@@ -310,8 +327,8 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
   const isCurrentSurah = currentTrack?.surahId === surahId;
   const playingAyahNumber = isCurrentSurah ? currentTrack?.ayahNumber : undefined;
 
-  const translationListRef = useRef<FlashListRef<Ayah>>(null);
-  const mushafListRef = useRef<FlashListRef<MushafPageData>>(null);
+  const translationListRef = useRef<FlatList<Ayah>>(null);
+  const mushafListRef = useRef<FlatList<MushafPageData>>(null);
 
   const isUserScrollingRef = useRef(false);
   const scrollOverrideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -335,6 +352,9 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
   }, []);
 
   const [selectedAyah, setSelectedAyah] = useState<Ayah | null>(null);
+  const [highlightedAyahNumber, setHighlightedAyahNumber] = useState<number | null>(
+    targetAyahNumber ?? null
+  );
   const [activeTajweedRule, setActiveTajweedRule] = useState<{
     rule: TajweedRuleInfo;
     matchedText: string;
@@ -350,10 +370,11 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
 
   React.useEffect(() => {
     if (surahId) {
-      setLastRead(surahId, 1);
+      const initialAyah = targetAyahNumber || 1;
+      setLastRead(surahId, initialAyah);
       recordAyahRead(1);
     }
-  }, [surahId, setLastRead, recordAyahRead]);
+  }, [surahId, targetAyahNumber, setLastRead, recordAyahRead]);
 
   const handleSelectAyah = useCallback(
     (ayah: Ayah | null) => {
@@ -401,6 +422,205 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
     }));
   }, [ayahs]);
 
+  // Precomputed layout metrics for FlatList instant O(1) jump
+  const { itemHeights, itemOffsets } = useMemo(() => {
+    const heights: number[] = [];
+    const offsets: number[] = [];
+    let currentY = headerHeight;
+
+    const arabicLineHeight = Math.round(quranFontSize * 2.5);
+    const contentWidth = Math.max(280, windowHeight > 0 ? windowWidth - 64 : 328);
+    const arCharsPerLine = Math.max(18, Math.floor(contentWidth / (quranFontSize * 0.44)));
+    const trCharsPerLine = Math.max(24, Math.floor(contentWidth / 7.6));
+
+    for (let i = 0; i < ayahs.length; i++) {
+      const a = ayahs[i];
+      const t = translationsMap[a.id]?.text;
+
+      const arTextLen = a.textUthmani?.length || 40;
+      const arLines = Math.max(1, Math.ceil(arTextLen / arCharsPerLine));
+      const trLines = t ? Math.max(1, Math.ceil(t.length / trCharsPerLine)) : 0;
+
+      const ayahTextHeight = arLines * arabicLineHeight + 8;
+      const transHeight = t ? trLines * 22 + 30 : 0;
+      const cardHeight = 84 + ayahTextHeight + transHeight;
+
+      heights.push(cardHeight);
+      offsets.push(currentY);
+      currentY += cardHeight;
+    }
+
+    return { itemHeights: heights, itemOffsets: offsets };
+  }, [ayahs, translationsMap, headerHeight, windowWidth, windowHeight, quranFontSize]);
+
+  const getTranslationItemLayout = useCallback(
+    (_: any, index: number) => ({
+      length: itemHeights[index] ?? 250,
+      offset: itemOffsets[index] ?? headerHeight + index * 250,
+      index,
+    }),
+    [itemHeights, itemOffsets, headerHeight]
+  );
+
+  const getMushafItemLayout = useCallback(
+    (_: any, index: number) => ({
+      length: windowWidth,
+      offset: index * windowWidth,
+      index,
+    }),
+    [windowWidth]
+  );
+
+  const initialTranslationIndex = useMemo(() => {
+    if (!targetAyahNumber || ayahs.length === 0) return undefined;
+    const idx = ayahs.findIndex((a) => a.ayahNumber === targetAyahNumber);
+    return idx >= 0 ? idx : undefined;
+  }, [targetAyahNumber, ayahs]);
+
+  const initialMushafIndex = useMemo(() => {
+    if (!targetAyahNumber || mushafPages.length === 0) return undefined;
+    const idx = mushafPages.findIndex((p) =>
+      p.ayahs.some((a) => a.ayahNumber === targetAyahNumber)
+    );
+    return idx >= 0 ? idx : undefined;
+  }, [targetAyahNumber, mushafPages]);
+
+  const [currentMushafPageIndex, setCurrentMushafPageIndex] = useState<number>(0);
+
+  useEffect(() => {
+    if (initialMushafIndex != null) {
+      setCurrentMushafPageIndex(initialMushafIndex);
+    }
+  }, [initialMushafIndex]);
+
+  const mushafPageHeight = useMemo(() => {
+    const topOccupied = insets.top + 54 + 44;
+    const bottomOccupied = Math.max(insets.bottom, 12) + (currentTrack ? 84 : 8) + 48;
+    return Math.max(360, windowHeight - topOccupied - bottomOccupied);
+  }, [windowHeight, insets.top, insets.bottom, currentTrack]);
+
+  const handleFlipMushafPage = useCallback(
+    (direction: 'prev' | 'next') => {
+      const targetIdx =
+        direction === 'next'
+          ? currentMushafPageIndex + 1
+          : currentMushafPageIndex - 1;
+      if (targetIdx >= 0 && targetIdx < mushafPages.length) {
+        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        mushafListRef.current?.scrollToIndex({
+          index: targetIdx,
+          animated: true,
+        });
+        setCurrentMushafPageIndex(targetIdx);
+        const firstAyahOfPage = mushafPages[targetIdx]?.ayahs[0];
+        if (firstAyahOfPage) {
+          setLastRead(surahId, firstAyahOfPage.ayahNumber);
+          recordAyahRead(1);
+        }
+      }
+    },
+    [currentMushafPageIndex, mushafPages, surahId, setLastRead, recordAyahRead]
+  );
+
+  const handleMushafPageScrollEnd = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const offsetX = event.nativeEvent.contentOffset.x;
+      const pageIdx = Math.round(offsetX / windowWidth);
+      if (
+        pageIdx >= 0 &&
+        pageIdx < mushafPages.length &&
+        pageIdx !== currentMushafPageIndex
+      ) {
+        setCurrentMushafPageIndex(pageIdx);
+        const firstAyahOfPage = mushafPages[pageIdx]?.ayahs[0];
+        if (firstAyahOfPage) {
+          setLastRead(surahId, firstAyahOfPage.ayahNumber);
+          recordAyahRead(1);
+        }
+      }
+    },
+    [windowWidth, mushafPages, currentMushafPageIndex, surahId, setLastRead, recordAyahRead]
+  );
+
+  const handleMushafScrollToIndexFailed = useCallback(
+    (info: { index: number; highestMeasuredFrameIndex: number; averageItemLength: number }) => {
+      setTimeout(() => {
+        mushafListRef.current?.scrollToIndex({
+          index: info.index,
+          animated: false,
+        });
+      }, 50);
+    },
+    []
+  );
+
+  // Intelligent Background Preloader:
+  // Automatically caches Tajweed and downloads audio for the page the user stopped on first,
+  // then preloads adjacent neighboring pages (next & previous) so page flipping is 100% lag-free.
+  useEffect(() => {
+    if (mushafPages.length === 0 || !surahId) return;
+    const timeout = setTimeout(() => {
+      void preloadMushafPagesAudio(
+        surahId,
+        mushafPages,
+        currentMushafPageIndex,
+        defaultReciter
+      );
+    }, 150);
+    return () => clearTimeout(timeout);
+  }, [surahId, mushafPages, currentMushafPageIndex, defaultReciter]);
+
+  // Sub-pixel ground-truth alignment once target ayah layout measures
+  const hasFineAdjustedRef = useRef(false);
+
+  useEffect(() => {
+    hasFineAdjustedRef.current = false;
+  }, [targetAyahNumber, surahId]);
+
+  const handleTargetAyahLayout = useCallback(
+    (e: any) => {
+      if (hasFineAdjustedRef.current || !targetAyahNumber) return;
+      hasFineAdjustedRef.current = true;
+
+      const { y: targetTop, height: targetHeight } = e.nativeEvent.layout;
+      const topBarHeight = insets.top + 60;
+      const bottomBarHeight = insets.bottom + 90;
+      const effectiveViewport = windowHeight - topBarHeight - bottomBarHeight;
+
+      let desiredOffset: number;
+      if (targetHeight >= effectiveViewport * 0.75) {
+        // Tall ayah (e.g. Ayat an-Nur 24:35 or Ayat al-Kursi 2:255):
+        // Position top of ayah cleanly below the top glass bar with 14px breathing room
+        desiredOffset = Math.max(0, targetTop - topBarHeight - 14);
+      } else {
+        // Normal ayah: place perfectly in vertical center of visible viewport
+        desiredOffset = Math.max(
+          0,
+          targetTop + targetHeight / 2 - effectiveViewport / 2 - topBarHeight
+        );
+      }
+
+      translationListRef.current?.scrollToOffset({
+        offset: desiredOffset,
+        animated: false,
+      });
+    },
+    [targetAyahNumber, insets.top, insets.bottom, windowHeight]
+  );
+
+  // Gold highlight for target ayah
+  useEffect(() => {
+    if (!targetAyahNumber) {
+      setHighlightedAyahNumber(null);
+      return;
+    }
+    setHighlightedAyahNumber(targetAyahNumber);
+    const timer = setTimeout(() => {
+      setHighlightedAyahNumber(null);
+    }, 3500);
+    return () => clearTimeout(timer);
+  }, [targetAyahNumber]);
+
   // Intelligent Autoscroll to active playing ayah with user drag override
   useEffect(() => {
     if (!isPlaying || !isCurrentSurah || playingAyahNumber == null) {
@@ -417,7 +637,7 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
           translationListRef.current.scrollToIndex({
             index,
             animated: true,
-            viewPosition: 0.25,
+            viewPosition: 0.35,
           });
         } catch {}
       }
@@ -425,17 +645,25 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
       const pageIndex = mushafPages.findIndex((p) =>
         p.ayahs.some((a) => a.ayahNumber === playingAyahNumber)
       );
-      if (pageIndex !== -1) {
+      if (pageIndex !== -1 && pageIndex !== currentMushafPageIndex) {
         try {
           mushafListRef.current.scrollToIndex({
             index: pageIndex,
             animated: true,
-            viewPosition: 0.25,
           });
+          setCurrentMushafPageIndex(pageIndex);
         } catch {}
       }
     }
-  }, [playingAyahNumber, isPlaying, isCurrentSurah, readingMode, ayahs, mushafPages]);
+  }, [
+    playingAyahNumber,
+    isPlaying,
+    isCurrentSurah,
+    readingMode,
+    ayahs,
+    mushafPages,
+    currentMushafPageIndex,
+  ]);
 
   const localizedName = surah
     ? getSurahName(surah.nameTranslation, language)
@@ -485,27 +713,31 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
     [controlsVisible, headerScrolledPast]
   );
 
-  const centerTitleStyle = useAnimatedStyle(() => ({
-    opacity: headerScrolledPast.value * controlsVisible.value,
-    transform: [
-      {
-        translateY: interpolate(
-          headerScrolledPast.value,
-          [0, 1],
-          [-8, 0],
-          Extrapolation.CLAMP
-        ),
-      },
-      {
-        scale: interpolate(
-          headerScrolledPast.value,
-          [0, 1],
-          [0.9, 1],
-          Extrapolation.CLAMP
-        ),
-      },
-    ],
-  }));
+  const centerTitleStyle = useAnimatedStyle(() => {
+    const isMushaf = readingMode === 'mushaf';
+    const showHeader = isMushaf ? 1 : headerScrolledPast.value;
+    return {
+      opacity: showHeader * controlsVisible.value,
+      transform: [
+        {
+          translateY: interpolate(
+            showHeader,
+            [0, 1],
+            [-8, 0],
+            Extrapolation.CLAMP
+          ),
+        },
+        {
+          scale: interpolate(
+            showHeader,
+            [0, 1],
+            [0.9, 1],
+            Extrapolation.CLAMP
+          ),
+        },
+      ],
+    };
+  }, [readingMode]);
 
   const backButtonStyle = useAnimatedStyle(() => ({
     transform: [
@@ -555,7 +787,15 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
 
   const renderHeader = useCallback(
     () => (
-      <View style={{ paddingTop: insets.top + 52 }}>
+      <View
+        onLayout={(e) => {
+          const h = e.nativeEvent.layout.height;
+          if (h > 0 && Math.abs(h - headerHeight) > 10) {
+            setHeaderHeight(h);
+          }
+        }}
+        style={{ paddingTop: insets.top + 52 }}
+      >
         {surah ? <SurahHeader surah={surah} /> : null}
         <ReadingModeToggle
           mode={readingMode}
@@ -563,12 +803,29 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
         />
       </View>
     ),
-    [insets.top, surah, readingMode, setReadingMode]
+    [insets.top, surah, readingMode, setReadingMode, headerHeight]
   );
 
   const renderFooter = useCallback(
     () => <View style={{ height: spacing.xxxl + spacing.xl }} />,
     [spacing]
+  );
+
+  const handleScrollToIndexFailed = useCallback(
+    (info: { index: number; highestMeasuredFrameIndex: number; averageItemLength: number }) => {
+      setTimeout(() => {
+        if (readingMode === 'translation' && translationListRef.current) {
+          try {
+            translationListRef.current.scrollToIndex({
+              index: info.index,
+              animated: false,
+              viewPosition: 0.35,
+            });
+          } catch {}
+        }
+      }, 50);
+    },
+    [readingMode]
   );
 
   const renderTranslationItem = useCallback(
@@ -578,6 +835,8 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
         index === ayahs.length - 1 || ayahs[index + 1]?.page !== item.page;
       const isCurrentPlaying =
         isPlaying && isCurrentSurah && item.ayahNumber === playingAyahNumber;
+      const isHighlighted = item.ayahNumber === highlightedAyahNumber;
+      const isTarget = item.ayahNumber === targetAyahNumber;
 
       return (
         <TranslationAyahCard
@@ -585,6 +844,7 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
           translation={translation}
           isLastOnPage={isLastOnPage}
           isCurrentPlaying={Boolean(isCurrentPlaying)}
+          isHighlighted={isHighlighted}
           quranFontSize={quranFontSize}
           showTajweed={showTajweed}
           showTranslation={showTranslation}
@@ -601,6 +861,7 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
           onPlayAyah={handlePlayAyah}
           onSelectAyah={handleSelectAyah}
           onPressRule={handleRulePress}
+          onLayout={isTarget ? handleTargetAyahLayout : undefined}
         />
       );
     },
@@ -610,6 +871,8 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
       isPlaying,
       isCurrentSurah,
       playingAyahNumber,
+      highlightedAyahNumber,
+      targetAyahNumber,
       quranFontSize,
       showTajweed,
       showTranslation,
@@ -625,6 +888,7 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
       handlePlayAyah,
       handleSelectAyah,
       handleRulePress,
+      handleTargetAyahLayout,
     ]
   );
 
@@ -633,11 +897,13 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
       return (
         <MushafView
           ayahs={item.ayahs}
-          fontSize={quranFontSize}
           pageNumber={item.pageNumber}
-          showDivider={true}
+          width={windowWidth}
+          height={mushafPageHeight}
+          fontSize={quranFontSize}
           showTajweed={showTajweed}
           selectedAyahId={selectedAyah?.id}
+          activeAyahNumber={highlightedAyahNumber}
           playingAyahNumber={
             isPlaying && isCurrentSurah ? playingAyahNumber : null
           }
@@ -647,9 +913,12 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
       );
     },
     [
+      windowWidth,
+      mushafPageHeight,
       quranFontSize,
       showTajweed,
       selectedAyah?.id,
+      highlightedAyahNumber,
       handleSelectAyah,
       isPlaying,
       isCurrentSurah,
@@ -738,40 +1007,150 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
           <AyahSkeleton />
         </View>
       ) : readingMode === 'mushaf' ? (
-        <Animated.View
-          key="mushaf-list"
-          style={{ flex: 1 }}
-          entering={FadeIn.duration(240)}
-          exiting={FadeOut.duration(160)}
-        >
-          <FlashList<MushafPageData>
+        <View style={{ flex: 1 }}>
+          {/* Top Reading Mode Toggle */}
+          <View
+            style={{
+              paddingTop: insets.top + 54,
+              paddingBottom: 6,
+              paddingHorizontal: 16,
+            }}
+          >
+            <ReadingModeToggle
+              mode={readingMode}
+              onModeChange={setReadingMode}
+            />
+          </View>
+
+          {/* Horizontal Medina Book Pager (1 Page per Screen, 60fps) */}
+          <FlatList<MushafPageData>
             ref={mushafListRef}
             data={mushafPages}
             renderItem={renderMushafItem}
             keyExtractor={(item) => `mushaf-page-${item.pageNumber}`}
-            drawDistance={800}
-            ListHeaderComponent={renderHeader}
-            ListFooterComponent={renderFooter}
-            onScroll={handleScroll}
-            onScrollBeginDrag={handleScrollBeginDrag}
-            scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}
+            getItemLayout={getMushafItemLayout}
+            horizontal={true}
+            pagingEnabled={true}
+            showsHorizontalScrollIndicator={false}
+            initialScrollIndex={
+              initialMushafIndex != null && initialMushafIndex < mushafPages.length
+                ? initialMushafIndex
+                : undefined
+            }
+            initialNumToRender={
+              initialMushafIndex != null
+                ? Math.min(mushafPages.length, initialMushafIndex + 3)
+                : 3
+            }
+            maxToRenderPerBatch={4}
+            windowSize={7}
+            removeClippedSubviews={Platform.OS === 'android'}
+            onMomentumScrollEnd={handleMushafPageScrollEnd}
+            onScrollToIndexFailed={handleMushafScrollToIndexFailed}
             overScrollMode="never"
+            style={{ flex: 1 }}
           />
-        </Animated.View>
+
+          {/* Bottom Medina Book Navigation Bar */}
+          <View
+            style={[
+              styles.mushafBottomNav,
+              {
+                paddingBottom:
+                  Math.max(insets.bottom, 12) + (currentTrack ? 84 : 8),
+              },
+            ]}
+          >
+            <AnimatedPressable
+              onPress={() => handleFlipMushafPage('prev')}
+              disabled={currentMushafPageIndex === 0}
+              style={[
+                styles.mushafPageBtn,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  opacity: currentMushafPageIndex === 0 ? 0.35 : 1,
+                },
+              ]}
+              accessibilityLabel="Предыдущая страница"
+              accessibilityRole="button"
+            >
+              <Ionicons
+                name="chevron-back"
+                size={20}
+                color={colors.primary}
+              />
+            </AnimatedPressable>
+
+            <View
+              style={[
+                styles.mushafPageCounter,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.mushafPageCounterText,
+                  { color: colors.textSecondary },
+                ]}
+              >
+                {t('quran.page', 'Стр.')}{' '}
+                <Text style={{ color: colors.secondary, fontWeight: '700' }}>
+                  {mushafPages[currentMushafPageIndex]?.pageNumber ??
+                    surah?.pageStart ??
+                    1}
+                </Text>
+                {'  •  '}
+                {currentMushafPageIndex + 1} / {Math.max(1, mushafPages.length)}
+              </Text>
+            </View>
+
+            <AnimatedPressable
+              onPress={() => handleFlipMushafPage('next')}
+              disabled={currentMushafPageIndex >= mushafPages.length - 1}
+              style={[
+                styles.mushafPageBtn,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  opacity:
+                    currentMushafPageIndex >= mushafPages.length - 1
+                      ? 0.35
+                      : 1,
+                },
+              ]}
+              accessibilityLabel="Следующая страница"
+              accessibilityRole="button"
+            >
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={colors.primary}
+              />
+            </AnimatedPressable>
+          </View>
+        </View>
       ) : (
-        <Animated.View
-          key="translation-list"
-          style={{ flex: 1 }}
-          entering={FadeIn.duration(240)}
-          exiting={FadeOut.duration(160)}
-        >
-          <FlashList<Ayah>
+        <View style={{ flex: 1 }}>
+          <FlatList<Ayah>
             ref={translationListRef}
             data={ayahs}
             renderItem={renderTranslationItem}
             keyExtractor={(item) => `ayah-${item.id}`}
-            drawDistance={800}
+            getItemLayout={getTranslationItemLayout}
+            initialScrollIndex={initialTranslationIndex}
+            initialNumToRender={
+              initialTranslationIndex != null
+                ? Math.min(ayahs.length, initialTranslationIndex + 4)
+                : 8
+            }
+            maxToRenderPerBatch={8}
+            windowSize={7}
+            removeClippedSubviews={Platform.OS === 'android'}
+            onScrollToIndexFailed={handleScrollToIndexFailed}
             ListHeaderComponent={renderHeader}
             ListFooterComponent={renderFooter}
             onScroll={handleScroll}
@@ -780,7 +1159,7 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
             showsVerticalScrollIndicator={false}
             overScrollMode="never"
           />
-        </Animated.View>
+        </View>
       )}
 
       {/* Contextual Ayah Action Bar (Copy, Bookmark, Play) */}
@@ -799,7 +1178,7 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
       ) : null}
 
       {/* Collapsible Floating Audio Player */}
-      {!selectedAyah && (
+      {!selectedAyah && currentTrack && (
         <Animated.View style={bottomPlayerStyle}>
           <FloatingAudioPlayer
             surahId={surahId}
@@ -918,6 +1297,33 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  mushafBottomNav: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingTop: 6,
+  },
+  mushafPageBtn: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mushafPageCounter: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mushafPageCounterText: {
+    fontSize: 13,
+    fontWeight: '600',
   },
 });
 

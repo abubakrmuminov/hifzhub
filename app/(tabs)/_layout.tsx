@@ -18,6 +18,49 @@ import { useTabBarStore } from '@/stores/tabBarStore';
 
 export interface TabLayoutProps {}
 
+const TabBarBackground = React.memo<{ isDark: boolean }>(({ isDark }) => (
+  <View
+    style={[
+      StyleSheet.absoluteFill,
+      { borderRadius: 32, overflow: 'hidden' },
+    ]}
+  >
+    <BlurView
+      intensity={85}
+      tint={isDark ? 'dark' : 'light'}
+      style={StyleSheet.absoluteFill}
+    />
+    {/* Frosted glass diffusion layer */}
+    <LinearGradient
+      colors={
+        isDark
+          ? ['rgba(26, 26, 48, 0.72)', 'rgba(15, 15, 30, 0.80)']
+          : ['rgba(255, 255, 255, 0.68)', 'rgba(242, 248, 244, 0.52)']
+      }
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={StyleSheet.absoluteFill}
+    />
+    {/* Top specular glaze line */}
+    <LinearGradient
+      colors={
+        isDark
+          ? ['rgba(255, 255, 255, 0.22)', 'rgba(255, 255, 255, 0)']
+          : ['rgba(255, 255, 255, 0.85)', 'rgba(255, 255, 255, 0)']
+      }
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 14,
+      }}
+    />
+  </View>
+));
+
 export function TabLayout({}: TabLayoutProps) {
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
@@ -46,94 +89,63 @@ export function TabLayout({}: TabLayoutProps) {
     transform: [{ translateY: translateY.value }],
   }));
 
+  const renderTabBar = React.useCallback(
+    (props: BottomTabBarProps) => (
+      <Animated.View
+        style={[styles.animatedTabBarWrapper, animTabBarStyle]}
+        pointerEvents={isTabBarVisible ? 'auto' : 'none'}
+      >
+        <BottomTabBar {...props} />
+      </Animated.View>
+    ),
+    [animTabBarStyle, isTabBarVisible]
+  );
+
+  const screenOptions = React.useMemo(
+    () => ({
+      tabBarActiveTintColor: colors.primary,
+      tabBarInactiveTintColor: isDark ? '#A6A6BC' : '#52545A',
+      tabBarShowLabel: true,
+      tabBarLabelStyle: {
+        fontSize: 10,
+        fontWeight: '700' as const,
+        letterSpacing: 0.2,
+        marginTop: -2,
+        marginBottom: 3,
+      },
+      tabBarItemStyle: {
+        paddingTop: 6,
+        paddingBottom: 2,
+      },
+      tabBarStyle: {
+        position: 'absolute' as const,
+        bottom: Math.max(insets.bottom, 10) + 6,
+        left: 16,
+        right: 16,
+        height: 64,
+        borderRadius: 32,
+        borderWidth: 1.2,
+        borderColor: isDark
+          ? 'rgba(255, 255, 255, 0.16)'
+          : 'rgba(255, 255, 255, 0.75)',
+        backgroundColor: 'transparent' as const,
+        elevation: 0,
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: isDark ? 0.35 : 0.08,
+        shadowRadius: 18,
+      },
+      tabBarBackground: () => <TabBarBackground isDark={isDark} />,
+      headerShown: false,
+    }),
+    [colors.primary, isDark, insets.bottom]
+  );
+
   return (
     <View style={styles.targetContainer}>
       <Tabs
-        tabBar={(props: BottomTabBarProps) => (
-          <Animated.View
-            style={[styles.animatedTabBarWrapper, animTabBarStyle]}
-            pointerEvents={isTabBarVisible ? 'auto' : 'none'}
-          >
-            <BottomTabBar {...props} />
-          </Animated.View>
-        )}
-        screenOptions={{
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: isDark ? '#A6A6BC' : '#52545A',
-          tabBarShowLabel: true,
-          tabBarLabelStyle: {
-            fontSize: 10,
-            fontWeight: '700',
-            letterSpacing: 0.2,
-            marginTop: -2,
-            marginBottom: 3,
-          },
-          tabBarItemStyle: {
-            paddingTop: 6,
-            paddingBottom: 2,
-          },
-          tabBarStyle: {
-            position: 'absolute',
-            bottom: Math.max(insets.bottom, 10) + 6,
-            left: 16,
-            right: 16,
-            height: 64,
-            borderRadius: 32,
-            borderWidth: 1.2,
-            borderColor: isDark
-              ? 'rgba(255, 255, 255, 0.16)'
-              : 'rgba(255, 255, 255, 0.75)',
-            backgroundColor: 'transparent',
-            elevation: 0,
-            shadowColor: '#000000',
-            shadowOffset: { width: 0, height: 6 },
-            shadowOpacity: isDark ? 0.35 : 0.08,
-            shadowRadius: 18,
-          },
-          tabBarBackground: () => (
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                { borderRadius: 32, overflow: 'hidden' },
-              ]}
-            >
-              <BlurView
-                intensity={85}
-                tint={isDark ? 'dark' : 'light'}
-                style={StyleSheet.absoluteFill}
-              />
-              {/* Frosted glass diffusion layer */}
-              <LinearGradient
-                colors={
-                  isDark
-                    ? ['rgba(26, 26, 48, 0.72)', 'rgba(15, 15, 30, 0.80)']
-                    : ['rgba(255, 255, 255, 0.68)', 'rgba(242, 248, 244, 0.52)']
-                }
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={StyleSheet.absoluteFill}
-              />
-              {/* Top specular glaze line */}
-              <LinearGradient
-                colors={
-                  isDark
-                    ? ['rgba(255, 255, 255, 0.22)', 'rgba(255, 255, 255, 0)']
-                    : ['rgba(255, 255, 255, 0.85)', 'rgba(255, 255, 255, 0)']
-                }
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: 14,
-                }}
-              />
-            </View>
-          ),
-          headerShown: false,
-        }}
+        tabBar={renderTabBar}
+        screenOptions={screenOptions}
       >
         <Tabs.Screen
           name="index"

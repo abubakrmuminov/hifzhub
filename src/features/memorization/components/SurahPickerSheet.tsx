@@ -30,6 +30,137 @@ export interface SurahPickerSheetProps {
   alreadyMemorized?: Set<string>;
 }
 
+interface SurahPickerItemProps {
+  item: SurahItem;
+  isSelected: boolean;
+  memorized: number;
+  isFullyMemorized: boolean;
+  onSelect: (surah: SurahItem) => void;
+  colors: any;
+  radius: any;
+  spacing: any;
+  isDark: boolean;
+  ayahsCountText: string;
+  memorizedText: string;
+}
+
+const SurahPickerItem = React.memo<SurahPickerItemProps>(({
+  item,
+  isSelected,
+  memorized,
+  isFullyMemorized,
+  onSelect,
+  colors,
+  radius,
+  spacing,
+  isDark,
+  ayahsCountText,
+  memorizedText,
+}) => {
+  return (
+    <AnimatedPressable
+      onPress={() => onSelect(item)}
+      haptic="light"
+      accessibilityRole="button"
+      accessibilityLabel={`${item.name}, ${item.arabicName}`}
+      style={[
+        styles.surahItem,
+        {
+          borderRadius: radius.md,
+          borderColor: isSelected
+            ? colors.primary
+            : isDark
+            ? 'rgba(255, 255, 255, 0.08)'
+            : 'rgba(0, 0, 0, 0.06)',
+          backgroundColor: isSelected
+            ? isDark
+              ? 'rgba(13, 107, 78, 0.18)'
+              : 'rgba(13, 107, 78, 0.08)'
+            : isDark
+            ? 'rgba(255, 255, 255, 0.03)'
+            : 'rgba(0, 0, 0, 0.02)',
+          opacity: isFullyMemorized && !isSelected ? 0.6 : 1,
+          marginBottom: spacing.xs,
+        },
+      ]}
+    >
+      {/* Left: ID badge and Names */}
+      <View style={styles.surahLeft}>
+        <View
+          style={[
+            styles.surahIdBadge,
+            {
+              borderRadius: radius.sm,
+              backgroundColor: isSelected
+                ? colors.primary
+                : isDark
+                ? 'rgba(255, 255, 255, 0.08)'
+                : 'rgba(0, 0, 0, 0.06)',
+            },
+          ]}
+        >
+          <Text
+            style={[
+              styles.surahIdText,
+              {
+                color: isSelected ? '#FFFFFF' : colors.textSecondary,
+              },
+            ]}
+          >
+            {item.id}
+          </Text>
+        </View>
+
+        <View style={[styles.surahNames, { marginStart: spacing.sm }]}>
+          <Text
+            style={[
+              styles.surahName,
+              {
+                color: colors.text,
+                fontWeight: isSelected ? '700' : '600',
+              },
+            ]}
+          >
+            {item.name}
+          </Text>
+          <Text style={[styles.ayahCountText, { color: colors.textTertiary }]}>
+            {ayahsCountText}
+            {memorized > 0 && (
+              <Text style={{ color: colors.secondary }}>
+                {` • ${memorizedText}`}
+              </Text>
+            )}
+          </Text>
+        </View>
+      </View>
+
+      {/* Right: Arabic Name */}
+      <View style={styles.surahRight}>
+        <Text
+          style={[
+            styles.arabicNameText,
+            {
+              color: isSelected ? colors.primary : colors.textSecondary,
+              fontFamily: undefined,
+            },
+          ]}
+        >
+          {item.arabicName}
+        </Text>
+        {isFullyMemorized && (
+          <View style={[styles.memorizedCheck, { marginStart: spacing.xs }]}>
+            <Ionicons
+              name="checkmark-circle"
+              size={16}
+              color={colors.success}
+            />
+          </View>
+        )}
+      </View>
+    </AnimatedPressable>
+  );
+});
+
 export const SurahPickerSheet: React.FC<SurahPickerSheetProps> = ({
   visible,
   onClose,
@@ -61,11 +192,11 @@ export const SurahPickerSheet: React.FC<SurahPickerSheetProps> = ({
   }, [visible, surahs, selectedSurahId]);
 
   // Handle selecting a different surah
-  const handleSelectSurah = (surah: SurahItem) => {
+  const handleSelectSurah = React.useCallback((surah: SurahItem) => {
     setSelectedSurahId(surah.id);
     setFromAyah(1);
     setToAyah(Math.min(3, surah.ayahCount));
-  };
+  }, []);
 
   // Filter surahs by search query
   const filteredSurahs = useMemo(() => {
@@ -79,17 +210,19 @@ export const SurahPickerSheet: React.FC<SurahPickerSheetProps> = ({
     );
   }, [surahs, searchQuery]);
 
-  // Count memorized ayahs for a given surah
-  const getMemorizedCount = (surah: SurahItem): number => {
-    if (!alreadyMemorized) return 0;
-    let count = 0;
-    for (let i = 1; i <= surah.ayahCount; i++) {
-      if (alreadyMemorized.has(`${surah.id}_${i}`)) {
-        count++;
+  // Precompute memorized counts by surahId in a single pass O(K) where K = memorized count
+  const memorizedCountsBySurah = useMemo(() => {
+    const counts: Record<number, number> = {};
+    if (!alreadyMemorized || alreadyMemorized.size === 0) return counts;
+    for (const key of alreadyMemorized) {
+      const idx = key.indexOf('_');
+      if (idx > 0) {
+        const sId = Number(key.slice(0, idx));
+        counts[sId] = (counts[sId] || 0) + 1;
       }
     }
-    return count;
-  };
+    return counts;
+  }, [alreadyMemorized]);
 
   // Check how many ayahs in current selected range are already memorized
   const memorizedInRangeCount = useMemo(() => {
@@ -134,6 +267,37 @@ export const SurahPickerSheet: React.FC<SurahPickerSheetProps> = ({
     onConfirm(selectedSurah.id, fromAyah, toAyah);
     onClose();
   };
+
+  const renderSurahItem = React.useCallback(
+    ({ item }: { item: SurahItem }) => {
+      const isSelected = item.id === selectedSurahId;
+      const memorized = memorizedCountsBySurah[item.id] || 0;
+      const isFullyMemorized = memorized === item.ayahCount && item.ayahCount > 0;
+
+      return (
+        <SurahPickerItem
+          item={item}
+          isSelected={isSelected}
+          memorized={memorized}
+          isFullyMemorized={isFullyMemorized}
+          onSelect={handleSelectSurah}
+          colors={colors}
+          radius={radius}
+          spacing={spacing}
+          isDark={isDark}
+          ayahsCountText={t('hifz.ayahsCount', {
+            defaultValue: `${item.ayahCount} аятов`,
+            count: item.ayahCount,
+          })}
+          memorizedText={t('hifz.memorizedCount', {
+            defaultValue: `${memorized} выучено`,
+            count: memorized,
+          })}
+        />
+      );
+    },
+    [selectedSurahId, memorizedCountsBySurah, handleSelectSurah, colors, radius, spacing, isDark, t]
+  );
 
   return (
     <Modal
@@ -251,120 +415,7 @@ export const SurahPickerSheet: React.FC<SurahPickerSheetProps> = ({
             keyExtractor={(item) => `surah-${item.id}`}
             contentContainerStyle={[styles.listContent, { paddingHorizontal: spacing.md }]}
             style={styles.list}
-            renderItem={({ item }) => {
-              const isSelected = item.id === selectedSurahId;
-              const memorized = getMemorizedCount(item);
-              const isFullyMemorized = memorized === item.ayahCount && item.ayahCount > 0;
-
-              return (
-                <AnimatedPressable
-                  onPress={() => handleSelectSurah(item)}
-                  haptic="light"
-                  accessibilityRole="button"
-                  accessibilityLabel={`${item.name}, ${item.arabicName}`}
-                  style={[
-                    styles.surahItem,
-                    {
-                      borderRadius: radius.md,
-                      borderColor: isSelected
-                        ? colors.primary
-                        : isDark
-                        ? 'rgba(255, 255, 255, 0.08)'
-                        : 'rgba(0, 0, 0, 0.06)',
-                      backgroundColor: isSelected
-                        ? isDark
-                          ? 'rgba(13, 107, 78, 0.18)'
-                          : 'rgba(13, 107, 78, 0.08)'
-                        : isDark
-                        ? 'rgba(255, 255, 255, 0.03)'
-                        : 'rgba(0, 0, 0, 0.02)',
-                      opacity: isFullyMemorized && !isSelected ? 0.6 : 1,
-                      marginBottom: spacing.xs,
-                    },
-                  ]}
-                >
-                  {/* Left: ID badge and Names */}
-                  <View style={styles.surahLeft}>
-                    <View
-                      style={[
-                        styles.surahIdBadge,
-                        {
-                          borderRadius: radius.sm,
-                          backgroundColor: isSelected
-                            ? colors.primary
-                            : isDark
-                            ? 'rgba(255, 255, 255, 0.08)'
-                            : 'rgba(0, 0, 0, 0.06)',
-                        },
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.surahIdText,
-                          {
-                            color: isSelected ? '#FFFFFF' : colors.textSecondary,
-                          },
-                        ]}
-                      >
-                        {item.id}
-                      </Text>
-                    </View>
-
-                    <View style={[styles.surahNames, { marginStart: spacing.sm }]}>
-                      <Text
-                        style={[
-                          styles.surahName,
-                          {
-                            color: colors.text,
-                            fontWeight: isSelected ? '700' : '600',
-                          },
-                        ]}
-                      >
-                        {item.name}
-                      </Text>
-                      <Text style={[styles.ayahCountText, { color: colors.textTertiary }]}>
-                        {t('hifz.ayahsCount', {
-                          defaultValue: `${item.ayahCount} аятов`,
-                          count: item.ayahCount,
-                        })}
-                        {memorized > 0 && (
-                          <Text style={{ color: colors.secondary }}>
-                            {` • ${t('hifz.memorizedCount', {
-                              defaultValue: `${memorized} выучено`,
-                              count: memorized,
-                            })}`}
-                          </Text>
-                        )}
-                      </Text>
-                    </View>
-                  </View>
-
-                  {/* Right: Arabic Name */}
-                  <View style={styles.surahRight}>
-                    <Text
-                      style={[
-                        styles.arabicNameText,
-                        {
-                          color: isSelected ? colors.primary : colors.textSecondary,
-                          fontFamily: undefined,
-                        },
-                      ]}
-                    >
-                      {item.arabicName}
-                    </Text>
-                    {isFullyMemorized && (
-                      <View style={[styles.memorizedCheck, { marginStart: spacing.xs }]}>
-                        <Ionicons
-                          name="checkmark-circle"
-                          size={16}
-                          color={colors.success}
-                        />
-                      </View>
-                    )}
-                  </View>
-                </AnimatedPressable>
-              );
-            }}
+            renderItem={renderSurahItem}
           />
 
           {/* Ayah Range Picker Section for Selected Surah */}

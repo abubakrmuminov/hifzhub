@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useProgressStore } from './progressStore';
 
 export type RepeatMode = 'none' | 'ayah' | 'surah' | 'range';
 
@@ -72,12 +73,32 @@ export const useAudioStore = create<AudioState>()((set) => ({
   setCurrentTrack: (currentTrack) => set({ currentTrack }),
   setPlaybackPosition: (playbackPosition) => set({ playbackPosition }),
   setDuration: (duration) => set({ duration }),
-  setRepeatMode: (repeatMode) => set({ repeatMode }),
+  setRepeatMode: (repeatMode) => {
+    set({ repeatMode });
+    if (repeatMode === 'ayah') {
+      try {
+        useProgressStore.getState().recordDailyActivity('usedRepeat');
+      } catch {}
+    }
+  },
   setPlaybackSpeed: (playbackSpeed) => set({ playbackSpeed }),
-  setRepeatCount: (repeatCount) =>
-    set({ repeatCount, repeatAyahTarget: repeatCount, currentRepeatIndex: 0 }),
+  setRepeatCount: (repeatCount) => {
+    set({ repeatCount, repeatAyahTarget: repeatCount, currentRepeatIndex: 0 });
+    if (repeatCount > 1) {
+      try {
+        useProgressStore.getState().recordDailyActivity('usedRepeat');
+      } catch {}
+    }
+  },
   setCurrentRepeatIndex: (currentRepeatIndex) => set({ currentRepeatIndex }),
-  setLoopRange: (loopRange) => set({ loopRange }),
+  setLoopRange: (loopRange) => {
+    set({ loopRange });
+    if (loopRange) {
+      try {
+        useProgressStore.getState().recordDailyActivity('usedRangeLoop');
+      } catch {}
+    }
+  },
   setFullScreenPlayerVisible: (visible) =>
     set({ isFullScreenPlayerVisible: visible, isFullPlayerVisible: visible }),
   setFullPlayerVisible: (visible) =>

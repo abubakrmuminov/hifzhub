@@ -19,9 +19,9 @@ export const USER_LEVELS: UserLevel[] = [
   },
   {
     level: 3,
-    titleRu: 'Талиб (Искатель знаний)',
-    titleUz: 'Tolib',
-    titleArabic: 'طالب',
+    titleRu: 'Муджтахид (Усердный)',
+    titleUz: 'Mujtahid',
+    titleArabic: 'مجتهد',
     minXP: 500,
     maxXP: 1200,
   },

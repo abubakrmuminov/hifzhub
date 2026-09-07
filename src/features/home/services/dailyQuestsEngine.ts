@@ -30,6 +30,18 @@ export interface UserProgressProfile {
   dueCardsCount: number;
   currentStreak: number;
   dailyTargetAyahs: number;
+
+  // Real today activity metrics
+  ayahsReadToday: number;
+  cardsReviewedToday: number;
+  cardsAddedToday: number;
+  completedLessonsToday: number;
+  perfectQuizzesToday: number;
+  bookmarksAddedToday: number;
+  readDailyAyahToday: boolean;
+  listenedAudioToday: boolean;
+  usedRepeatToday: boolean;
+  usedRangeLoopToday: boolean;
 }
 
 /**
@@ -91,6 +103,7 @@ interface QuestTemplate {
   descriptionRu: (ctx: UserProgressProfile) => string;
   descriptionUz: (ctx: UserProgressProfile) => string;
   target: (ctx: UserProgressProfile, rng: () => number) => number;
+  getCurrent: (ctx: UserProgressProfile) => number;
   xpReward: number;
   icon: string;
   color: string;
@@ -116,6 +129,7 @@ const QUEST_TEMPLATES: QuestTemplate[] = [
     descriptionRu: () => 'Изучи буквы, махраджи и звуки арабского языка',
     descriptionUz: () => 'Arab harflari, maxrajlar va tovushlarni o‘rganing',
     target: () => 1,
+    getCurrent: (ctx) => ctx.completedLessonsToday,
     xpReward: 25,
     icon: 'book-open',
     color: '#0D6B4E',
@@ -132,6 +146,7 @@ const QUEST_TEMPLATES: QuestTemplate[] = [
     descriptionRu: () => 'Пройди практические карточки в разделе обучения',
     descriptionUz: () => 'O‘rganish bo‘limidagi amaliy darslarni bajaring',
     target: () => 1,
+    getCurrent: (ctx) => ctx.completedLessonsToday,
     xpReward: 20,
     icon: 'mic',
     color: '#0D6B4E',
@@ -148,6 +163,7 @@ const QUEST_TEMPLATES: QuestTemplate[] = [
     descriptionRu: () => 'Укрепи знания и сделай шаг к беглому чтению',
     descriptionUz: () => 'Bilimlarni mustahkamlab, ravon o‘qish sari qadam tashlang',
     target: () => 2,
+    getCurrent: (ctx) => ctx.completedLessonsToday,
     xpReward: 40,
     icon: 'award',
     color: '#0D6B4E',
@@ -164,6 +180,7 @@ const QUEST_TEMPLATES: QuestTemplate[] = [
     descriptionRu: () => 'Ответь на все вопросы квиза без единой ошибки',
     descriptionUz: () => 'Viktorinadagi barcha savollarga xatosiz javob bering',
     target: () => 1,
+    getCurrent: (ctx) => ctx.perfectQuizzesToday,
     xpReward: 30,
     icon: 'check-circle',
     color: '#0D6B4E',
@@ -182,6 +199,7 @@ const QUEST_TEMPLATES: QuestTemplate[] = [
     descriptionRu: () => 'Интервальное повторение FSRS для прочной памяти',
     descriptionUz: () => 'Mustahkam xotira uchun FSRS oraliq takrorlash tizimi',
     target: (ctx) => Math.min(10, Math.max(3, ctx.dueCardsCount)),
+    getCurrent: (ctx) => ctx.cardsReviewedToday,
     xpReward: 35,
     icon: 'refresh-cw',
     color: '#D4A745',
@@ -198,6 +216,7 @@ const QUEST_TEMPLATES: QuestTemplate[] = [
     descriptionRu: () => 'Выбери аят в Коране и добавь его в карточки Хифза',
     descriptionUz: () => 'Qur’ondan oyat tanlab, uni Hifz kartalariga qo‘shing',
     target: () => 1,
+    getCurrent: (ctx) => ctx.cardsAddedToday,
     xpReward: 25,
     icon: 'plus-circle',
     color: '#D4A745',
@@ -214,6 +233,7 @@ const QUEST_TEMPLATES: QuestTemplate[] = [
     descriptionRu: () => 'Включи циклический повтор аята в аудиоплеере',
     descriptionUz: () => 'Audioda oyatni ketma-ket 3 marta takrorlab tinglang',
     target: () => 1,
+    getCurrent: (ctx) => (ctx.usedRepeatToday ? 1 : 0),
     xpReward: 20,
     icon: 'repeat',
     color: '#D4A745',
@@ -230,6 +250,7 @@ const QUEST_TEMPLATES: QuestTemplate[] = [
     descriptionRu: () => 'Используй заучивание отрезка аятов в плеере',
     descriptionUz: () => 'Pleyerda oyatlar oralig‘ini belgilab takrorlang',
     target: () => 1,
+    getCurrent: (ctx) => (ctx.usedRangeLoopToday ? 1 : 0),
     xpReward: 30,
     icon: 'shuffle',
     color: '#D4A745',
@@ -248,6 +269,7 @@ const QUEST_TEMPLATES: QuestTemplate[] = [
     descriptionRu: () => 'Ежедневная норма чтения приближает к Аллаху',
     descriptionUz: () => 'Har kungi tilovat ko‘ngilga nur va fayz bag‘ishlaydi',
     target: (ctx) => Math.max(5, ctx.dailyTargetAyahs),
+    getCurrent: (ctx) => ctx.ayahsReadToday,
     xpReward: 30,
     icon: 'book',
     color: '#8B5CF6',
@@ -264,6 +286,7 @@ const QUEST_TEMPLATES: QuestTemplate[] = [
     descriptionRu: () => 'Вдумчиво осмысли сегодняшний вдохновляющий аят',
     descriptionUz: () => 'Bugungi kun oyatini tafakkur bilan o‘qib chiqing',
     target: () => 1,
+    getCurrent: (ctx) => (ctx.readDailyAyahToday ? 1 : 0),
     xpReward: 20,
     icon: 'compass',
     color: '#8B5CF6',
@@ -290,6 +313,7 @@ const QUEST_TEMPLATES: QuestTemplate[] = [
     descriptionRu: () => 'Насладись красивым чтением одного из лучших кари мира',
     descriptionUz: () => 'Dunyoning eng mashhur qorisi tilovatidan bahramand bo‘ling',
     target: () => 1,
+    getCurrent: (ctx) => (ctx.listenedAudioToday ? 1 : 0),
     xpReward: 25,
     icon: 'headphones',
     color: '#8B5CF6',
@@ -306,6 +330,7 @@ const QUEST_TEMPLATES: QuestTemplate[] = [
     descriptionRu: () => 'Сохрани любимый аят для возвращения к нему позже',
     descriptionUz: () => 'Yoqtirgan oyatingizni keyinroq o‘qish uchun saqlab qo‘ying',
     target: () => 1,
+    getCurrent: (ctx) => ctx.bookmarksAddedToday,
     xpReward: 20,
     icon: 'bookmark',
     color: '#8B5CF6',
@@ -344,7 +369,9 @@ export function generateDailyQuests(
 
     const target = template.target(profile, rng);
     const questId = `quest_${pillar}_${profile.todayDateKey}_${template.templateId}`;
-    const isDone = Boolean(completedMap[questId]);
+    const rawCurrent = template.getCurrent(profile);
+    const current = Math.min(target, Math.max(0, rawCurrent));
+    const completed = current >= target || Boolean(completedMap[questId]);
 
     generatedQuests.push({
       id: questId,
@@ -354,9 +381,9 @@ export function generateDailyQuests(
       descriptionRu: template.descriptionRu(profile),
       descriptionUz: template.descriptionUz(profile),
       target,
-      current: isDone ? target : 0,
-      completed: isDone,
-      claimed: isDone,
+      current: completed ? target : current,
+      completed,
+      claimed: completed,
       xpReward: template.xpReward,
       icon: template.icon,
       color: template.color,

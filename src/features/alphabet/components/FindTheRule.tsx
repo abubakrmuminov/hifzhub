@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Platform } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { Feather } from '@expo/vector-icons';
@@ -204,9 +204,15 @@ export const FindTheRule: React.FC<FindTheRuleProps> = ({
                   styles.cardText,
                   isArabic && {
                     fontFamily: fontFamilies.arabic,
-                    fontSize: 32,
+                    fontSize: isSingleLetterGrid ? 28 : 24,
+                    lineHeight: isSingleLetterGrid ? 48 : 40,
                     writingDirection: 'rtl',
                     textAlign: 'center',
+                    ...Platform.select({
+                      android: {
+                        includeFontPadding: true,
+                      },
+                    }),
                   },
                   { color: colors.text },
                 ]}
@@ -328,13 +334,14 @@ const styles = StyleSheet.create({
   cardSingleLetter: {
     width: '22%',
     aspectRatio: 1,
-    minHeight: 68,
+    minHeight: 74,
+    paddingVertical: 4,
   },
   cardWord: {
     width: '47.5%',
-    minHeight: 76,
+    minHeight: 80,
     paddingHorizontal: 12,
-    paddingVertical: 14,
+    paddingVertical: 12,
   },
   badge: {
     position: 'absolute',

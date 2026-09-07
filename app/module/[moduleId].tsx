@@ -110,6 +110,335 @@ const PulsingRings: React.FC<PulsingRingsProps> = ({ color, isHexagon = false })
   );
 };
 
+interface LessonPathRowProps {
+  lesson: Lesson;
+  index: number;
+  isFirst: boolean;
+  isLast: boolean;
+  isCompleted: boolean;
+  isUnlocked: boolean;
+  isCurrent: boolean;
+  isExam: boolean;
+  moduleColor: string;
+  isDark: boolean;
+  textColor: string;
+  textSecondaryColor: string;
+  textTertiaryColor: string;
+  radiusMd: number;
+  onPress: (lesson: Lesson, isUnlocked: boolean) => void;
+  examLabel: string;
+  minutesLabel: string;
+  completedLabel: string;
+  unlockedLabel: string;
+  lockedLabel: string;
+}
+
+const LessonPathRow = React.memo<LessonPathRowProps>(({
+  lesson,
+  index,
+  isFirst,
+  isLast,
+  isCompleted,
+  isUnlocked,
+  isCurrent,
+  isExam,
+  moduleColor,
+  isDark,
+  textColor,
+  textSecondaryColor,
+  textTertiaryColor,
+  radiusMd,
+  onPress,
+  examLabel,
+  minutesLabel,
+  completedLabel,
+  unlockedLabel,
+  lockedLabel,
+}) => {
+  // Connector colors
+  const topConnectorActive = isFirst ? false : isUnlocked;
+  const bottomConnectorActive = isCompleted;
+
+  const activeLineColor = moduleColor;
+  const lockedLineColor = isDark
+    ? 'rgba(255, 255, 255, 0.16)'
+    : 'rgba(0, 0, 0, 0.12)';
+
+  const topColor = topConnectorActive ? activeLineColor : lockedLineColor;
+  const bottomColor = bottomConnectorActive ? activeLineColor : lockedLineColor;
+
+  // Node Colors
+  const nodeFill = isCompleted || isCurrent
+    ? moduleColor
+    : isDark
+    ? 'rgba(255, 255, 255, 0.08)'
+    : 'rgba(0, 0, 0, 0.06)';
+
+  return (
+    <Animated.View
+      entering={FadeInDown.delay(Math.min(index * 45, 600)).duration(380)}
+      style={styles.lessonRowWrapper}
+    >
+      {/* Connected Path Left Column (76px wide) */}
+      <View style={styles.timelineColumn}>
+        {/* Top connector segment */}
+        {!isFirst && (
+          <View style={[styles.connectorSegment, styles.connectorTop]}>
+            <Svg height="100%" width="4">
+              <Line
+                x1="2"
+                y1="0"
+                x2="2"
+                y2="100%"
+                stroke={topColor}
+                strokeWidth="2.5"
+                strokeDasharray="6, 5"
+                strokeLinecap="round"
+              />
+            </Svg>
+          </View>
+        )}
+
+        {/* Bottom connector segment */}
+        {!isLast && (
+          <View style={[styles.connectorSegment, styles.connectorBottom]}>
+            <Svg height="100%" width="4">
+              <Line
+                x1="2"
+                y1="0"
+                x2="2"
+                y2="100%"
+                stroke={bottomColor}
+                strokeWidth="2.5"
+                strokeDasharray="6, 5"
+                strokeLinecap="round"
+              />
+            </Svg>
+          </View>
+        )}
+
+        {/* 64px Node Center Wrapper */}
+        <View style={styles.nodeCenterContainer}>
+          {isCurrent && (
+            <PulsingRings
+              color={moduleColor}
+              isHexagon={isExam}
+            />
+          )}
+
+          <AnimatedPressable
+            onPress={() => onPress(lesson, isUnlocked)}
+            disabled={!isUnlocked}
+            style={[
+              styles.nodePressable,
+              !isUnlocked && styles.lockedNodePressable,
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={`${lesson.title}, ${
+              isCompleted
+                ? completedLabel
+                : isUnlocked
+                ? unlockedLabel
+                : lockedLabel
+            }`}
+          >
+            {isExam ? (
+              /* Exam Hexagon Badge */
+              <View style={styles.hexagonWrapper}>
+                <Svg width={64} height={64} viewBox="0 0 64 64">
+                  <Polygon
+                    points="32,3 59,17 59,47 32,61 5,47 5,17"
+                    fill={nodeFill}
+                  />
+                </Svg>
+                <View style={styles.nodeIconOverlay}>
+                  {isCompleted ? (
+                    <Ionicons name="checkmark" size={28} color="#FFFFFF" />
+                  ) : isCurrent ? (
+                    <Ionicons name="trophy" size={26} color="#FFFFFF" />
+                  ) : (
+                    <Ionicons
+                      name="lock-closed"
+                      size={22}
+                      color={isDark ? '#888899' : '#888888'}
+                    />
+                  )}
+                </View>
+              </View>
+            ) : (
+              /* Standard 64px Circular Node */
+              <View
+                style={[
+                  styles.circleNode,
+                  {
+                    backgroundColor: nodeFill,
+                  },
+                ]}
+              >
+                {isCompleted ? (
+                  <Ionicons name="checkmark" size={28} color="#FFFFFF" />
+                ) : isCurrent ? (
+                  <Ionicons
+                    name="play"
+                    size={26}
+                    color="#FFFFFF"
+                    style={styles.playIconOffset}
+                  />
+                ) : (
+                  <Ionicons
+                    name="lock-closed"
+                    size={22}
+                    color={isDark ? '#888899' : '#888888'}
+                  />
+                )}
+              </View>
+            )}
+          </AnimatedPressable>
+        </View>
+      </View>
+
+      {/* Right Column: Lesson Information Card */}
+      <View style={styles.cardColumn}>
+        <AnimatedPressable
+          onPress={() => onPress(lesson, isUnlocked)}
+          disabled={!isUnlocked}
+          style={[
+            styles.cardPressable,
+            !isUnlocked && styles.lockedCardPressable,
+          ]}
+        >
+          <GlassView
+            borderRadius={radiusMd}
+            style={[
+              styles.lessonCard,
+              isCurrent && {
+                borderColor: isDark
+                  ? `${moduleColor}70`
+                  : `${moduleColor}45`,
+                borderWidth: 1.5,
+              },
+            ]}
+          >
+            <View style={styles.lessonCardInner}>
+              {/* Title Row */}
+              <View style={styles.cardTitleRow}>
+                <Text
+                  style={[
+                    styles.lessonTitle,
+                    {
+                      color: isUnlocked
+                        ? textColor
+                        : textTertiaryColor,
+                    },
+                  ]}
+                  numberOfLines={1}
+                >
+                  {lesson.title}
+                </Text>
+                {isCompleted && (
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={18}
+                    color={moduleColor}
+                  />
+                )}
+              </View>
+
+              {/* Optional Description */}
+              {Boolean(lesson.description) && (
+                <Text
+                  style={[
+                    styles.lessonDescription,
+                    { color: textSecondaryColor },
+                  ]}
+                  numberOfLines={2}
+                >
+                  {lesson.description}
+                </Text>
+              )}
+
+              {/* Metadata Badges Row */}
+              <View style={styles.badgesRow}>
+                {/* Duration Badge */}
+                <View
+                  style={[
+                    styles.badgePill,
+                    {
+                      backgroundColor: isDark
+                        ? 'rgba(255, 255, 255, 0.07)'
+                        : 'rgba(0, 0, 0, 0.04)',
+                    },
+                  ]}
+                >
+                  <Ionicons
+                    name="time-outline"
+                    size={13}
+                    color={textSecondaryColor}
+                  />
+                  <Text
+                    style={[
+                      styles.badgeText,
+                      { color: textSecondaryColor },
+                    ]}
+                  >
+                    {lesson.estimatedMinutes} {minutesLabel}
+                  </Text>
+                </View>
+
+                {/* Golden XP Badge */}
+                <View
+                  style={[
+                    styles.badgePill,
+                    styles.xpBadgePill,
+                    {
+                      backgroundColor: isDark
+                        ? 'rgba(212, 167, 69, 0.18)'
+                        : 'rgba(212, 167, 69, 0.12)',
+                    },
+                  ]}
+                >
+                  <Ionicons name="star" size={13} color="#D4A745" />
+                  <Text style={styles.xpBadgeText}>
+                    +{lesson.xpReward} XP
+                  </Text>
+                </View>
+
+                {/* Exam Badge Tag */}
+                {isExam && (
+                  <View
+                    style={[
+                      styles.badgePill,
+                      {
+                        backgroundColor: isDark
+                          ? `${moduleColor}25`
+                          : `${moduleColor}15`,
+                      },
+                    ]}
+                  >
+                    <Ionicons
+                      name="trophy"
+                      size={12}
+                      color={moduleColor}
+                    />
+                    <Text
+                      style={[
+                        styles.badgeText,
+                        { color: moduleColor, fontWeight: '700' },
+                      ]}
+                    >
+                      {examLabel}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </View>
+          </GlassView>
+        </AnimatedPressable>
+      </View>
+    </Animated.View>
+  );
+});
+
 export default function ModuleDetailScreen() {
   const { moduleId } = useLocalSearchParams<{ moduleId: string }>();
   const router = useRouter();
@@ -138,32 +467,28 @@ export default function ModuleDetailScreen() {
   const completedLessons = useLessonStore((s) => s.completedLessons);
   const isLessonCompleted = useLessonStore((s) => s.isLessonCompleted);
 
-  // Check if a specific lesson is completed
-  const checkLessonCompleted = useCallback(
-    (lessonId: string): boolean => {
-      return Boolean(
-        isLessonCompleted(lessonId) ||
-          completedLessons[lessonId]?.completedAt ||
-          completedLessons[lessonId]?.passed
+  // Single-pass memoized status and completion calculation
+  const { statuses: lessonStatuses, completedCount } = useMemo(() => {
+    let prevCompleted = true;
+    let count = 0;
+    const statuses = lessons.map((lesson, idx) => {
+      const isCompleted = Boolean(
+        isLessonCompleted(lesson.lessonId) ||
+          completedLessons[lesson.lessonId]?.completedAt ||
+          completedLessons[lesson.lessonId]?.passed
       );
-    },
-    [isLessonCompleted, completedLessons]
-  );
-
-  // Unlocked rule: lesson 1 OR previous lesson completed
-  const checkLessonUnlocked = useCallback(
-    (index: number): boolean => {
-      if (index === 0) return true;
-      const prevLesson = lessons[index - 1];
-      return Boolean(prevLesson && checkLessonCompleted(prevLesson.lessonId));
-    },
-    [lessons, checkLessonCompleted]
-  );
-
-  // Progress calculations
-  const completedCount = useMemo(() => {
-    return lessons.filter((l) => checkLessonCompleted(l.lessonId)).length;
-  }, [lessons, checkLessonCompleted]);
+      if (isCompleted) count++;
+      const isUnlocked = idx === 0 || prevCompleted;
+      prevCompleted = isCompleted;
+      return {
+        isCompleted,
+        isUnlocked,
+        isCurrent: isUnlocked && !isCompleted,
+        isExam: Boolean(lesson.isExam || idx === lessons.length - 1),
+      };
+    });
+    return { statuses, completedCount: count };
+  }, [lessons, isLessonCompleted, completedLessons]);
 
   const totalLessons = currentModule.lessonsCount || lessons.length || 1;
   const progressPercent = Math.min(
@@ -357,295 +682,31 @@ export default function ModuleDetailScreen() {
       >
         <View style={styles.timelineList}>
           {lessons.map((lesson, index) => {
-            const isCompleted = checkLessonCompleted(lesson.lessonId);
-            const isUnlocked = checkLessonUnlocked(index);
-            const isCurrent = isUnlocked && !isCompleted;
-            const isExam = Boolean(lesson.isExam || index === lessons.length - 1);
-            const isFirst = index === 0;
-            const isLast = index === lessons.length - 1;
-
-            // Connector colors
-            const topConnectorActive = isFirst ? false : isUnlocked;
-            const bottomConnectorActive = isCompleted;
-
-            const activeLineColor = currentModule.color;
-            const lockedLineColor = isDark
-              ? 'rgba(255, 255, 255, 0.16)'
-              : 'rgba(0, 0, 0, 0.12)';
-
-            const topColor = topConnectorActive ? activeLineColor : lockedLineColor;
-            const bottomColor = bottomConnectorActive ? activeLineColor : lockedLineColor;
-
-            // Node Colors
-            const nodeFill = isCompleted || isCurrent
-              ? currentModule.color
-              : isDark
-              ? 'rgba(255, 255, 255, 0.08)'
-              : 'rgba(0, 0, 0, 0.06)';
-
+            const status = lessonStatuses[index];
             return (
-              <Animated.View
+              <LessonPathRow
                 key={lesson.lessonId}
-                entering={FadeInDown.delay(Math.min(index * 45, 600)).duration(380)}
-                style={styles.lessonRowWrapper}
-              >
-                {/* Connected Path Left Column (76px wide) */}
-                <View style={styles.timelineColumn}>
-                  {/* Top connector segment */}
-                  {!isFirst && (
-                    <View style={[styles.connectorSegment, styles.connectorTop]}>
-                      <Svg height="100%" width="4">
-                        <Line
-                          x1="2"
-                          y1="0"
-                          x2="2"
-                          y2="100%"
-                          stroke={topColor}
-                          strokeWidth="2.5"
-                          strokeDasharray="6, 5"
-                          strokeLinecap="round"
-                        />
-                      </Svg>
-                    </View>
-                  )}
-
-                  {/* Bottom connector segment */}
-                  {!isLast && (
-                    <View style={[styles.connectorSegment, styles.connectorBottom]}>
-                      <Svg height="100%" width="4">
-                        <Line
-                          x1="2"
-                          y1="0"
-                          x2="2"
-                          y2="100%"
-                          stroke={bottomColor}
-                          strokeWidth="2.5"
-                          strokeDasharray="6, 5"
-                          strokeLinecap="round"
-                        />
-                      </Svg>
-                    </View>
-                  )}
-
-                  {/* 64px Node Center Wrapper */}
-                  <View style={styles.nodeCenterContainer}>
-                    {isCurrent && (
-                      <PulsingRings
-                        color={currentModule.color}
-                        isHexagon={isExam}
-                      />
-                    )}
-
-                    <AnimatedPressable
-                      onPress={() => handleLessonPress(lesson, isUnlocked)}
-                      disabled={!isUnlocked}
-                      style={[
-                        styles.nodePressable,
-                        !isUnlocked && styles.lockedNodePressable,
-                      ]}
-                      accessibilityRole="button"
-                      accessibilityLabel={`${lesson.title}, ${
-                        isCompleted
-                          ? t('learn.completed', { defaultValue: 'пройден' })
-                          : isUnlocked
-                          ? t('learn.unlocked', { defaultValue: 'доступен' })
-                          : t('learn.locked', { defaultValue: 'заблокирован' })
-                      }`}
-                    >
-                      {isExam ? (
-                        /* Exam Hexagon Badge */
-                        <View style={styles.hexagonWrapper}>
-                          <Svg width={64} height={64} viewBox="0 0 64 64">
-                            <Polygon
-                              points="32,3 59,17 59,47 32,61 5,47 5,17"
-                              fill={nodeFill}
-                            />
-                          </Svg>
-                          <View style={styles.nodeIconOverlay}>
-                            {isCompleted ? (
-                              <Ionicons name="checkmark" size={28} color="#FFFFFF" />
-                            ) : isCurrent ? (
-                              <Ionicons name="trophy" size={26} color="#FFFFFF" />
-                            ) : (
-                              <Ionicons
-                                name="lock-closed"
-                                size={22}
-                                color={isDark ? '#888899' : '#888888'}
-                              />
-                            )}
-                          </View>
-                        </View>
-                      ) : (
-                        /* Standard 64px Circular Node */
-                        <View
-                          style={[
-                            styles.circleNode,
-                            {
-                              backgroundColor: nodeFill,
-                            },
-                          ]}
-                        >
-                          {isCompleted ? (
-                            <Ionicons name="checkmark" size={28} color="#FFFFFF" />
-                          ) : isCurrent ? (
-                            <Ionicons
-                              name="play"
-                              size={26}
-                              color="#FFFFFF"
-                              style={styles.playIconOffset}
-                            />
-                          ) : (
-                            <Ionicons
-                              name="lock-closed"
-                              size={22}
-                              color={isDark ? '#888899' : '#888888'}
-                            />
-                          )}
-                        </View>
-                      )}
-                    </AnimatedPressable>
-                  </View>
-                </View>
-
-                {/* Right Column: Lesson Information Card */}
-                <View style={styles.cardColumn}>
-                  <AnimatedPressable
-                    onPress={() => handleLessonPress(lesson, isUnlocked)}
-                    disabled={!isUnlocked}
-                    style={[
-                      styles.cardPressable,
-                      !isUnlocked && styles.lockedCardPressable,
-                    ]}
-                  >
-                    <GlassView
-                      borderRadius={radius.md}
-                      style={[
-                        styles.lessonCard,
-                        isCurrent && {
-                          borderColor: isDark
-                            ? `${currentModule.color}70`
-                            : `${currentModule.color}45`,
-                          borderWidth: 1.5,
-                        },
-                      ]}
-                    >
-                      <View style={styles.lessonCardInner}>
-                        {/* Title Row */}
-                        <View style={styles.cardTitleRow}>
-                          <Text
-                            style={[
-                              styles.lessonTitle,
-                              {
-                                color: isUnlocked
-                                  ? colors.text
-                                  : colors.textTertiary,
-                              },
-                            ]}
-                            numberOfLines={1}
-                          >
-                            {lesson.title}
-                          </Text>
-                          {isCompleted && (
-                            <Ionicons
-                              name="checkmark-circle"
-                              size={18}
-                              color={currentModule.color}
-                            />
-                          )}
-                        </View>
-
-                        {/* Optional Description */}
-                        {Boolean(lesson.description) && (
-                          <Text
-                            style={[
-                              styles.lessonDescription,
-                              { color: colors.textSecondary },
-                            ]}
-                            numberOfLines={2}
-                          >
-                            {lesson.description}
-                          </Text>
-                        )}
-
-                        {/* Metadata Badges Row */}
-                        <View style={styles.badgesRow}>
-                          {/* Duration Badge */}
-                          <View
-                            style={[
-                              styles.badgePill,
-                              {
-                                backgroundColor: isDark
-                                  ? 'rgba(255, 255, 255, 0.07)'
-                                  : 'rgba(0, 0, 0, 0.04)',
-                              },
-                            ]}
-                          >
-                            <Ionicons
-                              name="time-outline"
-                              size={13}
-                              color={colors.textSecondary}
-                            />
-                            <Text
-                              style={[
-                                styles.badgeText,
-                                { color: colors.textSecondary },
-                              ]}
-                            >
-                              {lesson.estimatedMinutes} {t('learn.minutes', { defaultValue: 'мин' })}
-                            </Text>
-                          </View>
-
-                          {/* Golden XP Badge */}
-                          <View
-                            style={[
-                              styles.badgePill,
-                              styles.xpBadgePill,
-                              {
-                                backgroundColor: isDark
-                                  ? 'rgba(212, 167, 69, 0.18)'
-                                  : 'rgba(212, 167, 69, 0.12)',
-                              },
-                            ]}
-                          >
-                            <Ionicons name="star" size={13} color="#D4A745" />
-                            <Text style={styles.xpBadgeText}>
-                              +{lesson.xpReward} XP
-                            </Text>
-                          </View>
-
-                          {/* Exam Badge Tag */}
-                          {isExam && (
-                            <View
-                              style={[
-                                styles.badgePill,
-                                {
-                                  backgroundColor: isDark
-                                    ? `${currentModule.color}25`
-                                    : `${currentModule.color}15`,
-                                },
-                              ]}
-                            >
-                              <Ionicons
-                                name="trophy"
-                                size={12}
-                                color={currentModule.color}
-                              />
-                              <Text
-                                style={[
-                                  styles.badgeText,
-                                  { color: currentModule.color, fontWeight: '700' },
-                                ]}
-                              >
-                                {t('learn.exam', { defaultValue: 'Экзамен' })}
-                              </Text>
-                            </View>
-                          )}
-                        </View>
-                      </View>
-                    </GlassView>
-                  </AnimatedPressable>
-                </View>
-              </Animated.View>
+                lesson={lesson}
+                index={index}
+                isFirst={index === 0}
+                isLast={index === lessons.length - 1}
+                isCompleted={status?.isCompleted ?? false}
+                isUnlocked={status?.isUnlocked ?? false}
+                isCurrent={status?.isCurrent ?? false}
+                isExam={status?.isExam ?? false}
+                moduleColor={currentModule.color}
+                isDark={isDark}
+                textColor={colors.text}
+                textSecondaryColor={colors.textSecondary}
+                textTertiaryColor={colors.textTertiary}
+                radiusMd={radius.md}
+                onPress={handleLessonPress}
+                examLabel={t('learn.exam', { defaultValue: 'Экзамен' })}
+                minutesLabel={t('learn.minutes', { defaultValue: 'мин' })}
+                completedLabel={t('learn.completed', { defaultValue: 'пройден' })}
+                unlockedLabel={t('learn.unlocked', { defaultValue: 'доступен' })}
+                lockedLabel={t('learn.locked', { defaultValue: 'заблокирован' })}
+              />
             );
           })}
         </View>

@@ -147,21 +147,31 @@ export const FloatingAudioPlayer: React.FC<FloatingAudioPlayerProps> = ({
     opacity: opacity.value,
   }));
 
+  React.useEffect(() => {
+    if (currentTrack) {
+      translateY.value = withTiming(0, { duration: 200 });
+      opacity.value = withTiming(1, { duration: 200 });
+      isClosing.current = false;
+    }
+  }, [currentTrack]);
+
   const handleClose = () => {
     if (isClosing.current) return;
     isClosing.current = true;
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
-    translateY.value = withTiming(100, { duration: 240 });
-    opacity.value = withTiming(0, { duration: 240 });
+    translateY.value = withTiming(100, { duration: 200 });
+    opacity.value = withTiming(0, { duration: 200 });
 
     setTimeout(async () => {
       await stopAudio();
-      translateY.value = 0;
-      opacity.value = 1;
       isClosing.current = false;
-    }, 250);
+    }, 220);
   };
+
+  if (!currentTrack) {
+    return null;
+  }
 
   return (
     <Animated.View

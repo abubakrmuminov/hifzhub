@@ -58,16 +58,24 @@ export const useLessonContentStore = create<LessonContentState>((set, get) => ({
       }
 
       for (const lesson of allLessons) {
-        lessonsById[lesson.lessonId] = lesson;
-        if (!lessonsByModule[lesson.moduleId]) {
-          lessonsByModule[lesson.moduleId] = [];
+        const modId =
+          typeof lesson.moduleId === 'number'
+            ? lesson.moduleId
+            : parseInt(String(lesson.moduleId).replace(/\D/g, ''), 10) || 1;
+        const normalizedLesson = { ...lesson, moduleId: modId };
+        lessonsById[lesson.lessonId] = normalizedLesson;
+        if (!lessonsByModule[modId]) {
+          lessonsByModule[modId] = [];
         }
-        lessonsByModule[lesson.moduleId].push(lesson);
+        lessonsByModule[modId].push(normalizedLesson);
       }
 
       // Sort lessons in each module by order
       for (const modId of Object.keys(lessonsByModule)) {
-        lessonsByModule[Number(modId)].sort((a, b) => a.order - b.order);
+        const numId = Number(modId);
+        if (Array.isArray(lessonsByModule[numId])) {
+          lessonsByModule[numId].sort((a, b) => a.order - b.order);
+        }
       }
 
       set({

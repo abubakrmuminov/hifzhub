@@ -4,6 +4,8 @@ export interface MemorizationCard {
   surahId: number;
   ayahNumber: number;
   arabicText: string;
+  page?: number;
+  juz?: number;
   translationRu?: string;
   translationUz?: string;
   // FSRS scheduling state
@@ -72,6 +74,8 @@ export interface AyahToMemorizeInput {
   surahId: number;
   ayahNumber: number;
   arabicText: string;
+  page?: number;
+  juz?: number;
   translationRu?: string;
   translationUz?: string;
 }

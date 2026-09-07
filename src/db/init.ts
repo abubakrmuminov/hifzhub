@@ -99,6 +99,9 @@ export const initDatabaseTables = (sqliteDb: SQLite.SQLiteDatabase): void => {
     CREATE INDEX IF NOT EXISTS idx_ayahs_surah_id ON ayahs(surah_id);
     CREATE INDEX IF NOT EXISTS idx_ayahs_surah_num ON ayahs(surah_id, ayah_number);
     CREATE INDEX IF NOT EXISTS idx_translations_ayah_lang ON translations(ayah_id, language);
+    CREATE INDEX IF NOT EXISTS idx_translations_lang ON translations(language);
+    CREATE INDEX IF NOT EXISTS idx_ayahs_page ON ayahs(page);
+    CREATE INDEX IF NOT EXISTS idx_ayahs_juz ON ayahs(juz);
   `);
 
   const surahCountResult = sqliteDb.getFirstSync<{ count: number }>(
@@ -106,26 +109,29 @@ export const initDatabaseTables = (sqliteDb: SQLite.SQLiteDatabase): void => {
   );
 
   if (!surahCountResult || surahCountResult.count === 0) {
+    const tStartSurahs = performance.now();
     sqliteDb.withTransactionSync(() => {
-      const insertSurah = sqliteDb.prepareSync(
-        'INSERT OR REPLACE INTO surahs (id, name_arabic, name_translation, revelation_type, ayah_count, juz_start, page_start) VALUES (?, ?, ?, ?, ?, ?, ?);'
-      );
-      try {
-        for (const s of SURAHS_DATA) {
-          insertSurah.executeSync([
+      const BATCH = 50;
+      for (let i = 0; i < SURAHS_DATA.length; i += BATCH) {
+        const chunk = SURAHS_DATA.slice(i, i + BATCH);
+        const placeholders = chunk.map(() => '(?, ?, ?, ?, ?, ?, ?)').join(', ');
+        const sql = `INSERT OR REPLACE INTO surahs (id, name_arabic, name_translation, revelation_type, ayah_count, juz_start, page_start) VALUES ${placeholders};`;
+        const params: any[] = [];
+        for (const s of chunk) {
+          params.push(
             s.id,
             s.nameArabic,
             s.nameTranslation,
             s.revelationType,
             s.ayahCount,
             s.juzStart,
-            s.pageStart,
-          ]);
+            s.pageStart
+          );
         }
-      } finally {
-        insertSurah.finalizeSync();
+        sqliteDb.runSync(sql, params);
       }
     });
+    console.log(`[DB Init] Seeded surahs in ${(performance.now() - tStartSurahs).toFixed(2)} ms`);
   }
 
   const ayahCountResult = sqliteDb.getFirstSync<{ count: number }>(
@@ -133,16 +139,19 @@ export const initDatabaseTables = (sqliteDb: SQLite.SQLiteDatabase): void => {
   );
 
   if (!ayahCountResult || ayahCountResult.count < 6236) {
+    const tStartAyahs = performance.now();
     const fullAyahs = require('../../assets/data/quran-full-ayahs.json');
     const fullTranslations = require('../../assets/data/quran-full-translations.json');
 
     sqliteDb.withTransactionSync(() => {
-      const insertAyah = sqliteDb.prepareSync(
-        'INSERT OR REPLACE INTO ayahs (id, surah_id, ayah_number, text_uthmani, text_tajweed, juz, hizb, page) VALUES (?, ?, ?, ?, ?, ?, ?, ?);'
-      );
-      try {
-        for (const a of fullAyahs) {
-          insertAyah.executeSync([
+      const BATCH = 200;
+      for (let i = 0; i < fullAyahs.length; i += BATCH) {
+        const chunk = fullAyahs.slice(i, i + BATCH);
+        const placeholders = chunk.map(() => '(?, ?, ?, ?, ?, ?, ?, ?)').join(', ');
+        const sql = `INSERT OR REPLACE INTO ayahs (id, surah_id, ayah_number, text_uthmani, text_tajweed, juz, hizb, page) VALUES ${placeholders};`;
+        const params: any[] = [];
+        for (const a of chunk) {
+          params.push(
             a.id,
             a.surahId,
             a.ayahNumber,
@@ -150,30 +159,24 @@ export const initDatabaseTables = (sqliteDb: SQLite.SQLiteDatabase): void => {
             a.textTajweed ?? null,
             a.juz,
             a.hizb,
-            a.page,
-          ]);
+            a.page
+          );
         }
-      } finally {
-        insertAyah.finalizeSync();
+        sqliteDb.runSync(sql, params);
       }
 
-      const insertTranslation = sqliteDb.prepareSync(
-        'INSERT OR REPLACE INTO translations (id, ayah_id, language, translator, text) VALUES (?, ?, ?, ?, ?);'
-      );
-      try {
-        for (const t of fullTranslations) {
-          insertTranslation.executeSync([
-            t.id,
-            t.ayahId,
-            t.language,
-            t.translator,
-            t.text,
-          ]);
+      for (let i = 0; i < fullTranslations.length; i += BATCH) {
+        const chunk = fullTranslations.slice(i, i + BATCH);
+        const placeholders = chunk.map(() => '(?, ?, ?, ?, ?)').join(', ');
+        const sql = `INSERT OR REPLACE INTO translations (id, ayah_id, language, translator, text) VALUES ${placeholders};`;
+        const params: any[] = [];
+        for (const t of chunk) {
+          params.push(t.id, t.ayahId, t.language, t.translator, t.text);
         }
-      } finally {
-        insertTranslation.finalizeSync();
+        sqliteDb.runSync(sql, params);
       }
     });
+    console.log(`[DB Init] Seeded 6236 ayahs & 12472 translations in ${(performance.now() - tStartAyahs).toFixed(2)} ms`);
   }
 
   isDbInitialized = true;
@@ -189,6 +192,9 @@ export const getPersistentSqliteDb = (): SQLite.SQLiteDatabase => {
     persistentSqliteDb = SQLite.openDatabaseSync('hifzhub.db');
     try {
       persistentSqliteDb.execSync('PRAGMA journal_mode = WAL;');
+      persistentSqliteDb.execSync('PRAGMA synchronous = NORMAL;');
+      persistentSqliteDb.execSync('PRAGMA temp_store = MEMORY;');
+      persistentSqliteDb.execSync('PRAGMA cache_size = -64000;');
     } catch {}
     try {
       persistentSqliteDb.execSync('PRAGMA foreign_keys = ON;');

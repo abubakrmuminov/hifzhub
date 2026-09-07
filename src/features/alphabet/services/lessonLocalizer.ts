@@ -138,25 +138,56 @@ export const localizeStep = (step: RawLessonStep | LessonStep, lang: string = 'r
 };
 
 /**
- * Creates a localized clone of a Lesson with all text fields resolved for the current language.
+ * Creates a lightweight localized clone of a Lesson for timeline / list display,
+ * resolving only header metadata and keeping steps intact without deep traversal.
  */
-export const localizeLesson = (lesson: RawLesson | Lesson, lang: string = 'ru'): Lesson => {
+export const localizeLessonSummary = (lesson: RawLesson | Lesson, lang: string = 'ru'): Lesson => {
   return {
     ...lesson,
     moduleTitle: resolveLocalizedString(lesson.moduleTitle, lang),
     title: resolveLocalizedString(lesson.title, lang),
     description: resolveLocalizedString(lesson.description, lang),
-    steps: lesson.steps.map((st) => localizeStep(st, lang)),
+    steps: (lesson.steps || []) as LessonStep[],
   };
 };
+
+const localizedLessonCache = new Map<string, Lesson>();
+
+/**
+ * Creates a localized clone of a Lesson with all text fields resolved for the current language.
+ * Uses an in-memory cache to guarantee 0ms instant retrieval on subsequent opens.
+ */
+export const localizeLesson = (lesson: RawLesson | Lesson, lang: string = 'ru'): Lesson => {
+  const cacheKey = `${lesson.lessonId}_${lang}_${(lesson as any).version || 1}`;
+  const cached = localizedLessonCache.get(cacheKey);
+  if (cached) return cached;
+
+  const localized: Lesson = {
+    ...lesson,
+    moduleTitle: resolveLocalizedString(lesson.moduleTitle, lang),
+    title: resolveLocalizedString(lesson.title, lang),
+    description: resolveLocalizedString(lesson.description, lang),
+    steps: (lesson.steps || []).map((st) => localizeStep(st, lang)),
+  };
+  localizedLessonCache.set(cacheKey, localized);
+  return localized;
+};
+
+const localizedModuleCache = new Map<string, LessonModule>();
 
 /**
  * Creates a localized clone of a LessonModule for display in lists.
  */
 export const localizeModule = (module: RawLessonModule | LessonModule, lang: string = 'ru'): LessonModule => {
-  return {
+  const cacheKey = `${module.moduleId}_${lang}_${(module as any).version || 1}`;
+  const cached = localizedModuleCache.get(cacheKey);
+  if (cached) return cached;
+
+  const localized: LessonModule = {
     ...module,
     moduleTitle: resolveLocalizedString(module.moduleTitle, lang),
     moduleDescription: resolveLocalizedString(module.moduleDescription, lang),
   };
+  localizedModuleCache.set(cacheKey, localized);
+  return localized;
 };

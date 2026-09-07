@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useCallback } from 'react';
 import { useLessonContentStore } from '@/stores/lessonContentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { localizeLesson, localizeModule } from '../services/lessonLocalizer';
+import { localizeLesson, localizeLessonSummary, localizeModule } from '../services/lessonLocalizer';
 import { lessonContentService } from '../services/lessonContentService';
 import type {
   Lesson,
@@ -43,6 +43,7 @@ export const useLessonModules = () => {
 
 /**
  * Hook to get detail and lessons for a specific module, localized for the current language.
+ * Uses lightweight lesson summaries for timeline rendering to guarantee 0ms screen opening.
  */
 export const useModuleDetail = (moduleId: number) => {
   const modules = useLessonContentStore((s) => s.modules);
@@ -77,7 +78,7 @@ export const useModuleDetail = (moduleId: number) => {
   }, [lessonsByModule, moduleId]);
 
   const localizedLessons = useMemo(() => {
-    return rawLessons.map((l) => localizeLesson(l, language));
+    return rawLessons.map((l) => localizeLessonSummary(l, language));
   }, [rawLessons, language]);
 
   return {
@@ -110,7 +111,15 @@ export const useLessonDetail = (lessonId: string) => {
     if (lessonsById[lessonId]) {
       return lessonsById[lessonId];
     }
-    // Synchronous fallback lookup across bundled lessons
+    // Fast-path: targeted lookup using module prefix if available, e.g. m1_l1 -> module 1
+    const match = lessonId.match(/^m(\d+)_/);
+    if (match) {
+      const targetModId = Number(match[1]);
+      const list = lessonContentService.getBundledLessons(targetModId);
+      const found = list.find((l) => l.lessonId === lessonId);
+      if (found) return found;
+    }
+    // Fallback lookup across bundled lessons
     for (const modId of [1, 2, 3, 4, 5]) {
       const bundled = lessonContentService.getBundledLessons(modId);
       const found = bundled.find((l) => l.lessonId === lessonId);

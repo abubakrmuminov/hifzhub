@@ -9,6 +9,7 @@ import { useTheme } from '@/shared/theme';
 import { GlassView } from '@/shared/components/GlassView';
 import { AnimatedPressable } from '@/shared/components/AnimatedPressable';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { useProgressStore } from '@/stores/progressStore';
 import { playAyah } from '@/features/audio';
 
 import { getDailyAyah } from '../data/dailyAyahData';
@@ -37,8 +38,18 @@ export const HomeAyahOfTheDay: React.FC<HomeAyahOfTheDayProps> = () => {
   const themeTag =
     language === 'uz' ? dailyAyah.themeUz : dailyAyah.themeRu;
 
+  React.useEffect(() => {
+    // Automatically count reflecting on today's ayah
+    try {
+      useProgressStore.getState().recordDailyActivity('readDailyAyah');
+    } catch {}
+  }, []);
+
   const handleRead = () => {
     void Haptics.selectionAsync();
+    try {
+      useProgressStore.getState().recordDailyActivity('readDailyAyah');
+    } catch {}
     router.push({
       pathname: '/surah/[id]',
       params: { id: String(surahId) },
@@ -47,6 +58,10 @@ export const HomeAyahOfTheDay: React.FC<HomeAyahOfTheDayProps> = () => {
 
   const handleListen = async () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    try {
+      useProgressStore.getState().recordDailyActivity('readDailyAyah');
+      useProgressStore.getState().recordDailyActivity('listenedAudio');
+    } catch {}
     await playAyah(surahId, ayahNumber, defaultReciter);
   };
 

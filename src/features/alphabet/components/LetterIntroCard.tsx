@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Platform } from 'react-native';
 import Animated, { ZoomIn, FadeInRight } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from 'react-i18next';
@@ -389,10 +389,16 @@ const styles = StyleSheet.create({
     height: 44,
   },
   arabicLetter: {
-    fontSize: 88,
-    lineHeight: 110,
+    fontSize: 78,
+    lineHeight: 122,
     textAlign: 'center',
     writingDirection: 'rtl',
+    paddingVertical: 4,
+    ...Platform.select({
+      android: {
+        includeFontPadding: true,
+      },
+    }),
   },
   speakerCircle: {
     width: 44,
@@ -476,15 +482,20 @@ const styles = StyleSheet.create({
   formMiniCard: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 4,
-    minHeight: 84,
+    minHeight: 90,
   },
   formArabic: {
-    fontSize: 36,
-    lineHeight: 46,
+    fontSize: 30,
+    lineHeight: 50,
     textAlign: 'center',
     writingDirection: 'rtl',
+    ...Platform.select({
+      android: {
+        includeFontPadding: true,
+      },
+    }),
   },
   formLabel: {
     fontSize: 10,

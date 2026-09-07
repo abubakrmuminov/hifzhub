@@ -347,11 +347,16 @@ const styles = StyleSheet.create({
     marginBottom: 36,
   },
   arabicText: {
-    fontSize: 40,
+    fontSize: 38,
     writingDirection: 'rtl',
     textAlign: 'center',
-    lineHeight: 64,
+    lineHeight: 66,
     marginBottom: 12,
+    ...Platform.select({
+      android: {
+        includeFontPadding: true,
+      },
+    }),
   },
   transliterationContainer: {
     minHeight: 34,

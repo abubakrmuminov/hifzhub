@@ -340,25 +340,27 @@ export default function MemorizationSessionScreen() {
       )}
 
       {/* Main Interactive Stage Area */}
-      <ScrollView
-        style={styles.scrollArea}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingHorizontal: spacing.md, paddingVertical: spacing.sm },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.modeContainer}>
-          {sessionMode === 'mushaf' ? (
-            <MushafBlindTrainer
-              cards={allSessionCards}
-              surahName={surahName}
-              surahId={currentSurah?.id || allSessionCards[0]?.surahId || 1}
-              onFinishSession={handleFinishMushaf}
-              onSwitchToDrillMode={() => handleSwitchMode('drill')}
-            />
-          ) : (
-            currentCard && (
+      {sessionMode === 'mushaf' ? (
+        <View style={{ flex: 1 }}>
+          <MushafBlindTrainer
+            cards={allSessionCards}
+            surahName={surahName}
+            surahId={currentSurah?.id || allSessionCards[0]?.surahId || 1}
+            onFinishSession={handleFinishMushaf}
+            onSwitchToDrillMode={() => handleSwitchMode('drill')}
+          />
+        </View>
+      ) : (
+        <ScrollView
+          style={styles.scrollArea}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingHorizontal: spacing.md, paddingVertical: spacing.sm },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.modeContainer}>
+            {currentCard && (
               <Animated.View
                 key={`${currentCard.id}_${trainingStage}`}
                 entering={FadeInDown.duration(350)}
@@ -402,10 +404,10 @@ export default function MemorizationSessionScreen() {
                   />
                 )}
               </Animated.View>
-            )
-          )}
-        </View>
-      </ScrollView>
+            )}
+          </View>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }

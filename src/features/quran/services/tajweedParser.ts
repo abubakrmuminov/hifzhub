@@ -526,6 +526,11 @@ function isTafkheemRa(followingDiacritics: string): boolean {
   return followingDiacritics.includes('\u064E') || followingDiacritics.includes('\u064F');
 }
 
+// In-memory caches for high-performance zero-lag rendering
+const tajweedTextSegmentsCache = new Map<string, TajweedSegment[]>();
+const tajweedWordCache = new Map<string, TajweedWord>();
+const tajweedWordsCache = new Map<string, TajweedWord[]>();
+
 /**
  * Parses raw tagged Tajweed text into structured segments with rule metadata.
  * Normalizes obsolete glyphs (U+0672 -> U+0670), fixes orphan combining diacritics,
@@ -534,6 +539,8 @@ function isTafkheemRa(followingDiacritics: string): boolean {
  */
 export function parseTajweedText(rawText: string): TajweedSegment[] {
   if (!rawText) return [];
+  const cached = tajweedTextSegmentsCache.get(rawText);
+  if (cached) return cached;
 
   // 1. Normalize obsolete or problematic glyphs:
   // - U+0672 (wavy alef rendered as orange emoji circle on Android) -> U+0670 (standard dagger alef)
@@ -732,6 +739,7 @@ export function parseTajweedText(rawText: string): TajweedSegment[] {
     return { ...seg, text };
   });
 
+  tajweedTextSegmentsCache.set(rawText, segments);
   return segments;
 }
 
@@ -831,15 +839,20 @@ export function cleanTajweedWord(rawWord: string): string {
  * providing precise letter-level fragments matching physical Tajweed mushafs.
  */
 export function parseTajweedWord(rawWord: string): TajweedWord {
+  const cached = tajweedWordCache.get(rawWord);
+  if (cached) return cached;
+
   const cleanWord = cleanTajweedWord(rawWord);
   if (!rawWord.includes('[')) {
-    return {
+    const plainResult: TajweedWord = {
       text: cleanWord,
       ruleCode: null,
       rule: null,
       allRules: [],
       fragments: [{ text: cleanWord, ruleCode: null, rule: null }],
     };
+    tajweedWordCache.set(rawWord, plainResult);
+    return plainResult;
   }
 
   const normalized = rawWord
@@ -939,13 +952,15 @@ export function parseTajweedWord(rawWord: string): TajweedWord {
   const uniqueActiveCodes = Array.from(new Set(activeCodesInWord));
   const allRules = uniqueActiveCodes.map((c) => TAJWEED_RULES[c]).filter(Boolean);
 
-  return {
+  const wordResult: TajweedWord = {
     text: cleanWord,
     ruleCode: topRuleCode,
     rule: primaryRule,
     allRules,
     fragments,
   };
+  tajweedWordCache.set(rawWord, wordResult);
+  return wordResult;
 }
 
 /**
@@ -953,8 +968,12 @@ export function parseTajweedWord(rawWord: string): TajweedWord {
  */
 export function parseTajweedWords(rawText: string): TajweedWord[] {
   if (!rawText) return [];
+  const cached = tajweedWordsCache.get(rawText);
+  if (cached) return cached;
   const rawWords = rawText.trim().split(/\s+/);
-  return rawWords.map((rawWord) => parseTajweedWord(rawWord));
+  const result = rawWords.map((rawWord) => parseTajweedWord(rawWord));
+  tajweedWordsCache.set(rawText, result);
+  return result;
 }
 
 /**

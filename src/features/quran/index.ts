@@ -11,6 +11,7 @@ export * from './components/AyahActionBar';
 export * from './components/TajweedInfoModal';
 export * from './components/TajweedLegendModal';
 export * from './services/tajweedParser';
+export * from './services/pagePreloader';
 export * from './hooks/useSurahs';
 export * from './hooks/useAyahs';
 export * from './utils/quranUtils';

@@ -357,14 +357,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   exampleArabicLead: {
-    fontSize: 40,
-    lineHeight: 56,
+    fontSize: 36,
+    lineHeight: 58,
     textAlign: 'center',
     writingDirection: 'rtl',
     marginBottom: 6,
     ...Platform.select({
       android: {
-        includeFontPadding: false,
+        includeFontPadding: true,
       },
     }),
   },
@@ -377,13 +377,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1,
   },
   exampleArabic: {
-    fontSize: 34,
-    lineHeight: 52,
+    fontSize: 32,
+    lineHeight: 54,
     textAlign: 'center',
     writingDirection: 'rtl',
     ...Platform.select({
       android: {
-        includeFontPadding: false,
+        includeFontPadding: true,
       },
     }),
   },

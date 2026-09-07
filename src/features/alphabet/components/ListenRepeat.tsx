@@ -317,10 +317,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   arabicText: {
-    fontSize: 36,
+    fontSize: 34,
     writingDirection: 'rtl',
     textAlign: 'center',
-    lineHeight: 52,
+    lineHeight: 56,
+    ...Platform.select({
+      android: {
+        includeFontPadding: true,
+      },
+    }),
   },
   transliterationText: {
     fontSize: 14,
