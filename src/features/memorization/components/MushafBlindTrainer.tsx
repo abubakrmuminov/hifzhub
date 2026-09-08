@@ -5,14 +5,11 @@ import {
   Pressable,
   StyleSheet,
   useWindowDimensions,
-  FlatList,
   ScrollView,
-  type NativeSyntheticEvent,
-  type NativeScrollEvent,
-  type ViewToken,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
+import PagerView from 'react-native-pager-view';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/shared/theme';
 import { AnimatedPressable } from '@/shared/components';
@@ -211,7 +208,7 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
   const [peekedKeys, setPeekedKeys] = useState<Set<string>>(new Set());
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
-  const flatListRef = useRef<FlatList<MushafTrainerPageData>>(null);
+  const trainerPagerRef = useRef<PagerView>(null);
 
   // Group cards into authentic Medina pages
   const pages = useMemo<MushafTrainerPageData[]>(() => {
@@ -324,10 +321,7 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
     );
     if (pageIdx !== -1 && pageIdx !== currentPageIndex) {
       try {
-        flatListRef.current?.scrollToIndex({
-          index: pageIdx,
-          animated: true,
-        });
+        trainerPagerRef.current?.setPage(pageIdx);
         setCurrentPageIndex(pageIdx);
       } catch {}
     }
@@ -384,42 +378,18 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
     });
   }, [isStorePlaying, cards, defaultReciter]);
 
-  const getPageItemLayout = useCallback(
-    (_: any, index: number) => ({
-      length: windowWidth,
-      offset: index * windowWidth,
-      index,
-    }),
-    [windowWidth]
-  );
-
   const handleFlipPage = useCallback(
     (direction: 'prev' | 'next') => {
       const targetIdx =
         direction === 'next' ? currentPageIndex + 1 : currentPageIndex - 1;
       if (targetIdx >= 0 && targetIdx < pages.length) {
         void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        flatListRef.current?.scrollToIndex({
-          index: targetIdx,
-          animated: true,
-        });
+        trainerPagerRef.current?.setPage(targetIdx);
         setCurrentPageIndex(targetIdx);
       }
     },
     [currentPageIndex, pages.length]
   );
-
-  const onTrainerPagesViewableChanged = useRef(
-    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
-      if (viewableItems.length > 0 && viewableItems[0].index != null) {
-        setCurrentPageIndex(viewableItems[0].index);
-      }
-    }
-  ).current;
-
-  const trainerViewabilityConfig = useRef({
-    viewAreaCoveragePercentThreshold: 50,
-  }).current;
 
   const renderPageItem = useCallback(
     ({ item }: { item: MushafTrainerPageData }) => {
@@ -767,25 +737,26 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
       </View>
 
       {/* 3. Horizontal Medina Book Pager (1 Page per screen, Authentic RTL, 60fps) */}
-      <FlatList<MushafTrainerPageData>
-        ref={flatListRef}
-        data={pages}
-        renderItem={renderPageItem}
-        keyExtractor={(item) => `mushaf-trainer-page-${item.pageNumber}`}
-        getItemLayout={getPageItemLayout}
-        horizontal={true}
-        pagingEnabled={true}
-        inverted={true}
-        showsHorizontalScrollIndicator={false}
-        onViewableItemsChanged={onTrainerPagesViewableChanged}
-        viewabilityConfig={trainerViewabilityConfig}
-        initialNumToRender={pages.length > 0 ? Math.min(pages.length, 2) : 1}
-        maxToRenderPerBatch={2}
-        windowSize={3}
-        removeClippedSubviews={false}
-        overScrollMode="never"
+      <PagerView
+        ref={trainerPagerRef}
         style={{ flex: 1 }}
-      />
+        initialPage={0}
+        layoutDirection="rtl"
+        offscreenPageLimit={2}
+        onPageSelected={(e) => {
+          setCurrentPageIndex(e.nativeEvent.position);
+        }}
+      >
+        {pages.map((item) => (
+          <View
+            key={`mushaf-trainer-page-${item.pageNumber}`}
+            style={{ flex: 1, width: windowWidth }}
+            collapsable={false}
+          >
+            {renderPageItem({ item })}
+          </View>
+        ))}
+      </PagerView>
 
       {/* 4. Bottom Medina Book Navigation Bar (Authentic RTL: Left advances Next, Right goes Prev) */}
       <View style={styles.bottomNavRow}>

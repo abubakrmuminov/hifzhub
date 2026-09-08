@@ -3,6 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
+  Platform,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
@@ -83,15 +84,27 @@ export const MushafView = React.memo<MushafViewProps>(
       ? ayahs.filter((a) => a.surahId >= startAyah!.surahId)
       : ayahs;
 
+    // Precompute and memoize Tajweed segments for all ayahs on this page
+    const ayahSegmentsMap = useMemo(() => {
+      const map = new Map<number, TajweedSegment[]>();
+      for (const a of ayahs) {
+        map.set(
+          a.id,
+          showTajweed
+            ? getAyahTajweedSegments(a.surahId, a.ayahNumber, a.textUthmani)
+            : [{ text: a.textUthmani }]
+        );
+      }
+      return map;
+    }, [ayahs, showTajweed]);
+
     const renderAyahText = (ayah: Ayah) => {
       const isSelected = selectedAyahId === ayah.id;
       const isPlaying =
         playingAyahNumber != null && playingAyahNumber === ayah.ayahNumber;
       const isActive = isPlaying || activeAyahNumber === ayah.ayahNumber;
 
-      const segments: TajweedSegment[] = showTajweed
-        ? getAyahTajweedSegments(ayah.surahId, ayah.ayahNumber, ayah.textUthmani)
-        : [{ text: ayah.textUthmani }];
+      const segments = ayahSegmentsMap.get(ayah.id) || [{ text: ayah.textUthmani }];
 
       return (
         <Text
@@ -356,7 +369,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   continuousText: {
-    textAlign: 'justify',
+    textAlign: Platform.OS === 'ios' ? 'justify' : 'right',
     writingDirection: 'rtl',
   },
   ayahSpan: {},
