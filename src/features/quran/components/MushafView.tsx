@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
@@ -59,9 +58,11 @@ export const MushafView = React.memo<MushafViewProps>(
       [surahId]
     );
 
-    // Dynamic line height for Quranic text
-    const textFontSize = Math.min(fontSize, 25);
-    const lineHeight = Math.round(textFontSize * 2.2);
+    // Calculate adaptive font size and line height so all 15 Medina lines fit cleanly
+    const availableHeight = height ? height - 90 : 540;
+    const targetLineHeight = Math.max(26, Math.min(Math.floor(availableHeight / 15.5), 44));
+    const textFontSize = Math.min(fontSize, Math.round(targetLineHeight / 1.75));
+    const lineHeight = targetLineHeight;
 
     const handleRulePress = (rule: TajweedRuleInfo, matchedText: string) => {
       if (!onPressRule) return;
@@ -136,11 +137,6 @@ export const MushafView = React.memo<MushafViewProps>(
             return (
               <Text
                 key={sIdx}
-                onPress={
-                  isRule && onPressRule
-                    ? () => handleRulePress(seg.rule!, seg.text)
-                    : undefined
-                }
                 suppressHighlighting={true}
                 style={{
                   color: ruleColor,
@@ -222,11 +218,7 @@ export const MushafView = React.memo<MushafViewProps>(
           />
 
           {/* Main Book Page Content */}
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
-            bounces={false}
-          >
+          <View style={styles.scrollContent}>
             {/* Any ayahs before new Surah starts */}
             {ayahsBeforeStart.length > 0 ? (
               <Text
@@ -302,7 +294,7 @@ export const MushafView = React.memo<MushafViewProps>(
             >
               {ayahsFromStart.map(renderAyahText)}
             </Text>
-          </ScrollView>
+          </View>
 
           {/* Bottom Medina Page Footer */}
           <View
@@ -359,9 +351,9 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   scrollContent: {
-    flexGrow: 1,
+    flex: 1,
     justifyContent: 'center',
-    paddingVertical: 8,
+    paddingVertical: 4,
   },
   continuousText: {
     textAlign: 'justify',

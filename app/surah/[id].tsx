@@ -8,6 +8,7 @@ import {
   Platform,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
+  type ViewToken,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -515,32 +516,36 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
         const firstAyahOfPage = mushafPages[targetIdx]?.ayahs[0];
         if (firstAyahOfPage) {
           setLastRead(surahId, firstAyahOfPage.ayahNumber);
-          recordAyahRead(1);
         }
       }
     },
-    [currentMushafPageIndex, mushafPages, surahId, setLastRead, recordAyahRead]
+    [currentMushafPageIndex, mushafPages, surahId, setLastRead]
   );
 
-  const handleMushafPageScrollEnd = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const offsetX = event.nativeEvent.contentOffset.x;
-      const pageIdx = Math.round(offsetX / windowWidth);
-      if (
-        pageIdx >= 0 &&
-        pageIdx < mushafPages.length &&
-        pageIdx !== currentMushafPageIndex
-      ) {
+  const mushafPagesRef = useRef(mushafPages);
+  mushafPagesRef.current = mushafPages;
+  const surahIdRef = useRef(surahId);
+  surahIdRef.current = surahId;
+  const setLastReadRef = useRef(setLastRead);
+  setLastReadRef.current = setLastRead;
+
+  const onMushafViewableItemsChanged = useRef(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      if (viewableItems.length > 0 && viewableItems[0].index != null) {
+        const pageIdx = viewableItems[0].index;
         setCurrentMushafPageIndex(pageIdx);
-        const firstAyahOfPage = mushafPages[pageIdx]?.ayahs[0];
-        if (firstAyahOfPage) {
-          setLastRead(surahId, firstAyahOfPage.ayahNumber);
-          recordAyahRead(1);
+        const pages = mushafPagesRef.current;
+        const firstAyahOfPage = pages[pageIdx]?.ayahs[0];
+        if (firstAyahOfPage && surahIdRef.current) {
+          setLastReadRef.current(surahIdRef.current, firstAyahOfPage.ayahNumber);
         }
       }
-    },
-    [windowWidth, mushafPages, currentMushafPageIndex, surahId, setLastRead, recordAyahRead]
-  );
+    }
+  ).current;
+
+  const mushafViewabilityConfig = useRef({
+    viewAreaCoveragePercentThreshold: 50,
+  }).current;
 
   const handleMushafScrollToIndexFailed = useCallback(
     (info: { index: number; highestMeasuredFrameIndex: number; averageItemLength: number }) => {
@@ -557,6 +562,7 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
   // Intelligent Background Preloader:
   // Automatically caches Tajweed and downloads audio for the page the user stopped on first,
   // then preloads adjacent neighboring pages (next & previous) so page flipping is 100% lag-free.
+  // 800ms debounce ensures zero network/disk competition while user is actively swiping.
   useEffect(() => {
     if (mushafPages.length === 0 || !surahId) return;
     const timeout = setTimeout(() => {
@@ -566,7 +572,7 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
         currentMushafPageIndex,
         defaultReciter
       );
-    }, 150);
+    }, 800);
     return () => clearTimeout(timeout);
   }, [surahId, mushafPages, currentMushafPageIndex, defaultReciter]);
 
@@ -1022,7 +1028,7 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
             />
           </View>
 
-          {/* Horizontal Medina Book Pager (1 Page per Screen, 60fps) */}
+          {/* Horizontal Medina Book Pager (1 Page per Screen, Authentic RTL, 60fps) */}
           <FlatList<MushafPageData>
             ref={mushafListRef}
             data={mushafPages}
@@ -1031,6 +1037,7 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
             getItemLayout={getMushafItemLayout}
             horizontal={true}
             pagingEnabled={true}
+            inverted={true}
             showsHorizontalScrollIndicator={false}
             initialScrollIndex={
               initialMushafIndex != null && initialMushafIndex < mushafPages.length
@@ -1039,19 +1046,20 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
             }
             initialNumToRender={
               initialMushafIndex != null
-                ? Math.min(mushafPages.length, initialMushafIndex + 3)
-                : 3
+                ? Math.min(mushafPages.length, initialMushafIndex + 2)
+                : 2
             }
-            maxToRenderPerBatch={4}
-            windowSize={7}
-            removeClippedSubviews={Platform.OS === 'android'}
-            onMomentumScrollEnd={handleMushafPageScrollEnd}
+            maxToRenderPerBatch={2}
+            windowSize={3}
+            removeClippedSubviews={false}
+            onViewableItemsChanged={onMushafViewableItemsChanged}
+            viewabilityConfig={mushafViewabilityConfig}
             onScrollToIndexFailed={handleMushafScrollToIndexFailed}
             overScrollMode="never"
             style={{ flex: 1 }}
           />
 
-          {/* Bottom Medina Book Navigation Bar */}
+          {/* Bottom Medina Book Navigation Bar (Authentic RTL: Left advances Next, Right goes Prev) */}
           <View
             style={[
               styles.mushafBottomNav,
@@ -1061,18 +1069,22 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
               },
             ]}
           >
+            {/* Left Button: Next Page (advances forward in Arabic reading order) */}
             <AnimatedPressable
-              onPress={() => handleFlipMushafPage('prev')}
-              disabled={currentMushafPageIndex === 0}
+              onPress={() => handleFlipMushafPage('next')}
+              disabled={currentMushafPageIndex >= mushafPages.length - 1}
               style={[
                 styles.mushafPageBtn,
                 {
                   backgroundColor: colors.surface,
                   borderColor: colors.border,
-                  opacity: currentMushafPageIndex === 0 ? 0.35 : 1,
+                  opacity:
+                    currentMushafPageIndex >= mushafPages.length - 1
+                      ? 0.35
+                      : 1,
                 },
               ]}
-              accessibilityLabel="Предыдущая страница"
+              accessibilityLabel="Следующая страница"
               accessibilityRole="button"
             >
               <Ionicons
@@ -1108,21 +1120,19 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
               </Text>
             </View>
 
+            {/* Right Button: Previous Page (goes backward toward the beginning) */}
             <AnimatedPressable
-              onPress={() => handleFlipMushafPage('next')}
-              disabled={currentMushafPageIndex >= mushafPages.length - 1}
+              onPress={() => handleFlipMushafPage('prev')}
+              disabled={currentMushafPageIndex === 0}
               style={[
                 styles.mushafPageBtn,
                 {
                   backgroundColor: colors.surface,
                   borderColor: colors.border,
-                  opacity:
-                    currentMushafPageIndex >= mushafPages.length - 1
-                      ? 0.35
-                      : 1,
+                  opacity: currentMushafPageIndex === 0 ? 0.35 : 1,
                 },
               ]}
-              accessibilityLabel="Следующая страница"
+              accessibilityLabel="Предыдущая страница"
               accessibilityRole="button"
             >
               <Ionicons

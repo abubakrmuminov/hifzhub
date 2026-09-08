@@ -9,6 +9,7 @@ import {
   ScrollView,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
+  type ViewToken,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
@@ -306,7 +307,7 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
         currentPageIndex,
         defaultReciter
       );
-    }, 150);
+    }, 800);
 
     return () => clearTimeout(timer);
   }, [pages, currentPageIndex, defaultReciter]);
@@ -408,20 +409,17 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
     [currentPageIndex, pages.length]
   );
 
-  const handlePageScrollEnd = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const offsetX = event.nativeEvent.contentOffset.x;
-      const pageIdx = Math.round(offsetX / windowWidth);
-      if (
-        pageIdx >= 0 &&
-        pageIdx < pages.length &&
-        pageIdx !== currentPageIndex
-      ) {
-        setCurrentPageIndex(pageIdx);
+  const onTrainerPagesViewableChanged = useRef(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      if (viewableItems.length > 0 && viewableItems[0].index != null) {
+        setCurrentPageIndex(viewableItems[0].index);
       }
-    },
-    [windowWidth, pages.length, currentPageIndex]
-  );
+    }
+  ).current;
+
+  const trainerViewabilityConfig = useRef({
+    viewAreaCoveragePercentThreshold: 50,
+  }).current;
 
   const renderPageItem = useCallback(
     ({ item }: { item: MushafTrainerPageData }) => {
@@ -482,6 +480,7 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
             <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.pageScrollContent}
+              nestedScrollEnabled={true}
               bounces={false}
             >
               {/* Surah Banner if Ayah 1 is on this page */}
@@ -767,7 +766,7 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
         </AnimatedPressable>
       </View>
 
-      {/* 3. Horizontal Medina Book Pager (1 Page per screen, 60fps) */}
+      {/* 3. Horizontal Medina Book Pager (1 Page per screen, Authentic RTL, 60fps) */}
       <FlatList<MushafTrainerPageData>
         ref={flatListRef}
         data={pages}
@@ -776,29 +775,33 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
         getItemLayout={getPageItemLayout}
         horizontal={true}
         pagingEnabled={true}
+        inverted={true}
         showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={handlePageScrollEnd}
-        initialNumToRender={pages.length > 0 ? Math.min(pages.length, 3) : 1}
-        maxToRenderPerBatch={3}
-        windowSize={5}
+        onViewableItemsChanged={onTrainerPagesViewableChanged}
+        viewabilityConfig={trainerViewabilityConfig}
+        initialNumToRender={pages.length > 0 ? Math.min(pages.length, 2) : 1}
+        maxToRenderPerBatch={2}
+        windowSize={3}
+        removeClippedSubviews={false}
         overScrollMode="never"
         style={{ flex: 1 }}
       />
 
-      {/* 4. Bottom Medina Book Navigation Bar */}
+      {/* 4. Bottom Medina Book Navigation Bar (Authentic RTL: Left advances Next, Right goes Prev) */}
       <View style={styles.bottomNavRow}>
+        {/* Left Button: Next Page (advances forward in Arabic reading order) */}
         <AnimatedPressable
-          onPress={() => handleFlipPage('prev')}
-          disabled={currentPageIndex === 0}
+          onPress={() => handleFlipPage('next')}
+          disabled={currentPageIndex >= pages.length - 1}
           style={[
             styles.pageTurnBtn,
             {
               backgroundColor: colors.surface,
               borderColor: colors.border,
-              opacity: currentPageIndex === 0 ? 0.35 : 1,
+              opacity: currentPageIndex >= pages.length - 1 ? 0.35 : 1,
             },
           ]}
-          accessibilityLabel="Предыдущая страница"
+          accessibilityLabel="Следующая страница"
           accessibilityRole="button"
         >
           <Ionicons name="chevron-back" size={20} color={colors.primary} />
@@ -823,18 +826,19 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
           </Text>
         </View>
 
+        {/* Right Button: Previous Page (goes backward toward the beginning) */}
         <AnimatedPressable
-          onPress={() => handleFlipPage('next')}
-          disabled={currentPageIndex >= pages.length - 1}
+          onPress={() => handleFlipPage('prev')}
+          disabled={currentPageIndex === 0}
           style={[
             styles.pageTurnBtn,
             {
               backgroundColor: colors.surface,
               borderColor: colors.border,
-              opacity: currentPageIndex >= pages.length - 1 ? 0.35 : 1,
+              opacity: currentPageIndex === 0 ? 0.35 : 1,
             },
           ]}
-          accessibilityLabel="Следующая страница"
+          accessibilityLabel="Предыдущая страница"
           accessibilityRole="button"
         >
           <Ionicons name="chevron-forward" size={20} color={colors.primary} />
