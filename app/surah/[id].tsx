@@ -25,7 +25,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import PagerView from 'react-native-pager-view';
 import { useTheme } from '@/shared/theme';
 import { AyahSkeleton } from '@/shared/components/Skeleton';
 import { GlassView } from '@/shared/components/GlassView';
@@ -36,6 +35,8 @@ import {
   AyahText,
   TranslationText,
   MushafView,
+  MushafRollingPager,
+  type MushafRollingPagerRef,
   PageDivider,
   FloatingAudioPlayer,
   AyahActionBar,
@@ -44,7 +45,8 @@ import {
   type TajweedRuleInfo,
   useAyahs,
   getSurahName,
-  preloadMushafPages,
+  preloadMushafPagesDeferred,
+  cancelMushafPreload,
   toArabicDigits,
 } from '@/features/quran';
 import { playAyah, pauseAudio } from '@/features/audio';
@@ -136,6 +138,23 @@ const MushafPageItem = React.memo<MushafPageItemProps>(
           </View>
         )}
       </View>
+    );
+  },
+  (prev, next) => {
+    if (prev.isRendered !== next.isRendered) return false;
+    if (prev.item.pageNumber !== next.item.pageNumber) return false;
+    if (!prev.isRendered) return true;
+
+    return (
+      prev.windowWidth === next.windowWidth &&
+      prev.mushafPageHeight === next.mushafPageHeight &&
+      prev.quranFontSize === next.quranFontSize &&
+      prev.showTajweed === next.showTajweed &&
+      prev.selectedAyahId === next.selectedAyahId &&
+      prev.activeAyahNumber === next.activeAyahNumber &&
+      prev.playingAyahNumber === next.playingAyahNumber &&
+      prev.onSelectAyah === next.onSelectAyah &&
+      prev.onPressRule === next.onPressRule
     );
   }
 );
@@ -411,7 +430,8 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
   const playingAyahNumber = isCurrentSurah ? currentTrack?.ayahNumber : undefined;
 
   const translationListRef = useRef<FlatList<Ayah>>(null);
-  const mushafPagerRef = useRef<PagerView>(null);
+  const mushafPagerRef = useRef<MushafRollingPagerRef>(null);
+  const currentMushafPageIndexRef = useRef(0);
 
   const isUserScrollingRef = useRef(false);
   const scrollOverrideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -568,23 +588,23 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
         : 0
   );
 
-  // Progressive rendering: initial +-2 pages render immediately on Frame 0 (0ms latency),
-  // then all pages of the surah are rendered 100ms after mount.
-  // This guarantees instant screen opening AND completely eliminates blank screens and lag on fast swiping.
-  const [renderAllMushafPages, setRenderAllMushafPages] = useState(false);
+  currentMushafPageIndexRef.current = currentMushafPageIndex;
+
+  const mushafPageLookup = useMemo(
+    () =>
+      mushafPages.map((page) => ({
+        ayahNumbers: new Set(page.ayahs.map((a) => a.ayahNumber)),
+        ayahIds: new Set(page.ayahs.map((a) => a.id)),
+      })),
+    [mushafPages]
+  );
 
   useEffect(() => {
     if (initialMushafIndex != null) {
       setCurrentMushafPageIndex(initialMushafIndex);
+      currentMushafPageIndexRef.current = initialMushafIndex;
     }
   }, [initialMushafIndex]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setRenderAllMushafPages(true);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   const mushafPageHeight = useMemo(() => {
     const topOccupied = insets.top + 54 + 44;
@@ -594,18 +614,12 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
 
   const handleFlipMushafPage = useCallback(
     (direction: 'prev' | 'next') => {
-      const targetIdx =
-        direction === 'next'
-          ? currentMushafPageIndex + 1
-          : currentMushafPageIndex - 1;
-      if (targetIdx >= 0 && targetIdx < mushafPages.length) {
-        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        requestAnimationFrame(() => {
-          mushafPagerRef.current?.setPage(targetIdx);
-        });
-      }
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      requestAnimationFrame(() => {
+        mushafPagerRef.current?.flipPage(direction);
+      });
     },
-    [currentMushafPageIndex, mushafPages.length]
+    []
   );
 
   const mushafPagesRef = useRef(mushafPages);
@@ -624,12 +638,101 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
     };
   }, []);
 
-  // Pre-warms in-memory Tajweed segments cache for current and nearby pages
-  // Fully synchronous, in-memory string parsing (< 1ms), zero network/disk competition
+  const handleMushafPageChange = useCallback((pageIdx: number) => {
+    currentMushafPageIndexRef.current = pageIdx;
+    setCurrentMushafPageIndex(pageIdx);
+
+    if (lastReadDebounceRef.current) {
+      clearTimeout(lastReadDebounceRef.current);
+    }
+    lastReadDebounceRef.current = setTimeout(() => {
+      const pages = mushafPagesRef.current;
+      const firstAyahOfPage = pages[pageIdx]?.ayahs[0];
+      if (firstAyahOfPage && surahIdRef.current) {
+        setLastReadRef.current(surahIdRef.current, firstAyahOfPage.ayahNumber);
+      }
+    }, 800);
+  }, []);
+
+  const renderMushafRollingPage = useCallback(
+    (index: number) => {
+      const item = mushafPages[index];
+      if (!item) return null;
+
+      const lookup = mushafPageLookup[index];
+      const pageSelectedAyahId =
+        selectedAyah?.id != null && lookup?.ayahIds.has(selectedAyah.id)
+          ? selectedAyah.id
+          : null;
+      const pageActiveAyahNumber =
+        highlightedAyahNumber != null &&
+        lookup?.ayahNumbers.has(highlightedAyahNumber)
+          ? highlightedAyahNumber
+          : null;
+      const pagePlayingAyahNumber =
+        isPlaying &&
+        isCurrentSurah &&
+        playingAyahNumber != null &&
+        lookup?.ayahNumbers.has(playingAyahNumber)
+          ? playingAyahNumber
+          : null;
+
+      return (
+        <MushafPageItem
+          item={item}
+          isRendered
+          windowWidth={windowWidth}
+          mushafPageHeight={mushafPageHeight}
+          quranFontSize={quranFontSize}
+          showTajweed={showTajweed}
+          selectedAyahId={pageSelectedAyahId}
+          activeAyahNumber={pageActiveAyahNumber}
+          playingAyahNumber={pagePlayingAyahNumber}
+          onSelectAyah={handleSelectAyah}
+          onPressRule={handleRulePress}
+        />
+      );
+    },
+    [
+      mushafPages,
+      mushafPageLookup,
+      selectedAyah?.id,
+      highlightedAyahNumber,
+      isPlaying,
+      isCurrentSurah,
+      playingAyahNumber,
+      windowWidth,
+      mushafPageHeight,
+      quranFontSize,
+      showTajweed,
+      handleSelectAyah,
+      handleRulePress,
+    ]
+  );
+
+  const renderMushafRollingPlaceholder = useCallback(
+    () => (
+      <View style={{ width: windowWidth, flex: 1, paddingHorizontal: 12 }}>
+        <View
+          style={{
+            flex: 1,
+            borderWidth: 1.5,
+            borderColor: 'rgba(212, 167, 69, 0.26)',
+            borderRadius: 20,
+            backgroundColor: 'rgba(212, 167, 69, 0.03)',
+          }}
+        />
+      </View>
+    ),
+    [windowWidth]
+  );
+
+  // Pre-warm Tajweed cache after interactions settle (current ±1, +2 forward)
   useEffect(() => {
-    if (mushafPages.length === 0) return;
-    preloadMushafPages(mushafPages, currentMushafPageIndex);
-  }, [mushafPages, currentMushafPageIndex]);
+    if (mushafPages.length === 0 || readingMode !== 'mushaf') return;
+    preloadMushafPagesDeferred(mushafPages, currentMushafPageIndex);
+    return () => cancelMushafPreload();
+  }, [mushafPages, currentMushafPageIndex, readingMode]);
 
   // Sub-pixel ground-truth alignment once target ayah layout measures
   const hasFineAdjustedRef = useRef(false);
@@ -711,7 +814,6 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
           requestAnimationFrame(() => {
             mushafPagerRef.current?.setPage(pageIndex);
           });
-          setCurrentMushafPageIndex(pageIndex);
         } catch {}
       }
     }
@@ -1049,57 +1151,19 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
             />
           </View>
 
-          {/* Native High-Performance Medina Book Pager (60-120fps hardware accelerated) */}
-          <PagerView
+          {/* Rolling 3-slot pager: constant native view count regardless of surah length */}
+          <MushafRollingPager
             ref={mushafPagerRef}
-            style={{ flex: 1 }}
-            initialPage={
-              initialMushafIndex != null && initialMushafIndex < mushafPages.length
-                ? initialMushafIndex
-                : 0
-            }
-            layoutDirection="rtl"
-            offscreenPageLimit={2}
-            overScrollMode="never"
-            onPageSelected={(e) => {
-              const pageIdx = e.nativeEvent.position;
-              setCurrentMushafPageIndex(pageIdx);
-              if (lastReadDebounceRef.current) {
-                clearTimeout(lastReadDebounceRef.current);
-              }
-              lastReadDebounceRef.current = setTimeout(() => {
-                const pages = mushafPagesRef.current;
-                const firstAyahOfPage = pages[pageIdx]?.ayahs[0];
-                if (firstAyahOfPage && surahIdRef.current) {
-                  setLastReadRef.current(surahIdRef.current, firstAyahOfPage.ayahNumber);
-                }
-              }, 800);
+            pageCount={mushafPages.length}
+            pageIndex={currentMushafPageIndex}
+            onPageChange={handleMushafPageChange}
+            onPageScrollIdle={(idx) => {
+              preloadMushafPagesDeferred(mushafPagesRef.current, idx);
             }}
-          >
-            {mushafPages.map((item, index) => {
-              const isRendered =
-                renderAllMushafPages ||
-                Math.abs(index - currentMushafPageIndex) <= 2;
-              return (
-                <MushafPageItem
-                  key={`mushaf-page-${item.pageNumber}`}
-                  item={item}
-                  isRendered={isRendered}
-                  windowWidth={windowWidth}
-                  mushafPageHeight={mushafPageHeight}
-                  quranFontSize={quranFontSize}
-                  showTajweed={showTajweed}
-                  selectedAyahId={selectedAyah?.id}
-                  activeAyahNumber={highlightedAyahNumber}
-                  playingAyahNumber={
-                    isPlaying && isCurrentSurah ? playingAyahNumber : null
-                  }
-                  onSelectAyah={handleSelectAyah}
-                  onPressRule={handleRulePress}
-                />
-              );
-            })}
-          </PagerView>
+            renderPage={renderMushafRollingPage}
+            renderPlaceholder={renderMushafRollingPlaceholder}
+            layoutDirection="rtl"
+          />
 
           {/* Bottom Medina Book Navigation Bar (Authentic RTL: Left advances Next, Right goes Prev) */}
           <View
@@ -1221,6 +1285,8 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
           surahName={localizedName}
           surahArabic={surah?.nameArabic}
           translationText={translationsMap[selectedAyah.id]?.text}
+          showTajweed={showTajweed}
+          onPressRule={handleRulePress}
           onClose={() => setSelectedAyah(null)}
           onPlay={() => {
             void playAyah(surahId, selectedAyah.ayahNumber, defaultReciter);

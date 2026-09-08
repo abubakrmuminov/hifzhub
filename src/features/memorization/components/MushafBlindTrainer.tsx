@@ -5,17 +5,18 @@ import {
   Pressable,
   StyleSheet,
   useWindowDimensions,
-  ScrollView,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
-import PagerView from 'react-native-pager-view';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/shared/theme';
 import { AnimatedPressable } from '@/shared/components';
 import { toArabicDigits } from '@/features/quran/utils/quranUtils';
+import {
+  MushafRollingPager,
+  type MushafRollingPagerRef,
+} from '@/features/quran/components/MushafRollingPager';
 import { playAyah, stopAudio } from '@/features/audio';
-import { preloadMushafPages } from '@/features/quran';
 import { SURAHS_DATA } from '@/features/quran/data/surahsData';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useAudioStore } from '@/stores/audioStore';
@@ -189,6 +190,215 @@ interface MushafTrainerPageData {
   }[];
 }
 
+interface MushafTrainerPageProps {
+  item: MushafTrainerPageData;
+  windowWidth: number;
+  maskMode: MushafMaskMode;
+  playingSurahId?: number;
+  playingAyahNumber?: number;
+  onPlaySingleAyah: (surahId: number, ayahNumber: number) => void;
+}
+
+const MushafTrainerPage = React.memo<MushafTrainerPageProps>(
+  ({
+    item,
+    windowWidth,
+    maskMode,
+    playingSurahId,
+    playingAyahNumber,
+    onPlaySingleAyah,
+  }) => {
+    const { colors, fontFamilies, shadows, radius, isDark } = useTheme();
+    const [peekedKeys, setPeekedKeys] = useState<Set<string>>(() => new Set());
+
+    const handleWordTap = useCallback((key: string) => {
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setPeekedKeys((prev) => {
+        const next = new Set(prev);
+        if (next.has(key)) {
+          next.delete(key);
+        } else {
+          next.add(key);
+        }
+        return next;
+      });
+    }, []);
+
+    const cardBgColor = isDark ? '#141C18' : '#FBF9F5';
+    const cardBorderColor = isDark
+      ? 'rgba(212, 167, 69, 0.26)'
+      : 'rgba(212, 167, 69, 0.38)';
+
+    return (
+      <View style={{ width: windowWidth, paddingHorizontal: 12, flex: 1 }}>
+        <View
+          style={[
+            styles.bookPageCard,
+            shadows.medium,
+            {
+              backgroundColor: cardBgColor,
+              borderColor: cardBorderColor,
+              borderRadius: radius.xl,
+            },
+          ]}
+        >
+          <View style={styles.pageHeaderRow}>
+            <Text
+              style={[
+                styles.pageHeaderMeta,
+                { color: colors.secondary, fontFamily: fontFamilies.arabic },
+              ]}
+            >
+              الجزء {toArabicDigits(item.juzNumber)}
+            </Text>
+
+            <View
+              style={[
+                styles.headerDiamond,
+                { borderColor: colors.secondary + '60' },
+              ]}
+            />
+
+            <Text
+              style={[
+                styles.pageHeaderMeta,
+                { color: colors.secondary, fontFamily: fontFamilies.arabic },
+              ]}
+            >
+              {item.surahNameArabic ? `سُورَةُ ${item.surahNameArabic}` : ''}
+            </Text>
+          </View>
+
+          <View
+            style={[
+              styles.headerDividerLine,
+              { backgroundColor: colors.secondary + '30' },
+            ]}
+          />
+
+          <View style={styles.pageScrollContent}>
+            {item.hasSurahStart && item.surahNameArabic && (
+              <View style={styles.surahBannerWrap}>
+                <View
+                  style={[
+                    styles.surahBannerFrame,
+                    {
+                      borderColor: colors.secondary,
+                      backgroundColor: isDark
+                        ? 'rgba(212, 167, 69, 0.12)'
+                        : 'rgba(212, 167, 69, 0.10)',
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.surahBannerTitle,
+                      {
+                        fontFamily: fontFamilies.arabic,
+                        color: colors.secondary,
+                      },
+                    ]}
+                  >
+                    سُورَةُ {item.surahNameArabic}
+                  </Text>
+                </View>
+              </View>
+            )}
+
+            {item.showBismillah && (
+              <View style={styles.bismillahWrap}>
+                <Text
+                  style={[
+                    styles.bismillahText,
+                    {
+                      fontFamily: fontFamilies.arabic,
+                      color: colors.secondary,
+                    },
+                  ]}
+                >
+                  بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
+                </Text>
+              </View>
+            )}
+
+            <View style={styles.continuousAyahFlow}>
+              {item.ayahStreams.map(({ card, words, ayahNumber }) => {
+                const isAyahPlaying =
+                  playingSurahId != null &&
+                  playingAyahNumber != null &&
+                  playingSurahId === card.surahId &&
+                  playingAyahNumber === ayahNumber;
+
+                return (
+                  <React.Fragment key={card.id}>
+                    {words.map((wItem) => {
+                      const isPeeked = peekedKeys.has(wItem.key);
+                      const isRevealed =
+                        maskMode === 'all_revealed' ||
+                        isPeeked ||
+                        (maskMode === 'hints_only' && wItem.isFirstWordOfAyah);
+
+                      return (
+                        <MushafWordTile
+                          key={wItem.key}
+                          item={wItem}
+                          isRevealed={isRevealed}
+                          isPeeked={isPeeked}
+                          isAyahPlaying={isAyahPlaying}
+                          onPress={handleWordTap}
+                          fontFamily={fontFamilies.arabic}
+                          textColor={colors.text}
+                          primaryColor={colors.primary}
+                          secondaryColor={colors.secondary}
+                          isDark={isDark}
+                        />
+                      );
+                    })}
+
+                    <AyahRosette
+                      surahId={card.surahId}
+                      ayahNumber={ayahNumber}
+                      isAyahPlaying={isAyahPlaying}
+                      onPress={onPlaySingleAyah}
+                      primaryColor={colors.primary}
+                      secondaryColor={colors.secondary}
+                    />
+                  </React.Fragment>
+                );
+              })}
+            </View>
+          </View>
+
+          <View
+            style={[
+              styles.footerDividerLine,
+              { backgroundColor: colors.secondary + '30' },
+            ]}
+          />
+
+          <View style={styles.pageFooterRow}>
+            <Text
+              style={[
+                styles.pageNumberText,
+                { color: colors.secondary, fontFamily: fontFamilies.arabic },
+              ]}
+            >
+              — {toArabicDigits(item.pageNumber)} —
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  },
+  (prev, next) =>
+    prev.item === next.item &&
+    prev.windowWidth === next.windowWidth &&
+    prev.maskMode === next.maskMode &&
+    prev.playingSurahId === next.playingSurahId &&
+    prev.playingAyahNumber === next.playingAyahNumber &&
+    prev.onPlaySingleAyah === next.onPlaySingleAyah
+);
+
 export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
   cards,
   surahName,
@@ -205,11 +415,10 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
   const currentTrack = useAudioStore((s) => s.currentTrack);
 
   const [maskMode, setMaskMode] = useState<MushafMaskMode>('all_hidden');
-  const [peekedKeys, setPeekedKeys] = useState<Set<string>>(new Set());
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  const [renderAllPages, setRenderAllPages] = useState(false);
 
-  const trainerPagerRef = useRef<PagerView>(null);
+  const trainerPagerRef = useRef<MushafRollingPagerRef>(null);
+  const currentPageIndexRef = useRef(0);
 
   // Group cards into authentic Medina pages
   const pages = useMemo<MushafTrainerPageData[]>(() => {
@@ -278,37 +487,6 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
     };
   }, []);
 
-  // Pre-warms in-memory Tajweed segments cache for current and nearby pages
-  // Fully synchronous, in-memory string parsing (< 1ms), zero network/disk competition
-  useEffect(() => {
-    if (pages.length === 0) return;
-    const currPage = pages[currentPageIndex];
-    if (!currPage) return;
-
-    const preloaderPages = pages.map((p) => ({
-      pageNumber: p.pageNumber,
-      ayahs: p.cards.map((c) => ({
-        id: 0,
-        surahId: c.surahId,
-        ayahNumber: c.ayahNumber,
-        textUthmani: c.arabicText,
-        textTajweed: c.arabicText,
-        juz: p.juzNumber,
-        hizb: 1,
-        page: p.pageNumber,
-      })),
-    }));
-
-    preloadMushafPages(preloaderPages, currentPageIndex);
-  }, [pages, currentPageIndex]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setRenderAllPages(true);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
   // Auto-flip page as continuous audio plays through during self-check
   useEffect(() => {
     if (!isStorePlaying || !currentTrack) return;
@@ -324,7 +502,6 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
         requestAnimationFrame(() => {
           trainerPagerRef.current?.setPage(pageIdx);
         });
-        setCurrentPageIndex(pageIdx);
       } catch {}
     }
   }, [currentTrack?.ayahNumber, currentTrack?.surahId, isStorePlaying, pages, currentPageIndex]);
@@ -332,19 +509,6 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
   const handleModeChange = useCallback((newMode: MushafMaskMode) => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setMaskMode(newMode);
-  }, []);
-
-  const handleWordTap = useCallback((key: string) => {
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setPeekedKeys((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) {
-        next.delete(key);
-      } else {
-        next.add(key);
-      }
-      return next;
-    });
   }, []);
 
   const handlePlaySingleAyah = useCallback(
@@ -380,213 +544,73 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
     });
   }, [isStorePlaying, cards, defaultReciter]);
 
-  const handleFlipPage = useCallback(
-    (direction: 'prev' | 'next') => {
-      const targetIdx =
-        direction === 'next' ? currentPageIndex + 1 : currentPageIndex - 1;
-      if (targetIdx >= 0 && targetIdx < pages.length) {
-        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        requestAnimationFrame(() => {
-          trainerPagerRef.current?.setPage(targetIdx);
-        });
-      }
-    },
-    [currentPageIndex, pages.length]
-  );
+  const handleFlipPage = useCallback((direction: 'prev' | 'next') => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    requestAnimationFrame(() => {
+      trainerPagerRef.current?.flipPage(direction);
+    });
+  }, []);
 
-  const renderPageItem = useCallback(
-    ({ item }: { item: MushafTrainerPageData }) => {
-      const cardBgColor = isDark ? '#141C18' : '#FBF9F5';
-      const cardBorderColor = isDark
-        ? 'rgba(212, 167, 69, 0.26)'
-        : 'rgba(212, 167, 69, 0.38)';
+  const handleTrainerPageChange = useCallback((pageIdx: number) => {
+    currentPageIndexRef.current = pageIdx;
+    setCurrentPageIndex(pageIdx);
+  }, []);
+
+  const renderTrainerRollingPage = useCallback(
+    (index: number) => {
+      const item = pages[index];
+      if (!item) return null;
+
+      const pageHasPlayingAyah =
+        isStorePlaying &&
+        currentTrack &&
+        item.cards.some(
+          (c) =>
+            c.surahId === currentTrack.surahId &&
+            c.ayahNumber === currentTrack.ayahNumber
+        );
 
       return (
-        <View style={{ width: windowWidth, paddingHorizontal: 12, flex: 1 }}>
-          <View
-            style={[
-              styles.bookPageCard,
-              shadows.medium,
-              {
-                backgroundColor: cardBgColor,
-                borderColor: cardBorderColor,
-                borderRadius: radius.xl,
-              },
-            ]}
-          >
-            {/* Top Medina Header */}
-            <View style={styles.pageHeaderRow}>
-              <Text
-                style={[
-                  styles.pageHeaderMeta,
-                  { color: colors.secondary, fontFamily: fontFamilies.arabic },
-                ]}
-              >
-                الجزء {toArabicDigits(item.juzNumber)}
-              </Text>
-
-              <View
-                style={[
-                  styles.headerDiamond,
-                  { borderColor: colors.secondary + '60' },
-                ]}
-              />
-
-              <Text
-                style={[
-                  styles.pageHeaderMeta,
-                  { color: colors.secondary, fontFamily: fontFamilies.arabic },
-                ]}
-              >
-                {item.surahNameArabic ? `سُورَةُ ${item.surahNameArabic}` : ''}
-              </Text>
-            </View>
-
-            <View
-              style={[
-                styles.headerDividerLine,
-                { backgroundColor: colors.secondary + '30' },
-              ]}
-            />
-
-            {/* Scrollable Medina Page Content */}
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.pageScrollContent}
-              nestedScrollEnabled={true}
-              bounces={false}
-            >
-              {/* Surah Banner if Ayah 1 is on this page */}
-              {item.hasSurahStart && item.surahNameArabic && (
-                <View style={styles.surahBannerWrap}>
-                  <View
-                    style={[
-                      styles.surahBannerFrame,
-                      {
-                        borderColor: colors.secondary,
-                        backgroundColor: isDark
-                          ? 'rgba(212, 167, 69, 0.12)'
-                          : 'rgba(212, 167, 69, 0.10)',
-                      },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.surahBannerTitle,
-                        {
-                          fontFamily: fontFamilies.arabic,
-                          color: colors.secondary,
-                        },
-                      ]}
-                    >
-                      سُورَةُ {item.surahNameArabic}
-                    </Text>
-                  </View>
-                </View>
-              )}
-
-              {/* Bismillah if Ayah 1 */}
-              {item.showBismillah && (
-                <View style={styles.bismillahWrap}>
-                  <Text
-                    style={[
-                      styles.bismillahText,
-                      {
-                        fontFamily: fontFamilies.arabic,
-                        color: colors.secondary,
-                      },
-                    ]}
-                  >
-                    بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
-                  </Text>
-                </View>
-              )}
-
-              {/* Continuous Flow of Ayahs with Inset Verse Markers */}
-              <View style={styles.continuousAyahFlow}>
-                {item.ayahStreams.map(({ card, words, ayahNumber }) => {
-                  const isAyahPlaying =
-                    isStorePlaying &&
-                    currentTrack?.surahId === card.surahId &&
-                    currentTrack?.ayahNumber === ayahNumber;
-
-                  return (
-                    <React.Fragment key={card.id}>
-                      {words.map((wItem) => {
-                        const isPeeked = peekedKeys.has(wItem.key);
-                        const isRevealed =
-                          maskMode === 'all_revealed' ||
-                          isPeeked ||
-                          (maskMode === 'hints_only' && wItem.isFirstWordOfAyah);
-
-                        return (
-                          <MushafWordTile
-                            key={wItem.key}
-                            item={wItem}
-                            isRevealed={isRevealed}
-                            isPeeked={isPeeked}
-                            isAyahPlaying={isAyahPlaying}
-                            onPress={handleWordTap}
-                            fontFamily={fontFamilies.arabic}
-                            textColor={colors.text}
-                            primaryColor={colors.primary}
-                            secondaryColor={colors.secondary}
-                            isDark={isDark}
-                          />
-                        );
-                      })}
-
-                      <AyahRosette
-                        surahId={card.surahId}
-                        ayahNumber={ayahNumber}
-                        isAyahPlaying={isAyahPlaying}
-                        onPress={handlePlaySingleAyah}
-                        primaryColor={colors.primary}
-                        secondaryColor={colors.secondary}
-                      />
-                    </React.Fragment>
-                  );
-                })}
-              </View>
-            </ScrollView>
-
-            {/* Bottom Medina Page Footer */}
-            <View
-              style={[
-                styles.footerDividerLine,
-                { backgroundColor: colors.secondary + '30' },
-              ]}
-            />
-
-            <View style={styles.pageFooterRow}>
-              <Text
-                style={[
-                  styles.pageNumberText,
-                  { color: colors.secondary, fontFamily: fontFamilies.arabic },
-                ]}
-              >
-                — {toArabicDigits(item.pageNumber)} —
-              </Text>
-            </View>
-          </View>
-        </View>
+        <MushafTrainerPage
+          item={item}
+          windowWidth={windowWidth}
+          maskMode={maskMode}
+          playingSurahId={pageHasPlayingAyah ? currentTrack!.surahId : undefined}
+          playingAyahNumber={
+            pageHasPlayingAyah ? currentTrack!.ayahNumber : undefined
+          }
+          onPlaySingleAyah={handlePlaySingleAyah}
+        />
       );
     },
     [
+      pages,
       windowWidth,
-      isDark,
-      colors,
-      fontFamilies,
-      shadows,
-      radius,
+      maskMode,
       isStorePlaying,
       currentTrack,
-      peekedKeys,
-      maskMode,
-      handleWordTap,
       handlePlaySingleAyah,
     ]
   );
+
+  const renderTrainerRollingPlaceholder = useCallback(
+    () => (
+      <View style={{ width: windowWidth, paddingHorizontal: 12, flex: 1 }}>
+        <View
+          style={{
+            flex: 1,
+            borderWidth: 1.5,
+            borderColor: 'rgba(212, 167, 69, 0.26)',
+            borderRadius: 20,
+            backgroundColor: 'rgba(212, 167, 69, 0.03)',
+          }}
+        />
+      </View>
+    ),
+    [windowWidth]
+  );
+
+  currentPageIndexRef.current = currentPageIndex;
 
   const currentPageNumber = pages[currentPageIndex]?.pageNumber ?? 1;
 
@@ -739,48 +763,16 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
         </AnimatedPressable>
       </View>
 
-      {/* 3. Horizontal Medina Book Pager (1 Page per screen, Authentic RTL, 60fps) */}
-      <PagerView
+      {/* Rolling 3-slot pager: constant native view count regardless of session length */}
+      <MushafRollingPager
         ref={trainerPagerRef}
-        style={{ flex: 1 }}
-        initialPage={0}
+        pageCount={pages.length}
+        pageIndex={currentPageIndex}
+        onPageChange={handleTrainerPageChange}
+        renderPage={renderTrainerRollingPage}
+        renderPlaceholder={renderTrainerRollingPlaceholder}
         layoutDirection="rtl"
-        offscreenPageLimit={2}
-        overScrollMode="never"
-        onPageSelected={(e) => {
-          setCurrentPageIndex(e.nativeEvent.position);
-        }}
-      >
-        {pages.map((item, index) => {
-          const isRendered =
-            renderAllPages || Math.abs(index - currentPageIndex) <= 2;
-          return (
-            <View
-              key={`mushaf-trainer-page-${item.pageNumber}`}
-              style={{ flex: 1, width: windowWidth }}
-              collapsable={false}
-            >
-              {isRendered ? (
-                renderPageItem({ item })
-              ) : (
-                <View style={{ width: windowWidth, paddingHorizontal: 12, flex: 1 }}>
-                  <View
-                    style={{
-                      flex: 1,
-                      borderWidth: 1.5,
-                      borderColor: 'rgba(212, 167, 69, 0.26)',
-                      borderRadius: 20,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: 'rgba(212, 167, 69, 0.03)',
-                    }}
-                  />
-                </View>
-              )}
-            </View>
-          );
-        })}
-      </PagerView>
+      />
 
       {/* 4. Bottom Medina Book Navigation Bar (Authentic RTL: Left advances Next, Right goes Prev) */}
       <View style={styles.bottomNavRow}>

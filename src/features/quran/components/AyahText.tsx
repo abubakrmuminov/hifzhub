@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { Text, StyleSheet, type StyleProp, type TextStyle } from 'react-native';
-import * as Haptics from 'expo-haptics';
 import { useTheme, getQuranLineHeight } from '@/shared/theme';
 import { toArabicDigits } from '@/features/quran/utils/quranUtils';
 import {
@@ -47,12 +46,6 @@ export const AyahText = React.memo<AyahTextProps>(({
     return parseTajweedText(rawTagged);
   }, [showTajweed, textTajweed, surahId, ayahNumber]);
 
-  const handleRulePress = (rule: TajweedRuleInfo, matchedText: string) => {
-    if (!onPressRule) return;
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onPressRule(rule, matchedText);
-  };
-
   return (
     <Text
       style={[
@@ -76,8 +69,6 @@ export const AyahText = React.memo<AyahTextProps>(({
             return (
               <Text
                 key={idx}
-                onPress={isRule && onPressRule ? () => handleRulePress(seg.rule!, seg.text) : undefined}
-                suppressHighlighting={true}
                 style={{
                   color: ruleColor,
                   fontFamily: fontFamilies.quran,

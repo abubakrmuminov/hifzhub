@@ -5,6 +5,7 @@ export * from './components/TranslationText';
 export * from './components/SurahHeader';
 export * from './components/ReadingModeToggle';
 export * from './components/MushafView';
+export * from './components/MushafRollingPager';
 export * from './components/FloatingAudioPlayer';
 export * from './components/PageDivider';
 export * from './components/AyahActionBar';

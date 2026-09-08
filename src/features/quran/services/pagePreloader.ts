@@ -1,3 +1,4 @@
+import { InteractionManager } from 'react-native';
 import { getAyahTajweedSegments } from './tajweedParser';
 import type { Ayah } from '@/db/schema';
 
@@ -7,9 +8,11 @@ export interface PreloadQueueItem {
   textUthmani?: string;
 }
 
+let deferredPreloadHandle: { cancel: () => void } | null = null;
+
 /**
  * Pre-warms Tajweed parser memory cache for all ayahs in the given list.
- * Synchronous and instant (pure in-memory string parsing, < 1ms).
+ * Synchronous and instant (pure in-memory string parsing, < 1ms per ayah).
  */
 export function warmupPagesTajweed(ayahs: Ayah[]): void {
   for (let i = 0; i < ayahs.length; i++) {
@@ -23,35 +26,27 @@ export function warmupPagesTajweed(ayahs: Ayah[]): void {
 }
 
 /**
- * Intelligently pre-warms Tajweed parser memory cache for current and nearby pages.
- * Fully synchronous and in-memory.
- * Zero network requests, zero disk I/O, zero thread blocking.
+ * Pre-warms Tajweed parser memory cache for current and nearby pages.
+ * Rolling window: current, previous, next, next+1 (Quran.com-style forward bias).
  */
 export function preloadMushafPages(
   pages: { pageNumber: number; ayahs: Ayah[] }[],
   currentPageIndex?: number
 ): void {
-  // Pre-warm the current and nearest pages first
-  if (currentPageIndex != null) {
-    const nearIndices = [
-      currentPageIndex,
-      currentPageIndex + 1,
-      currentPageIndex - 1,
-      currentPageIndex + 2,
-    ];
-    for (const pageIdx of nearIndices) {
-      if (pageIdx >= 0 && pageIdx < pages.length) {
-        const page = pages[pageIdx];
-        if (page?.ayahs) {
-          warmupPagesTajweed(page.ayahs);
-        }
-      }
-    }
-  }
+  if (currentPageIndex == null) return;
 
-  // Pre-warm all remaining pages in the surah in-memory (< 1ms total)
-  for (let i = 0; i < pages.length; i++) {
-    const page = pages[i];
+  const nearIndices = [
+    currentPageIndex,
+    currentPageIndex - 1,
+    currentPageIndex + 1,
+    currentPageIndex + 2,
+  ];
+
+  const seen = new Set<number>();
+  for (const pageIdx of nearIndices) {
+    if (pageIdx < 0 || pageIdx >= pages.length || seen.has(pageIdx)) continue;
+    seen.add(pageIdx);
+    const page = pages[pageIdx];
     if (page?.ayahs) {
       warmupPagesTajweed(page.ayahs);
     }
@@ -59,10 +54,29 @@ export function preloadMushafPages(
 }
 
 /**
+ * Schedules Tajweed cache warm-up after animations and gestures settle.
+ * Cancels any pending task to avoid piling up work during fast swiping.
+ */
+export function preloadMushafPagesDeferred(
+  pages: { pageNumber: number; ayahs: Ayah[] }[],
+  currentPageIndex?: number
+): void {
+  deferredPreloadHandle?.cancel();
+  deferredPreloadHandle = InteractionManager.runAfterInteractions(() => {
+    deferredPreloadHandle = null;
+    preloadMushafPages(pages, currentPageIndex);
+  });
+}
+
+/** Cancel a pending deferred preload (e.g. on unmount). */
+export function cancelMushafPreload(): void {
+  deferredPreloadHandle?.cancel();
+  deferredPreloadHandle = null;
+}
+
+/**
  * Kept for backwards compatibility.
  * Audio is streamed and buffered on-demand by trackPlayer when actively playing.
- * During reading, background audio downloading is intentionally disabled to avoid
- * saturating mobile bandwidth, disk I/O, and freezing the UI thread.
  */
 export async function preloadMushafPagesAudio(
   _surahId: number,

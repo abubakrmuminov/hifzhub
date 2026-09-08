@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -10,6 +10,12 @@ import { useTheme } from '@/shared/theme';
 import { GlassView } from '@/shared/components/GlassView';
 import { AnimatedPressable } from '@/shared/components/AnimatedPressable';
 import { useBookmarkStore } from '@/stores/bookmarkStore';
+import { useSettingsStore } from '@/stores/settingsStore';
+import {
+  getTajweedForAyah,
+  parseTajweedText,
+  type TajweedRuleInfo,
+} from '../services/tajweedParser';
 import type { Ayah } from '@/db/schema';
 
 export interface AyahActionBarProps {
@@ -17,6 +23,8 @@ export interface AyahActionBarProps {
   surahName: string;
   surahArabic?: string;
   translationText?: string;
+  showTajweed?: boolean;
+  onPressRule?: (rule: TajweedRuleInfo, matchedText: string) => void;
   onClose: () => void;
   onPlay: () => void;
 }
@@ -26,6 +34,8 @@ export const AyahActionBar: React.FC<AyahActionBarProps> = ({
   surahName,
   surahArabic,
   translationText,
+  showTajweed = true,
+  onPressRule,
   onClose,
   onPlay,
 }) => {
@@ -33,6 +43,27 @@ export const AyahActionBar: React.FC<AyahActionBarProps> = ({
   const { colors, radius, spacing, fontFamilies, isDark } = useTheme();
   const { isBookmarked, toggleBookmark } = useBookmarkStore();
   const bookmarked = isBookmarked(ayah.id);
+  const language = useSettingsStore((s) => s.language);
+  const isUz = language === 'uz';
+
+  const ayahRules = useMemo(() => {
+    if (!showTajweed) return [];
+    let rawTagged = ayah.textTajweed;
+    if (!rawTagged && ayah.surahId) {
+      rawTagged = getTajweedForAyah(ayah.surahId, ayah.ayahNumber);
+    }
+    if (!rawTagged) return [];
+    const segments = parseTajweedText(rawTagged);
+    const seen = new Set<string>();
+    const rules: { rule: TajweedRuleInfo; sampleText: string }[] = [];
+    for (const seg of segments) {
+      if (seg.rule && !seen.has(seg.rule.code)) {
+        seen.add(seg.rule.code);
+        rules.push({ rule: seg.rule, sampleText: seg.text });
+      }
+    }
+    return rules;
+  }, [ayah, showTajweed]);
 
   const [copied, setCopied] = useState(false);
 
@@ -116,6 +147,59 @@ export const AyahActionBar: React.FC<AyahActionBarProps> = ({
         >
           {ayah.textUthmani}
         </Text>
+
+        {/* Tajweed Rule Pills (if any in this ayah) */}
+        {ayahRules.length > 0 && (
+          <View style={styles.tajweedSection}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.tajweedScrollContent}
+            >
+              {ayahRules.map((item, idx) => {
+                const ruleColor = isDark ? item.rule.darkColor : item.rule.lightColor;
+                const ruleName = isUz ? item.rule.nameUz : item.rule.nameRu;
+
+                return (
+                  <AnimatedPressable
+                    key={idx}
+                    onPress={() => {
+                      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      onPressRule?.(item.rule, item.sampleText);
+                    }}
+                    style={[
+                      styles.tajweedChip,
+                      {
+                        backgroundColor: isDark
+                          ? 'rgba(255, 255, 255, 0.08)'
+                          : 'rgba(0, 0, 0, 0.05)',
+                        borderColor: ruleColor + '80',
+                      },
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.tajweedDot,
+                        { backgroundColor: ruleColor },
+                      ]}
+                    />
+                    <Text
+                      style={[
+                        styles.tajweedChipText,
+                        {
+                          color: isDark ? '#FFFFFF' : '#1A1A1A',
+                          fontFamily: fontFamilies.ui,
+                        },
+                      ]}
+                    >
+                      {ruleName}
+                    </Text>
+                  </AnimatedPressable>
+                );
+              })}
+            </ScrollView>
+          </View>
+        )}
 
         {/* Action Buttons Row */}
         <View style={styles.actionsRow}>
@@ -243,6 +327,34 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginVertical: 4,
     opacity: 0.9,
+  },
+  tajweedSection: {
+    marginTop: 6,
+    marginBottom: 4,
+  },
+  tajweedScrollContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 2,
+  },
+  tajweedChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  tajweedDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  tajweedChipText: {
+    fontSize: 11.5,
+    fontWeight: '600',
   },
   actionsRow: {
     flexDirection: 'row',

@@ -65,12 +65,6 @@ export const MushafView = React.memo<MushafViewProps>(
     const textFontSize = Math.min(fontSize, Math.round(targetLineHeight / 1.75));
     const lineHeight = targetLineHeight;
 
-    const handleRulePress = (rule: TajweedRuleInfo, matchedText: string) => {
-      if (!onPressRule) return;
-      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      onPressRule(rule, matchedText);
-    };
-
     // Check if this page contains the start of a Surah (memoized)
     const { hasSurahStart, showBismillah, ayahsBeforeStart, ayahsFromStart } =
       useMemo(() => {
@@ -117,18 +111,6 @@ export const MushafView = React.memo<MushafViewProps>(
         return (
           <Text
             key={ayah.id}
-            onPress={
-              selectedAyahId != null
-                ? () => {
-                    void Haptics.selectionAsync();
-                    onSelectAyah?.(isSelected ? (null as any) : ayah);
-                  }
-                : undefined
-            }
-            onLongPress={() => {
-              void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              onSelectAyah?.(ayah);
-            }}
             style={[
               styles.ayahSpan,
               (isSelected || isActive) && [
@@ -173,10 +155,11 @@ export const MushafView = React.memo<MushafViewProps>(
             <Text
               style={[
                 styles.ayahBadge,
+                isSelected && styles.ayahBadgeSelected,
                 {
-                  color: colors.secondary,
+                  color: isSelected ? colors.primary : colors.secondary,
                   fontFamily: fontFamilies.arabic,
-                  fontSize: Math.round(textFontSize * 0.76),
+                  fontSize: Math.round(textFontSize * 0.82),
                 },
               ]}
             >
@@ -255,7 +238,7 @@ export const MushafView = React.memo<MushafViewProps>(
           />
 
           {/* Main Book Page Content */}
-          <View style={styles.scrollContent}>
+          <View style={styles.scrollContent} pointerEvents="none">
             {/* Any ayahs before new Surah starts */}
             {ayahsBeforeStart.length > 0 ? (
               <Text
@@ -354,7 +337,19 @@ export const MushafView = React.memo<MushafViewProps>(
         </View>
       </View>
     );
-  }
+  },
+  (prev, next) =>
+    prev.pageNumber === next.pageNumber &&
+    prev.width === next.width &&
+    prev.height === next.height &&
+    prev.fontSize === next.fontSize &&
+    prev.showTajweed === next.showTajweed &&
+    prev.selectedAyahId === next.selectedAyahId &&
+    prev.activeAyahNumber === next.activeAyahNumber &&
+    prev.playingAyahNumber === next.playingAyahNumber &&
+    prev.onSelectAyah === next.onSelectAyah &&
+    prev.onPressRule === next.onPressRule &&
+    prev.ayahs === next.ayahs
 );
 
 const styles = StyleSheet.create({
@@ -401,8 +396,12 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   ayahBadge: {
-    fontWeight: '600',
+    fontWeight: '700',
     includeFontPadding: false,
+    paddingHorizontal: 2,
+  },
+  ayahBadgeSelected: {
+    textDecorationLine: 'underline',
   },
   surahBannerWrap: {
     alignItems: 'center',

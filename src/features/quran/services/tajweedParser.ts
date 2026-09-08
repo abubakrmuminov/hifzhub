@@ -526,10 +526,35 @@ function isTafkheemRa(followingDiacritics: string): boolean {
   return followingDiacritics.includes('\u064E') || followingDiacritics.includes('\u064F');
 }
 
-// In-memory caches for high-performance zero-lag rendering
+// In-memory LRU caches — bounded to prevent unbounded memory growth during long reading sessions
+const MAX_TAJWEED_TEXT_CACHE = 300;
+const MAX_TAJWEED_WORD_CACHE = 600;
+const MAX_TAJWEED_WORDS_CACHE = 200;
+
 const tajweedTextSegmentsCache = new Map<string, TajweedSegment[]>();
 const tajweedWordCache = new Map<string, TajweedWord>();
 const tajweedWordsCache = new Map<string, TajweedWord[]>();
+
+function lruCacheGet<K, V>(cache: Map<K, V>, key: K): V | undefined {
+  const value = cache.get(key);
+  if (value !== undefined) {
+    cache.delete(key);
+    cache.set(key, value);
+  }
+  return value;
+}
+
+function lruCacheSet<K, V>(cache: Map<K, V>, key: K, value: V, maxSize: number): void {
+  if (cache.has(key)) {
+    cache.delete(key);
+  } else if (cache.size >= maxSize) {
+    const oldestKey = cache.keys().next().value;
+    if (oldestKey !== undefined) {
+      cache.delete(oldestKey);
+    }
+  }
+  cache.set(key, value);
+}
 
 /**
  * Parses raw tagged Tajweed text into structured segments with rule metadata.
@@ -539,7 +564,7 @@ const tajweedWordsCache = new Map<string, TajweedWord[]>();
  */
 export function parseTajweedText(rawText: string): TajweedSegment[] {
   if (!rawText) return [];
-  const cached = tajweedTextSegmentsCache.get(rawText);
+  const cached = lruCacheGet(tajweedTextSegmentsCache, rawText);
   if (cached) return cached;
 
   // 1. Normalize obsolete or problematic glyphs:
@@ -682,7 +707,7 @@ export function parseTajweedText(rawText: string): TajweedSegment[] {
     return { ...seg, text };
   });
 
-  tajweedTextSegmentsCache.set(rawText, segments);
+  lruCacheSet(tajweedTextSegmentsCache, rawText, segments, MAX_TAJWEED_TEXT_CACHE);
   return segments;
 }
 
@@ -782,7 +807,7 @@ export function cleanTajweedWord(rawWord: string): string {
  * providing precise letter-level fragments matching physical Tajweed mushafs.
  */
 export function parseTajweedWord(rawWord: string): TajweedWord {
-  const cached = tajweedWordCache.get(rawWord);
+  const cached = lruCacheGet(tajweedWordCache, rawWord);
   if (cached) return cached;
 
   const cleanWord = cleanTajweedWord(rawWord);
@@ -794,7 +819,7 @@ export function parseTajweedWord(rawWord: string): TajweedWord {
       allRules: [],
       fragments: [{ text: cleanWord, ruleCode: null, rule: null }],
     };
-    tajweedWordCache.set(rawWord, plainResult);
+    lruCacheSet(tajweedWordCache, rawWord, plainResult, MAX_TAJWEED_WORD_CACHE);
     return plainResult;
   }
 
@@ -902,7 +927,7 @@ export function parseTajweedWord(rawWord: string): TajweedWord {
     allRules,
     fragments,
   };
-  tajweedWordCache.set(rawWord, wordResult);
+  lruCacheSet(tajweedWordCache, rawWord, wordResult, MAX_TAJWEED_WORD_CACHE);
   return wordResult;
 }
 
@@ -911,11 +936,11 @@ export function parseTajweedWord(rawWord: string): TajweedWord {
  */
 export function parseTajweedWords(rawText: string): TajweedWord[] {
   if (!rawText) return [];
-  const cached = tajweedWordsCache.get(rawText);
+  const cached = lruCacheGet(tajweedWordsCache, rawText);
   if (cached) return cached;
   const rawWords = rawText.trim().split(/\s+/);
   const result = rawWords.map((rawWord) => parseTajweedWord(rawWord));
-  tajweedWordsCache.set(rawText, result);
+  lruCacheSet(tajweedWordsCache, rawText, result, MAX_TAJWEED_WORDS_CACHE);
   return result;
 }
 
