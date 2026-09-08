@@ -207,7 +207,7 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
   const [maskMode, setMaskMode] = useState<MushafMaskMode>('all_hidden');
   const [peekedKeys, setPeekedKeys] = useState<Set<string>>(new Set());
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  const [renderedPages, setRenderedPages] = useState<Set<number>>(() => new Set([0, 1, 2]));
+  const [renderAllPages, setRenderAllPages] = useState(false);
 
   const trainerPagerRef = useRef<PagerView>(null);
 
@@ -303,20 +303,11 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
   }, [pages, currentPageIndex]);
 
   useEffect(() => {
-    setRenderedPages((prev) => {
-      let changed = false;
-      const next = new Set(prev);
-      const start = Math.max(0, currentPageIndex - 1);
-      const end = currentPageIndex + 1;
-      for (let i = start; i <= end; i++) {
-        if (!next.has(i)) {
-          next.add(i);
-          changed = true;
-        }
-      }
-      return changed ? next : prev;
-    });
-  }, [currentPageIndex]);
+    const timer = setTimeout(() => {
+      setRenderAllPages(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Auto-flip page as continuous audio plays through during self-check
   useEffect(() => {
@@ -754,21 +745,38 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
         style={{ flex: 1 }}
         initialPage={0}
         layoutDirection="rtl"
-        offscreenPageLimit={1}
+        offscreenPageLimit={2}
         overScrollMode="never"
         onPageSelected={(e) => {
           setCurrentPageIndex(e.nativeEvent.position);
         }}
       >
         {pages.map((item, index) => {
-          const isRendered = renderedPages.has(index);
+          const isRendered =
+            renderAllPages || Math.abs(index - currentPageIndex) <= 2;
           return (
             <View
               key={`mushaf-trainer-page-${item.pageNumber}`}
               style={{ flex: 1, width: windowWidth }}
               collapsable={false}
             >
-              {isRendered ? renderPageItem({ item }) : null}
+              {isRendered ? (
+                renderPageItem({ item })
+              ) : (
+                <View style={{ width: windowWidth, paddingHorizontal: 12, flex: 1 }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      borderWidth: 1.5,
+                      borderColor: 'rgba(212, 167, 69, 0.26)',
+                      borderRadius: 20,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'rgba(212, 167, 69, 0.03)',
+                    }}
+                  />
+                </View>
+              )}
             </View>
           );
         })}

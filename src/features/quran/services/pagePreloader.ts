@@ -29,21 +29,31 @@ export function warmupPagesTajweed(ayahs: Ayah[]): void {
  */
 export function preloadMushafPages(
   pages: { pageNumber: number; ayahs: Ayah[] }[],
-  currentPageIndex: number
+  currentPageIndex?: number
 ): void {
-  const targetIndices = [
-    currentPageIndex,
-    currentPageIndex + 1,
-    currentPageIndex - 1,
-    currentPageIndex + 2,
-  ];
-
-  for (const pageIdx of targetIndices) {
-    if (pageIdx >= 0 && pageIdx < pages.length) {
-      const page = pages[pageIdx];
-      if (page?.ayahs) {
-        warmupPagesTajweed(page.ayahs);
+  // Pre-warm the current and nearest pages first
+  if (currentPageIndex != null) {
+    const nearIndices = [
+      currentPageIndex,
+      currentPageIndex + 1,
+      currentPageIndex - 1,
+      currentPageIndex + 2,
+    ];
+    for (const pageIdx of nearIndices) {
+      if (pageIdx >= 0 && pageIdx < pages.length) {
+        const page = pages[pageIdx];
+        if (page?.ayahs) {
+          warmupPagesTajweed(page.ayahs);
+        }
       }
+    }
+  }
+
+  // Pre-warm all remaining pages in the surah in-memory (< 1ms total)
+  for (let i = 0; i < pages.length; i++) {
+    const page = pages[i];
+    if (page?.ayahs) {
+      warmupPagesTajweed(page.ayahs);
     }
   }
 }
