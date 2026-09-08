@@ -15,7 +15,7 @@ import { useTheme } from '@/shared/theme';
 import { AnimatedPressable } from '@/shared/components';
 import { toArabicDigits } from '@/features/quran/utils/quranUtils';
 import { playAyah, stopAudio } from '@/features/audio';
-import { preloadMushafPagesAudio } from '@/features/quran';
+import { preloadMushafPages } from '@/features/quran';
 import { SURAHS_DATA } from '@/features/quran/data/surahsData';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useAudioStore } from '@/stores/audioStore';
@@ -207,6 +207,23 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
   const [maskMode, setMaskMode] = useState<MushafMaskMode>('all_hidden');
   const [peekedKeys, setPeekedKeys] = useState<Set<string>>(new Set());
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [renderedPages, setRenderedPages] = useState<Set<number>>(() => new Set([0, 1]));
+
+  useEffect(() => {
+    setRenderedPages((prev) => {
+      let changed = false;
+      const next = new Set(prev);
+      const start = Math.max(0, currentPageIndex - 1);
+      const end = currentPageIndex + 1;
+      for (let i = start; i <= end; i++) {
+        if (!next.has(i)) {
+          next.add(i);
+          changed = true;
+        }
+      }
+      return changed ? next : prev;
+    });
+  }, [currentPageIndex]);
 
   const trainerPagerRef = useRef<PagerView>(null);
 
@@ -277,37 +294,29 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
     };
   }, []);
 
-  // Background Preloader: caches Tajweed and downloads audio for current & neighboring pages
+  // Pre-warms in-memory Tajweed segments cache for current and nearby pages
+  // Fully synchronous, in-memory string parsing (< 1ms), zero network/disk competition
   useEffect(() => {
     if (pages.length === 0) return;
     const currPage = pages[currentPageIndex];
     if (!currPage) return;
 
-    const timer = setTimeout(() => {
-      const preloaderPages = pages.map((p) => ({
-        pageNumber: p.pageNumber,
-        ayahs: p.cards.map((c) => ({
-          id: 0,
-          surahId: c.surahId,
-          ayahNumber: c.ayahNumber,
-          textUthmani: c.arabicText,
-          textTajweed: c.arabicText,
-          juz: p.juzNumber,
-          hizb: 1,
-          page: p.pageNumber,
-        })),
-      }));
+    const preloaderPages = pages.map((p) => ({
+      pageNumber: p.pageNumber,
+      ayahs: p.cards.map((c) => ({
+        id: 0,
+        surahId: c.surahId,
+        ayahNumber: c.ayahNumber,
+        textUthmani: c.arabicText,
+        textTajweed: c.arabicText,
+        juz: p.juzNumber,
+        hizb: 1,
+        page: p.pageNumber,
+      })),
+    }));
 
-      void preloadMushafPagesAudio(
-        currPage.surahId,
-        preloaderPages,
-        currentPageIndex,
-        defaultReciter
-      );
-    }, 800);
-
-    return () => clearTimeout(timer);
-  }, [pages, currentPageIndex, defaultReciter]);
+    preloadMushafPages(preloaderPages, currentPageIndex);
+  }, [pages, currentPageIndex]);
 
   // Auto-flip page as continuous audio plays through during self-check
   useEffect(() => {
@@ -321,7 +330,9 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
     );
     if (pageIdx !== -1 && pageIdx !== currentPageIndex) {
       try {
-        trainerPagerRef.current?.setPage(pageIdx);
+        requestAnimationFrame(() => {
+          trainerPagerRef.current?.setPage(pageIdx);
+        });
         setCurrentPageIndex(pageIdx);
       } catch {}
     }
@@ -384,8 +395,9 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
         direction === 'next' ? currentPageIndex + 1 : currentPageIndex - 1;
       if (targetIdx >= 0 && targetIdx < pages.length) {
         void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        trainerPagerRef.current?.setPage(targetIdx);
-        setCurrentPageIndex(targetIdx);
+        requestAnimationFrame(() => {
+          trainerPagerRef.current?.setPage(targetIdx);
+        });
       }
     },
     [currentPageIndex, pages.length]
@@ -742,20 +754,23 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
         style={{ flex: 1 }}
         initialPage={0}
         layoutDirection="rtl"
-        offscreenPageLimit={2}
+        offscreenPageLimit={1}
         onPageSelected={(e) => {
           setCurrentPageIndex(e.nativeEvent.position);
         }}
       >
-        {pages.map((item) => (
-          <View
-            key={`mushaf-trainer-page-${item.pageNumber}`}
-            style={{ flex: 1, width: windowWidth }}
-            collapsable={false}
-          >
-            {renderPageItem({ item })}
-          </View>
-        ))}
+        {pages.map((item, index) => {
+          const isRendered = renderedPages.has(index);
+          return (
+            <View
+              key={`mushaf-trainer-page-${item.pageNumber}`}
+              style={{ flex: 1, width: windowWidth }}
+              collapsable={false}
+            >
+              {isRendered ? renderPageItem({ item }) : null}
+            </View>
+          );
+        })}
       </PagerView>
 
       {/* 4. Bottom Medina Book Navigation Bar (Authentic RTL: Left advances Next, Right goes Prev) */}

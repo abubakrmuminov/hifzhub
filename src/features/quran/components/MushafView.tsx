@@ -182,7 +182,7 @@ export const MushafView = React.memo<MushafViewProps>(
       : 'rgba(212, 167, 69, 0.38)';
 
     return (
-      <View style={[{ width, paddingHorizontal: 12 }, style]}>
+      <View style={[{ width, flex: 1, paddingHorizontal: 12 }, style]}>
         <View
           style={[
             styles.bookPageCard,
@@ -191,7 +191,6 @@ export const MushafView = React.memo<MushafViewProps>(
               backgroundColor: cardBgColor,
               borderColor: cardBorderColor,
               borderRadius: radius.xl,
-              height: height ? height - 12 : undefined,
             },
           ]}
         >
