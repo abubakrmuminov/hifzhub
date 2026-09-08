@@ -6,6 +6,7 @@ import {
   StyleSheet,
   useWindowDimensions,
   ScrollView,
+  InteractionManager,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
@@ -207,23 +208,7 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
   const [maskMode, setMaskMode] = useState<MushafMaskMode>('all_hidden');
   const [peekedKeys, setPeekedKeys] = useState<Set<string>>(new Set());
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  const [renderedPages, setRenderedPages] = useState<Set<number>>(() => new Set([0, 1]));
-
-  useEffect(() => {
-    setRenderedPages((prev) => {
-      let changed = false;
-      const next = new Set(prev);
-      const start = Math.max(0, currentPageIndex - 1);
-      const end = currentPageIndex + 1;
-      for (let i = start; i <= end; i++) {
-        if (!next.has(i)) {
-          next.add(i);
-          changed = true;
-        }
-      }
-      return changed ? next : prev;
-    });
-  }, [currentPageIndex]);
+  const [renderedPages, setRenderedPages] = useState<Set<number>>(() => new Set([0, 1, 2]));
 
   const trainerPagerRef = useRef<PagerView>(null);
 
@@ -317,6 +302,27 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
 
     preloadMushafPages(preloaderPages, currentPageIndex);
   }, [pages, currentPageIndex]);
+
+  // Background idle pre-warmer:
+  // After active swipe interactions finish, quietly pre-render up to 4 pages ahead and 2 behind.
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => {
+      setRenderedPages((prev) => {
+        let changed = false;
+        const next = new Set(prev);
+        const start = Math.max(0, currentPageIndex - 2);
+        const end = Math.min(pages.length - 1, currentPageIndex + 4);
+        for (let i = start; i <= end; i++) {
+          if (!next.has(i)) {
+            next.add(i);
+            changed = true;
+          }
+        }
+        return changed ? next : prev;
+      });
+    });
+    return () => task.cancel();
+  }, [currentPageIndex, pages.length]);
 
   // Auto-flip page as continuous audio plays through during self-check
   useEffect(() => {
@@ -754,7 +760,8 @@ export const MushafBlindTrainer: React.FC<MushafBlindTrainerProps> = ({
         style={{ flex: 1 }}
         initialPage={0}
         layoutDirection="rtl"
-        offscreenPageLimit={1}
+        offscreenPageLimit={2}
+        overScrollMode="never"
         onPageSelected={(e) => {
           setCurrentPageIndex(e.nativeEvent.position);
         }}

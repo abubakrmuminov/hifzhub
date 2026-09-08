@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -71,18 +71,25 @@ export const MushafView = React.memo<MushafViewProps>(
       onPressRule(rule, matchedText);
     };
 
-    // Check if this page contains the start of a Surah
-    const startAyah = ayahs.find((a) => a.ayahNumber === 1);
-    const hasSurahStart = Boolean(startAyah);
-    const showBismillah = hasSurahStart && surahId !== 9 && surahId !== 1;
-
-    // Separate ayahs before Surah start (if page spans across two surahs)
-    const ayahsBeforeStart = hasSurahStart
-      ? ayahs.filter((a) => a.surahId < startAyah!.surahId)
-      : [];
-    const ayahsFromStart = hasSurahStart
-      ? ayahs.filter((a) => a.surahId >= startAyah!.surahId)
-      : ayahs;
+    // Check if this page contains the start of a Surah (memoized)
+    const { hasSurahStart, showBismillah, ayahsBeforeStart, ayahsFromStart } =
+      useMemo(() => {
+        const start = ayahs.find((a) => a.ayahNumber === 1);
+        const hasStart = Boolean(start);
+        const bismillah = hasStart && surahId !== 9 && surahId !== 1;
+        const before = hasStart
+          ? ayahs.filter((a) => a.surahId < start!.surahId)
+          : [];
+        const from = hasStart
+          ? ayahs.filter((a) => a.surahId >= start!.surahId)
+          : ayahs;
+        return {
+          hasSurahStart: hasStart,
+          showBismillah: bismillah,
+          ayahsBeforeStart: before,
+          ayahsFromStart: from,
+        };
+      }, [ayahs, surahId]);
 
     // Precompute and memoize Tajweed segments for all ayahs on this page
     const ayahSegmentsMap = useMemo(() => {
@@ -98,83 +105,101 @@ export const MushafView = React.memo<MushafViewProps>(
       return map;
     }, [ayahs, showTajweed]);
 
-    const renderAyahText = (ayah: Ayah) => {
-      const isSelected = selectedAyahId === ayah.id;
-      const isPlaying =
-        playingAyahNumber != null && playingAyahNumber === ayah.ayahNumber;
-      const isActive = isPlaying || activeAyahNumber === ayah.ayahNumber;
+    const renderAyahText = useCallback(
+      (ayah: Ayah) => {
+        const isSelected = selectedAyahId === ayah.id;
+        const isPlaying =
+          playingAyahNumber != null && playingAyahNumber === ayah.ayahNumber;
+        const isActive = isPlaying || activeAyahNumber === ayah.ayahNumber;
 
-      const segments = ayahSegmentsMap.get(ayah.id) || [{ text: ayah.textUthmani }];
+        const segments = ayahSegmentsMap.get(ayah.id) || [{ text: ayah.textUthmani }];
 
-      return (
-        <Text
-          key={ayah.id}
-          onPress={() => {
-            if (selectedAyahId != null) {
-              void Haptics.selectionAsync();
-              onSelectAyah?.(isSelected ? (null as any) : ayah);
-            }
-          }}
-          onLongPress={() => {
-            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            onSelectAyah?.(ayah);
-          }}
-          style={[
-            styles.ayahSpan,
-            (isSelected || isActive) && [
-              styles.ayahSelected,
-              {
-                backgroundColor: isSelected
-                  ? isDark
-                    ? 'rgba(212, 167, 69, 0.38)'
-                    : 'rgba(212, 167, 69, 0.28)'
-                  : isPlaying
-                  ? isDark
-                    ? 'rgba(212, 167, 69, 0.25)'
-                    : 'rgba(212, 167, 69, 0.18)'
-                  : isDark
-                  ? 'rgba(212, 167, 69, 0.22)'
-                  : 'rgba(212, 167, 69, 0.14)',
-              },
-            ],
-          ]}
-        >
-          {segments.map((seg, sIdx) => {
-            const isRule = showTajweed && seg.rule != null;
-            const ruleColor = isRule
-              ? isDark
-                ? seg.rule!.darkColor
-                : seg.rule!.lightColor
-              : colors.quranText;
-
-            return (
-              <Text
-                key={sIdx}
-                suppressHighlighting={true}
-                style={{
-                  color: ruleColor,
-                  fontFamily: fontFamilies.quran,
-                }}
-              >
-                {seg.text}
-              </Text>
-            );
-          })}
+        return (
           <Text
+            key={ayah.id}
+            onPress={
+              selectedAyahId != null
+                ? () => {
+                    void Haptics.selectionAsync();
+                    onSelectAyah?.(isSelected ? (null as any) : ayah);
+                  }
+                : undefined
+            }
+            onLongPress={() => {
+              void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              onSelectAyah?.(ayah);
+            }}
             style={[
-              styles.ayahBadge,
-              {
-                color: colors.secondary,
-                fontFamily: fontFamilies.arabic,
-                fontSize: Math.round(textFontSize * 0.76),
-              },
+              styles.ayahSpan,
+              (isSelected || isActive) && [
+                styles.ayahSelected,
+                {
+                  backgroundColor: isSelected
+                    ? isDark
+                      ? 'rgba(212, 167, 69, 0.38)'
+                      : 'rgba(212, 167, 69, 0.28)'
+                    : isPlaying
+                    ? isDark
+                      ? 'rgba(212, 167, 69, 0.25)'
+                      : 'rgba(212, 167, 69, 0.18)'
+                    : isDark
+                    ? 'rgba(212, 167, 69, 0.22)'
+                    : 'rgba(212, 167, 69, 0.14)',
+                },
+              ],
             ]}
           >
-            {` ﴿${toArabicDigits(ayah.ayahNumber)}﴾ `}
+            {segments.map((seg, sIdx) => {
+              const isRule = showTajweed && seg.rule != null;
+              const ruleColor = isRule
+                ? isDark
+                  ? seg.rule!.darkColor
+                  : seg.rule!.lightColor
+                : colors.quranText;
+
+              return (
+                <Text
+                  key={sIdx}
+                  suppressHighlighting={true}
+                  style={{
+                    color: ruleColor,
+                    fontFamily: fontFamilies.quran,
+                  }}
+                >
+                  {seg.text}
+                </Text>
+              );
+            })}
+            <Text
+              style={[
+                styles.ayahBadge,
+                {
+                  color: colors.secondary,
+                  fontFamily: fontFamilies.arabic,
+                  fontSize: Math.round(textFontSize * 0.76),
+                },
+              ]}
+            >
+              {` ﴿${toArabicDigits(ayah.ayahNumber)}﴾ `}
+            </Text>
           </Text>
-        </Text>
-      );
-    };
+        );
+      },
+      [
+        selectedAyahId,
+        playingAyahNumber,
+        activeAyahNumber,
+        ayahSegmentsMap,
+        onSelectAyah,
+        isDark,
+        showTajweed,
+        colors.quranText,
+        colors.secondary,
+        fontFamilies.quran,
+        fontFamilies.arabic,
+        textFontSize,
+      ]
+    );
 
     const cardBgColor = isDark ? '#141C18' : '#FBF9F5';
     const cardBorderColor = isDark
