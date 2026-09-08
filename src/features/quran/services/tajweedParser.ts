@@ -637,66 +637,9 @@ export function parseTajweedText(rawText: string): TajweedSegment[] {
     }
   }
 
-  // 3. Extract Tafkheem (heavy letters) from untagged segments, matching Quran.com
-  const withTafkheem: TajweedSegment[] = [];
-  for (const seg of cleaned) {
-    if (seg.ruleCode != null) {
-      withTafkheem.push(seg);
-      continue;
-    }
-
-    let text = seg.text;
-    let idx = 0;
-    let untaggedBuf = '';
-
-    while (idx < text.length) {
-      const ch = text[idx];
-      let isTaf = false;
-
-      if (TAFKHEEM_LETTERS.has(ch)) {
-        isTaf = true;
-      } else if (ch === 'ر') {
-        let d = '';
-        let k = idx + 1;
-        while (k < text.length && IS_COMBINING_MARK.test(text[k])) {
-          d += text[k];
-          k++;
-        }
-        if (isTafkheemRa(d)) {
-          isTaf = true;
-        }
-      }
-
-      if (isTaf) {
-        if (untaggedBuf) {
-          withTafkheem.push({ text: untaggedBuf, ruleCode: undefined, rule: undefined });
-          untaggedBuf = '';
-        }
-        let tafText = ch;
-        idx++;
-        while (idx < text.length && IS_COMBINING_MARK.test(text[idx])) {
-          tafText += text[idx];
-          idx++;
-        }
-        withTafkheem.push({
-          text: tafText,
-          ruleCode: 'k',
-          rule: TAJWEED_RULES['k'],
-        });
-      } else {
-        untaggedBuf += ch;
-        idx++;
-      }
-    }
-
-    if (untaggedBuf) {
-      withTafkheem.push({ text: untaggedBuf, ruleCode: undefined, rule: undefined });
-    }
-  }
-
-  // 4. Merge consecutive segments with identical ruleCode
+  // 3. Merge consecutive segments with identical ruleCode
   const merged: TajweedSegment[] = [];
-  for (const seg of withTafkheem) {
+  for (const seg of cleaned) {
     if (merged.length > 0 && merged[merged.length - 1].ruleCode === seg.ruleCode) {
       merged[merged.length - 1].text += seg.text;
     } else {

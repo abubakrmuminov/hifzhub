@@ -6,7 +6,6 @@ import {
   useWindowDimensions,
   FlatList,
   Platform,
-  InteractionManager,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
   type ViewToken,
@@ -545,14 +544,14 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
   );
 
   // Set of page indices that have been rendered.
-  // Pre-renders immediate window on start, and expands up to 4 pages ahead during idle time.
+  // Mounts current and adjacent pages on demand, keeping previously rendered pages in memory.
   const [renderedPages, setRenderedPages] = useState<Set<number>>(() => {
     const initial = new Set<number>();
     const start =
       initialMushafIndex != null && initialMushafIndex < mushafPages.length
         ? initialMushafIndex
         : 0;
-    for (let i = Math.max(0, start - 1); i <= start + 2; i++) {
+    for (let i = Math.max(0, start - 1); i <= start + 1; i++) {
       initial.add(i);
     }
     return initial;
@@ -565,7 +564,7 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
         let changed = false;
         const next = new Set(prev);
         const start = Math.max(0, initialMushafIndex - 1);
-        const end = initialMushafIndex + 2;
+        const end = initialMushafIndex + 1;
         for (let i = start; i <= end; i++) {
           if (!next.has(i)) {
             next.add(i);
@@ -577,27 +576,21 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
     }
   }, [initialMushafIndex]);
 
-  // Background idle pre-warmer:
-  // After active swipe interactions finish, quietly pre-render up to 4 pages ahead and 2 behind.
-  // This guarantees that during fast swiping, every upcoming page is ALREADY mounted and in memory!
   useEffect(() => {
-    const task = InteractionManager.runAfterInteractions(() => {
-      setRenderedPages((prev) => {
-        let changed = false;
-        const next = new Set(prev);
-        const start = Math.max(0, currentMushafPageIndex - 2);
-        const end = Math.min(mushafPages.length - 1, currentMushafPageIndex + 4);
-        for (let i = start; i <= end; i++) {
-          if (!next.has(i)) {
-            next.add(i);
-            changed = true;
-          }
+    setRenderedPages((prev) => {
+      let changed = false;
+      const next = new Set(prev);
+      const start = Math.max(0, currentMushafPageIndex - 1);
+      const end = currentMushafPageIndex + 1;
+      for (let i = start; i <= end; i++) {
+        if (!next.has(i)) {
+          next.add(i);
+          changed = true;
         }
-        return changed ? next : prev;
-      });
+      }
+      return changed ? next : prev;
     });
-    return () => task.cancel();
-  }, [currentMushafPageIndex, mushafPages.length]);
+  }, [currentMushafPageIndex]);
 
   const mushafPageHeight = useMemo(() => {
     const topOccupied = insets.top + 54 + 44;
@@ -1072,7 +1065,7 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
                 : 0
             }
             layoutDirection="rtl"
-            offscreenPageLimit={2}
+            offscreenPageLimit={1}
             overScrollMode="never"
             onPageSelected={(e) => {
               const pageIdx = e.nativeEvent.position;

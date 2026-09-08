@@ -34,11 +34,8 @@ export function preloadMushafPages(
   const targetIndices = [
     currentPageIndex,
     currentPageIndex + 1,
-    currentPageIndex + 2,
-    currentPageIndex + 3,
-    currentPageIndex + 4,
     currentPageIndex - 1,
-    currentPageIndex - 2,
+    currentPageIndex + 2,
   ];
 
   for (const pageIdx of targetIndices) {
