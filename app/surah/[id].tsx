@@ -8,7 +8,6 @@ import {
   Platform,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
-  type ViewToken,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -23,7 +22,7 @@ import Animated, {
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { Ionicons, Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/shared/theme';
 import { AyahSkeleton } from '@/shared/components/Skeleton';
@@ -34,8 +33,7 @@ import {
   ReadingModeToggle,
   AyahText,
   TranslationText,
-  MushafView,
-  MushafRollingPager,
+  MushafBookView,
   type MushafRollingPagerRef,
   PageDivider,
   FloatingAudioPlayer,
@@ -47,11 +45,9 @@ import {
   getSurahName,
   preloadMushafPagesDeferred,
   cancelMushafPreload,
-  toArabicDigits,
 } from '@/features/quran';
 import { playAyah, pauseAudio } from '@/features/audio';
 import { useAudioStore } from '@/stores/audioStore';
-import { useDownload } from '@/features/audio/hooks/useDownload';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useProgressStore } from '@/stores/progressStore';
 import { SURAHS_DATA } from '@/features/quran/data/surahsData';
@@ -61,103 +57,6 @@ interface MushafPageData {
   pageNumber: number;
   ayahs: Ayah[];
 }
-
-const mushafPageFlexStyle = { flex: 1 } as const;
-
-interface MushafPageItemProps {
-  item: MushafPageData;
-  isRendered: boolean;
-  windowWidth: number;
-  mushafPageHeight: number;
-  quranFontSize: number;
-  showTajweed: boolean;
-  selectedAyahId?: number | null;
-  activeAyahNumber?: number | null;
-  playingAyahNumber?: number | null;
-  onSelectAyah: (ayah: Ayah | null) => void;
-  onPressRule: (rule: TajweedRuleInfo, matchedText: string) => void;
-}
-
-const MushafPageItem = React.memo<MushafPageItemProps>(
-  ({
-    item,
-    isRendered,
-    windowWidth,
-    mushafPageHeight,
-    quranFontSize,
-    showTajweed,
-    selectedAyahId,
-    activeAyahNumber,
-    playingAyahNumber,
-    onSelectAyah,
-    onPressRule,
-  }) => {
-    return (
-      <View
-        style={{ flex: 1, width: windowWidth }}
-        collapsable={false}
-      >
-        {isRendered ? (
-          <MushafView
-            ayahs={item.ayahs}
-            pageNumber={item.pageNumber}
-            width={windowWidth}
-            height={mushafPageHeight}
-            style={mushafPageFlexStyle}
-            fontSize={quranFontSize}
-            showTajweed={showTajweed}
-            selectedAyahId={selectedAyahId}
-            activeAyahNumber={activeAyahNumber}
-            playingAyahNumber={playingAyahNumber}
-            onSelectAyah={onSelectAyah}
-            onPressRule={onPressRule}
-          />
-        ) : (
-          <View style={{ width: windowWidth, flex: 1, paddingHorizontal: 12 }}>
-            <View
-              style={{
-                flex: 1,
-                borderWidth: 1.5,
-                borderColor: 'rgba(212, 167, 69, 0.26)',
-                borderRadius: 20,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(212, 167, 69, 0.03)',
-              }}
-            >
-              <Text
-                style={{
-                  color: '#D4A745',
-                  fontSize: 16,
-                  fontWeight: '600',
-                }}
-              >
-                {toArabicDigits(item.pageNumber)}
-              </Text>
-            </View>
-          </View>
-        )}
-      </View>
-    );
-  },
-  (prev, next) => {
-    if (prev.isRendered !== next.isRendered) return false;
-    if (prev.item.pageNumber !== next.item.pageNumber) return false;
-    if (!prev.isRendered) return true;
-
-    return (
-      prev.windowWidth === next.windowWidth &&
-      prev.mushafPageHeight === next.mushafPageHeight &&
-      prev.quranFontSize === next.quranFontSize &&
-      prev.showTajweed === next.showTajweed &&
-      prev.selectedAyahId === next.selectedAyahId &&
-      prev.activeAyahNumber === next.activeAyahNumber &&
-      prev.playingAyahNumber === next.playingAyahNumber &&
-      prev.onSelectAyah === next.onSelectAyah &&
-      prev.onPressRule === next.onPressRule
-    );
-  }
-);
 
 interface TranslationAyahCardProps {
   item: Ayah;
@@ -472,11 +371,13 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
   );
 
   React.useEffect(() => {
-    if (surahId) {
+    if (!surahId) return;
+    const timer = setTimeout(() => {
       const initialAyah = targetAyahNumber || 1;
       setLastRead(surahId, initialAyah);
       recordAyahRead(1);
-    }
+    }, 450);
+    return () => clearTimeout(timer);
   }, [surahId, targetAyahNumber, setLastRead, recordAyahRead]);
 
   const handleSelectAyah = useCallback(
@@ -581,46 +482,19 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
     return idx >= 0 ? idx : undefined;
   }, [targetAyahNumber, mushafPages]);
 
-  const [currentMushafPageIndex, setCurrentMushafPageIndex] = useState<number>(
-    () =>
-      initialMushafIndex != null && initialMushafIndex < mushafPages.length
-        ? initialMushafIndex
-        : 0
-  );
-
-  currentMushafPageIndexRef.current = currentMushafPageIndex;
-
-  const mushafPageLookup = useMemo(
-    () =>
-      mushafPages.map((page) => ({
-        ayahNumbers: new Set(page.ayahs.map((a) => a.ayahNumber)),
-        ayahIds: new Set(page.ayahs.map((a) => a.id)),
-      })),
-    [mushafPages]
-  );
+  const mushafAnchorIndex = initialMushafIndex ?? 0;
 
   useEffect(() => {
     if (initialMushafIndex != null) {
-      setCurrentMushafPageIndex(initialMushafIndex);
       currentMushafPageIndexRef.current = initialMushafIndex;
     }
   }, [initialMushafIndex]);
 
   const mushafPageHeight = useMemo(() => {
     const topOccupied = insets.top + 54 + 44;
-    const bottomOccupied = Math.max(insets.bottom, 12) + (currentTrack ? 84 : 8) + 48;
+    const bottomOccupied = Math.max(insets.bottom, 12) + 84 + 48;
     return Math.max(360, windowHeight - topOccupied - bottomOccupied);
-  }, [windowHeight, insets.top, insets.bottom, currentTrack]);
-
-  const handleFlipMushafPage = useCallback(
-    (direction: 'prev' | 'next') => {
-      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      requestAnimationFrame(() => {
-        mushafPagerRef.current?.flipPage(direction);
-      });
-    },
-    []
-  );
+  }, [windowHeight, insets.top, insets.bottom]);
 
   const mushafPagesRef = useRef(mushafPages);
   mushafPagesRef.current = mushafPages;
@@ -638,9 +512,8 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
     };
   }, []);
 
-  const handleMushafPageChange = useCallback((pageIdx: number) => {
+  const handleMushafPageIdle = useCallback((pageIdx: number) => {
     currentMushafPageIndexRef.current = pageIdx;
-    setCurrentMushafPageIndex(pageIdx);
 
     if (lastReadDebounceRef.current) {
       clearTimeout(lastReadDebounceRef.current);
@@ -654,85 +527,11 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
     }, 800);
   }, []);
 
-  const renderMushafRollingPage = useCallback(
-    (index: number) => {
-      const item = mushafPages[index];
-      if (!item) return null;
-
-      const lookup = mushafPageLookup[index];
-      const pageSelectedAyahId =
-        selectedAyah?.id != null && lookup?.ayahIds.has(selectedAyah.id)
-          ? selectedAyah.id
-          : null;
-      const pageActiveAyahNumber =
-        highlightedAyahNumber != null &&
-        lookup?.ayahNumbers.has(highlightedAyahNumber)
-          ? highlightedAyahNumber
-          : null;
-      const pagePlayingAyahNumber =
-        isPlaying &&
-        isCurrentSurah &&
-        playingAyahNumber != null &&
-        lookup?.ayahNumbers.has(playingAyahNumber)
-          ? playingAyahNumber
-          : null;
-
-      return (
-        <MushafPageItem
-          item={item}
-          isRendered
-          windowWidth={windowWidth}
-          mushafPageHeight={mushafPageHeight}
-          quranFontSize={quranFontSize}
-          showTajweed={showTajweed}
-          selectedAyahId={pageSelectedAyahId}
-          activeAyahNumber={pageActiveAyahNumber}
-          playingAyahNumber={pagePlayingAyahNumber}
-          onSelectAyah={handleSelectAyah}
-          onPressRule={handleRulePress}
-        />
-      );
-    },
-    [
-      mushafPages,
-      mushafPageLookup,
-      selectedAyah?.id,
-      highlightedAyahNumber,
-      isPlaying,
-      isCurrentSurah,
-      playingAyahNumber,
-      windowWidth,
-      mushafPageHeight,
-      quranFontSize,
-      showTajweed,
-      handleSelectAyah,
-      handleRulePress,
-    ]
-  );
-
-  const renderMushafRollingPlaceholder = useCallback(
-    () => (
-      <View style={{ width: windowWidth, flex: 1, paddingHorizontal: 12 }}>
-        <View
-          style={{
-            flex: 1,
-            borderWidth: 1.5,
-            borderColor: 'rgba(212, 167, 69, 0.26)',
-            borderRadius: 20,
-            backgroundColor: 'rgba(212, 167, 69, 0.03)',
-          }}
-        />
-      </View>
-    ),
-    [windowWidth]
-  );
-
-  // Pre-warm Tajweed cache after interactions settle (current ±1, +2 forward)
   useEffect(() => {
     if (mushafPages.length === 0 || readingMode !== 'mushaf') return;
-    preloadMushafPagesDeferred(mushafPages, currentMushafPageIndex);
+    preloadMushafPagesDeferred(mushafPages, currentMushafPageIndexRef.current);
     return () => cancelMushafPreload();
-  }, [mushafPages, currentMushafPageIndex, readingMode]);
+  }, [mushafPages, readingMode]);
 
   // Sub-pixel ground-truth alignment once target ayah layout measures
   const hasFineAdjustedRef = useRef(false);
@@ -809,7 +608,7 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
       const pageIndex = mushafPages.findIndex((p) =>
         p.ayahs.some((a) => a.ayahNumber === playingAyahNumber)
       );
-      if (pageIndex !== -1 && pageIndex !== currentMushafPageIndex) {
+      if (pageIndex !== -1 && pageIndex !== currentMushafPageIndexRef.current) {
         try {
           requestAnimationFrame(() => {
             mushafPagerRef.current?.setPage(pageIndex);
@@ -824,7 +623,6 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
     readingMode,
     ayahs,
     mushafPages,
-    currentMushafPageIndex,
   ]);
 
   const localizedName = surah
@@ -1151,103 +949,24 @@ export const SurahDetailScreen: React.FC<SurahDetailScreenProps> = () => {
             />
           </View>
 
-          {/* Rolling 3-slot pager: constant native view count regardless of surah length */}
-          <MushafRollingPager
-            ref={mushafPagerRef}
-            pageCount={mushafPages.length}
-            pageIndex={currentMushafPageIndex}
-            onPageChange={handleMushafPageChange}
-            onPageScrollIdle={(idx) => {
-              preloadMushafPagesDeferred(mushafPagesRef.current, idx);
-            }}
-            renderPage={renderMushafRollingPage}
-            renderPlaceholder={renderMushafRollingPlaceholder}
-            layoutDirection="rtl"
+          <MushafBookView
+            pages={mushafPages}
+            windowWidth={windowWidth}
+            mushafPageHeight={mushafPageHeight}
+            quranFontSize={quranFontSize}
+            showTajweed={showTajweed}
+            selectedAyahId={selectedAyah?.id ?? null}
+            highlightedAyahNumber={highlightedAyahNumber}
+            playingAyahNumber={
+              isPlaying && isCurrentSurah ? playingAyahNumber ?? null : null
+            }
+            onSelectAyah={handleSelectAyah}
+            onPressRule={handleRulePress}
+            initialPageIndex={mushafAnchorIndex}
+            pagerRef={mushafPagerRef}
+            onPageIdle={handleMushafPageIdle}
+            surahPageStart={surah?.pageStart}
           />
-
-          {/* Bottom Medina Book Navigation Bar (Authentic RTL: Left advances Next, Right goes Prev) */}
-          <View
-            style={[
-              styles.mushafBottomNav,
-              {
-                paddingBottom:
-                  Math.max(insets.bottom, 12) + (currentTrack ? 84 : 8),
-              },
-            ]}
-          >
-            {/* Left Button: Next Page (advances forward in Arabic reading order) */}
-            <AnimatedPressable
-              onPress={() => handleFlipMushafPage('next')}
-              disabled={currentMushafPageIndex >= mushafPages.length - 1}
-              style={[
-                styles.mushafPageBtn,
-                {
-                  backgroundColor: colors.surface,
-                  borderColor: colors.border,
-                  opacity:
-                    currentMushafPageIndex >= mushafPages.length - 1
-                      ? 0.35
-                      : 1,
-                },
-              ]}
-              accessibilityLabel="Следующая страница"
-              accessibilityRole="button"
-            >
-              <Ionicons
-                name="chevron-back"
-                size={20}
-                color={colors.primary}
-              />
-            </AnimatedPressable>
-
-            <View
-              style={[
-                styles.mushafPageCounter,
-                {
-                  backgroundColor: colors.surface,
-                  borderColor: colors.border,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.mushafPageCounterText,
-                  { color: colors.textSecondary },
-                ]}
-              >
-                {t('quran.page', 'Стр.')}{' '}
-                <Text style={{ color: colors.secondary, fontWeight: '700' }}>
-                  {mushafPages[currentMushafPageIndex]?.pageNumber ??
-                    surah?.pageStart ??
-                    1}
-                </Text>
-                {'  •  '}
-                {currentMushafPageIndex + 1} / {Math.max(1, mushafPages.length)}
-              </Text>
-            </View>
-
-            {/* Right Button: Previous Page (goes backward toward the beginning) */}
-            <AnimatedPressable
-              onPress={() => handleFlipMushafPage('prev')}
-              disabled={currentMushafPageIndex === 0}
-              style={[
-                styles.mushafPageBtn,
-                {
-                  backgroundColor: colors.surface,
-                  borderColor: colors.border,
-                  opacity: currentMushafPageIndex === 0 ? 0.35 : 1,
-                },
-              ]}
-              accessibilityLabel="Предыдущая страница"
-              accessibilityRole="button"
-            >
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={colors.primary}
-              />
-            </AnimatedPressable>
-          </View>
         </View>
       ) : (
         <View style={{ flex: 1 }}>

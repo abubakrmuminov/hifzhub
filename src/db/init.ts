@@ -1,15 +1,16 @@
 import * as SQLite from 'expo-sqlite';
 import { SURAHS_DATA } from '@/features/quran/data/surahsData';
-import { SEED_AYAHS, SEED_TRANSLATIONS } from '@/features/quran/data/seedAyahs';
 
 let isDbInitialized = false;
 let isInitializing = false;
+let seedPromise: Promise<void> | null = null;
 
-export const initDatabaseTables = (sqliteDb: SQLite.SQLiteDatabase): void => {
-  if (isDbInitialized || isInitializing) return;
-  isInitializing = true;
-  try {
+const yieldToUi = (): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, 0);
+  });
 
+const createDatabaseTables = (sqliteDb: SQLite.SQLiteDatabase): void => {
   sqliteDb.execSync(`
     CREATE TABLE IF NOT EXISTS surahs (
       id INTEGER PRIMARY KEY,
@@ -103,83 +104,104 @@ export const initDatabaseTables = (sqliteDb: SQLite.SQLiteDatabase): void => {
     CREATE INDEX IF NOT EXISTS idx_ayahs_page ON ayahs(page);
     CREATE INDEX IF NOT EXISTS idx_ayahs_juz ON ayahs(juz);
   `);
+};
 
+const seedSurahsIfNeeded = (sqliteDb: SQLite.SQLiteDatabase): void => {
   const surahCountResult = sqliteDb.getFirstSync<{ count: number }>(
     'SELECT COUNT(*) as count FROM surahs;'
   );
 
-  if (!surahCountResult || surahCountResult.count === 0) {
-    const tStartSurahs = performance.now();
-    sqliteDb.withTransactionSync(() => {
-      const BATCH = 50;
-      for (let i = 0; i < SURAHS_DATA.length; i += BATCH) {
-        const chunk = SURAHS_DATA.slice(i, i + BATCH);
-        const placeholders = chunk.map(() => '(?, ?, ?, ?, ?, ?, ?)').join(', ');
-        const sql = `INSERT OR REPLACE INTO surahs (id, name_arabic, name_translation, revelation_type, ayah_count, juz_start, page_start) VALUES ${placeholders};`;
-        const params: any[] = [];
-        for (const s of chunk) {
-          params.push(
-            s.id,
-            s.nameArabic,
-            s.nameTranslation,
-            s.revelationType,
-            s.ayahCount,
-            s.juzStart,
-            s.pageStart
-          );
-        }
-        sqliteDb.runSync(sql, params);
-      }
-    });
-    console.log(`[DB Init] Seeded surahs in ${(performance.now() - tStartSurahs).toFixed(2)} ms`);
-  }
+  if (surahCountResult && surahCountResult.count > 0) return;
 
+  const tStartSurahs = performance.now();
+  sqliteDb.withTransactionSync(() => {
+    const BATCH = 50;
+    for (let i = 0; i < SURAHS_DATA.length; i += BATCH) {
+      const chunk = SURAHS_DATA.slice(i, i + BATCH);
+      const placeholders = chunk.map(() => '(?, ?, ?, ?, ?, ?, ?)').join(', ');
+      const sql = `INSERT OR REPLACE INTO surahs (id, name_arabic, name_translation, revelation_type, ayah_count, juz_start, page_start) VALUES ${placeholders};`;
+      const params: any[] = [];
+      for (const s of chunk) {
+        params.push(
+          s.id,
+          s.nameArabic,
+          s.nameTranslation,
+          s.revelationType,
+          s.ayahCount,
+          s.juzStart,
+          s.pageStart
+        );
+      }
+      sqliteDb.runSync(sql, params);
+    }
+  });
+  console.log(`[DB Init] Seeded surahs in ${(performance.now() - tStartSurahs).toFixed(2)} ms`);
+};
+
+const seedAyahsIfNeeded = async (sqliteDb: SQLite.SQLiteDatabase): Promise<void> => {
   const ayahCountResult = sqliteDb.getFirstSync<{ count: number }>(
     'SELECT COUNT(*) as count FROM ayahs;'
   );
 
-  if (!ayahCountResult || ayahCountResult.count < 6236) {
-    const tStartAyahs = performance.now();
-    const fullAyahs = require('../../assets/data/quran-full-ayahs.json');
-    const fullTranslations = require('../../assets/data/quran-full-translations.json');
+  if (ayahCountResult && ayahCountResult.count >= 6236) return;
 
+  const tStartAyahs = performance.now();
+  const fullAyahs = require('../../assets/data/quran-full-ayahs.json');
+  const fullTranslations = require('../../assets/data/quran-full-translations.json');
+
+  const BATCH = 200;
+  for (let i = 0; i < fullAyahs.length; i += BATCH) {
+    const chunk = fullAyahs.slice(i, i + BATCH);
+    const placeholders = chunk.map(() => '(?, ?, ?, ?, ?, ?, ?, ?)').join(', ');
+    const sql = `INSERT OR REPLACE INTO ayahs (id, surah_id, ayah_number, text_uthmani, text_tajweed, juz, hizb, page) VALUES ${placeholders};`;
+    const params: any[] = [];
+    for (const a of chunk) {
+      params.push(
+        a.id,
+        a.surahId,
+        a.ayahNumber,
+        a.textUthmani,
+        a.textTajweed ?? null,
+        a.juz,
+        a.hizb,
+        a.page
+      );
+    }
     sqliteDb.withTransactionSync(() => {
-      const BATCH = 200;
-      for (let i = 0; i < fullAyahs.length; i += BATCH) {
-        const chunk = fullAyahs.slice(i, i + BATCH);
-        const placeholders = chunk.map(() => '(?, ?, ?, ?, ?, ?, ?, ?)').join(', ');
-        const sql = `INSERT OR REPLACE INTO ayahs (id, surah_id, ayah_number, text_uthmani, text_tajweed, juz, hizb, page) VALUES ${placeholders};`;
-        const params: any[] = [];
-        for (const a of chunk) {
-          params.push(
-            a.id,
-            a.surahId,
-            a.ayahNumber,
-            a.textUthmani,
-            a.textTajweed ?? null,
-            a.juz,
-            a.hizb,
-            a.page
-          );
-        }
-        sqliteDb.runSync(sql, params);
-      }
-
-      for (let i = 0; i < fullTranslations.length; i += BATCH) {
-        const chunk = fullTranslations.slice(i, i + BATCH);
-        const placeholders = chunk.map(() => '(?, ?, ?, ?, ?)').join(', ');
-        const sql = `INSERT OR REPLACE INTO translations (id, ayah_id, language, translator, text) VALUES ${placeholders};`;
-        const params: any[] = [];
-        for (const t of chunk) {
-          params.push(t.id, t.ayahId, t.language, t.translator, t.text);
-        }
-        sqliteDb.runSync(sql, params);
-      }
+      sqliteDb.runSync(sql, params);
     });
-    console.log(`[DB Init] Seeded 6236 ayahs & 12472 translations in ${(performance.now() - tStartAyahs).toFixed(2)} ms`);
+    if (i > 0 && i % (BATCH * 3) === 0) {
+      await yieldToUi();
+    }
   }
 
-  isDbInitialized = true;
+  for (let i = 0; i < fullTranslations.length; i += BATCH) {
+    const chunk = fullTranslations.slice(i, i + BATCH);
+    const placeholders = chunk.map(() => '(?, ?, ?, ?, ?)').join(', ');
+    const sql = `INSERT OR REPLACE INTO translations (id, ayah_id, language, translator, text) VALUES ${placeholders};`;
+    const params: any[] = [];
+    for (const t of chunk) {
+      params.push(t.id, t.ayahId, t.language, t.translator, t.text);
+    }
+    sqliteDb.withTransactionSync(() => {
+      sqliteDb.runSync(sql, params);
+    });
+    if (i > 0 && i % (BATCH * 3) === 0) {
+      await yieldToUi();
+    }
+  }
+
+  console.log(
+    `[DB Init] Seeded 6236 ayahs & 12472 translations in ${(performance.now() - tStartAyahs).toFixed(2)} ms`
+  );
+};
+
+export const initDatabaseTables = (sqliteDb: SQLite.SQLiteDatabase): void => {
+  if (isDbInitialized || isInitializing) return;
+  isInitializing = true;
+  try {
+    createDatabaseTables(sqliteDb);
+    seedSurahsIfNeeded(sqliteDb);
   } finally {
     isInitializing = false;
   }
@@ -199,12 +221,25 @@ export const getPersistentSqliteDb = (): SQLite.SQLiteDatabase => {
     try {
       persistentSqliteDb.execSync('PRAGMA foreign_keys = ON;');
     } catch {}
-    initDatabaseTables(persistentSqliteDb);
+    createDatabaseTables(persistentSqliteDb);
   }
   return persistentSqliteDb;
 };
 
 export const initializeDatabase = async (): Promise<void> => {
   if (isDbInitialized && persistentSqliteDb) return;
-  getPersistentSqliteDb();
+  if (seedPromise) return seedPromise;
+
+  seedPromise = (async () => {
+    const db = getPersistentSqliteDb();
+    seedSurahsIfNeeded(db);
+    await seedAyahsIfNeeded(db);
+    isDbInitialized = true;
+  })();
+
+  try {
+    await seedPromise;
+  } finally {
+    seedPromise = isDbInitialized ? seedPromise : null;
+  }
 };

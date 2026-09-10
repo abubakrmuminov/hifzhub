@@ -1,13 +1,7 @@
 import { create } from 'zustand';
-import { createJSONStorage, persist, type StateStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { useProgressStore } from './progressStore';
-
-const asyncStorage: StateStorage = {
-  setItem: (name: string, value: string) => AsyncStorage.setItem(name, value),
-  getItem: (name: string) => AsyncStorage.getItem(name),
-  removeItem: (name: string) => AsyncStorage.removeItem(name),
-};
+import { appStorage } from '@/shared/storage/mmkvStorage';
 
 export interface LessonResult {
   lessonId: string;
@@ -171,7 +165,7 @@ export const useLessonStore = create<LessonStoreState>()(
     }),
     {
       name: 'hifzhub-lesson-progress',
-      storage: createJSONStorage(() => asyncStorage),
+      storage: createJSONStorage(() => appStorage),
     }
   )
 );

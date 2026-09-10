@@ -509,6 +509,11 @@ export function getTajweedDataset(): Record<string, string> {
   return tajweedCache || {};
 }
 
+/** Warm the 1.8MB JSON parse off the first mushaf paint. */
+export function preloadTajweedDataset(): void {
+  getTajweedDataset();
+}
+
 /**
  * Retrieves the raw tagged Tajweed text for a specific surah and ayah.
  */
@@ -522,18 +527,38 @@ const IS_COMBINING_MARK = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-
 const TAFKHEEM_LETTERS = new Set(['خ', 'ص', 'ض', 'غ', 'ط', 'ق', 'ظ']);
 const NON_FORWARD_CONNECTORS = new Set(['ا', 'أ', 'إ', 'آ', 'ٱ', 'د', 'ذ', 'ر', 'ز', 'و', 'ؤ', 'ة', 'ء']);
 
+/** Rules that actually change glyph color. Madd tabii / silent / wasl stay default text. */
+const MUSHAF_COLOR_RULES = new Set<TajweedRuleCode>([
+  'm',
+  'o',
+  'p',
+  'q',
+  'g',
+  'f',
+  'c',
+  'i',
+  'a',
+  'u',
+  'd',
+  'w',
+  'b',
+  'k',
+]);
+
 function isTafkheemRa(followingDiacritics: string): boolean {
   return followingDiacritics.includes('\u064E') || followingDiacritics.includes('\u064F');
 }
 
-// In-memory LRU caches — bounded to prevent unbounded memory growth during long reading sessions
-const MAX_TAJWEED_TEXT_CACHE = 300;
-const MAX_TAJWEED_WORD_CACHE = 600;
-const MAX_TAJWEED_WORDS_CACHE = 200;
+// In-memory LRU caches — ~2–3 juz of parsed ayahs so fast paging stays warm
+const MAX_TAJWEED_TEXT_CACHE = 1500;
+const MAX_TAJWEED_WORD_CACHE = 3000;
+const MAX_TAJWEED_WORDS_CACHE = 1500;
+const MAX_AYAH_SEGMENTS_CACHE = 1500;
 
 const tajweedTextSegmentsCache = new Map<string, TajweedSegment[]>();
 const tajweedWordCache = new Map<string, TajweedWord>();
 const tajweedWordsCache = new Map<string, TajweedWord[]>();
+const ayahSegmentsCache = new Map<string, TajweedSegment[]>();
 
 function lruCacheGet<K, V>(cache: Map<K, V>, key: K): V | undefined {
   const value = cache.get(key);
@@ -663,12 +688,33 @@ export function parseTajweedText(rawText: string): TajweedSegment[] {
   }
 
   // 3. Merge consecutive segments with identical ruleCode
-  const merged: TajweedSegment[] = [];
+  const mergedSameRule: TajweedSegment[] = [];
   for (const seg of cleaned) {
-    if (merged.length > 0 && merged[merged.length - 1].ruleCode === seg.ruleCode) {
-      merged[merged.length - 1].text += seg.text;
+    if (
+      mergedSameRule.length > 0 &&
+      mergedSameRule[mergedSameRule.length - 1].ruleCode === seg.ruleCode
+    ) {
+      mergedSameRule[mergedSameRule.length - 1].text += seg.text;
     } else {
-      merged.push({ ...seg });
+      mergedSameRule.push({ ...seg });
+    }
+  }
+
+  // 4. Collapse inactive rules (madd tabii, silent, wasl) into plain runs so a
+  //    typical ayah is a handful of colored Text nodes, not 15–30.
+  const merged: TajweedSegment[] = [];
+  for (const seg of mergedSameRule) {
+    const code =
+      seg.ruleCode && MUSHAF_COLOR_RULES.has(seg.ruleCode) ? seg.ruleCode : undefined;
+    const last = merged[merged.length - 1];
+    if (last && last.ruleCode === code) {
+      last.text += seg.text;
+    } else {
+      merged.push({
+        text: seg.text,
+        ruleCode: code,
+        rule: code ? TAJWEED_RULES[code] : undefined,
+      });
     }
   }
 
@@ -719,11 +765,56 @@ export function getAyahTajweedSegments(
   ayahNumber: number,
   fallbackUthmani?: string
 ): TajweedSegment[] {
+  const ayahKey = `${surahId}:${ayahNumber}`;
+  const cached = lruCacheGet(ayahSegmentsCache, ayahKey);
+  if (cached) return cached;
+
   const taggedText = getTajweedForAyah(surahId, ayahNumber);
-  if (taggedText) {
-    return parseTajweedText(taggedText);
+  const result = taggedText
+    ? parseTajweedText(taggedText)
+    : fallbackUthmani
+    ? [{ text: fallbackUthmani }]
+    : [];
+  if (result.length > 0) {
+    lruCacheSet(ayahSegmentsCache, ayahKey, result, MAX_AYAH_SEGMENTS_CACHE);
   }
-  return fallbackUthmani ? [{ text: fallbackUthmani }] : [];
+  return result;
+}
+
+const MAX_PAGE_SEGMENTS_CACHE = 120;
+const pageSegmentsCache = new Map<string, Map<number, TajweedSegment[]>>();
+
+/**
+ * Page-level segment tree, keyed outside MushafView so paging reuses the same
+ * Map without re-parsing. Warm this from pagePreloader.
+ */
+export function getPageTajweedSegments(
+  pageNumber: number,
+  ayahs: Array<{
+    id: number;
+    surahId: number;
+    ayahNumber: number;
+    textUthmani: string;
+  }>,
+  showTajweed: boolean
+): Map<number, TajweedSegment[]> {
+  const firstId = ayahs[0]?.id ?? 0;
+  const lastId = ayahs[ayahs.length - 1]?.id ?? 0;
+  const key = `${pageNumber}:${showTajweed ? 1 : 0}:${ayahs.length}:${firstId}:${lastId}`;
+  const cached = lruCacheGet(pageSegmentsCache, key);
+  if (cached) return cached;
+
+  const map = new Map<number, TajweedSegment[]>();
+  for (const a of ayahs) {
+    map.set(
+      a.id,
+      showTajweed
+        ? getAyahTajweedSegments(a.surahId, a.ayahNumber, a.textUthmani)
+        : [{ text: a.textUthmani }]
+    );
+  }
+  lruCacheSet(pageSegmentsCache, key, map, MAX_PAGE_SEGMENTS_CACHE);
+  return map;
 }
 
 /**
@@ -768,22 +859,7 @@ export const RULE_PRIORITY: Record<TajweedRuleCode, number> = {
   l: 0,  // Lam Shamsiyyah - default text color
 };
 
-export const ACTIVE_TAJWEED_RULES = new Set<TajweedRuleCode>([
-  'm',
-  'o',
-  'p',
-  'q',
-  'g',
-  'f',
-  'c',
-  'i',
-  'a',
-  'u',
-  'd',
-  'w',
-  'b',
-  'k',
-]);
+export const ACTIVE_TAJWEED_RULES = MUSHAF_COLOR_RULES;
 
 const ARABIC_DIACRITICS = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]/;
 
@@ -967,4 +1043,3 @@ export function getAyahTajweedWords(
   }
   return [];
 }
-

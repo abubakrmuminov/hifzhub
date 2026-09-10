@@ -3,8 +3,7 @@ import { Text, StyleSheet, type StyleProp, type TextStyle } from 'react-native';
 import { useTheme, getQuranLineHeight } from '@/shared/theme';
 import { toArabicDigits } from '@/features/quran/utils/quranUtils';
 import {
-  getTajweedForAyah,
-  parseTajweedText,
+  getAyahTajweedSegments,
   type TajweedRuleInfo,
   type TajweedSegment,
 } from '../services/tajweedParser';
@@ -35,16 +34,10 @@ export const AyahText = React.memo<AyahTextProps>(({
 
   // Parse letter-level Tajweed segments
   const segments: TajweedSegment[] | null = useMemo(() => {
-    if (!showTajweed) return null;
-
-    let rawTagged = textTajweed;
-    if (!rawTagged && surahId) {
-      rawTagged = getTajweedForAyah(surahId, ayahNumber);
-    }
-
-    if (!rawTagged) return null;
-    return parseTajweedText(rawTagged);
-  }, [showTajweed, textTajweed, surahId, ayahNumber]);
+    if (!showTajweed || !surahId) return null;
+    const parsed = getAyahTajweedSegments(surahId, ayahNumber, textUthmani);
+    return parsed.length > 0 ? parsed : null;
+  }, [showTajweed, surahId, ayahNumber, textUthmani]);
 
   return (
     <Text

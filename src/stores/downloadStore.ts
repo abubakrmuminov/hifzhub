@@ -1,13 +1,7 @@
 import { create } from 'zustand';
-import { createJSONStorage, persist, type StateStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import * as FileSystem from 'expo-file-system/legacy';
-
-const asyncStorage: StateStorage = {
-  setItem: (name: string, value: string) => AsyncStorage.setItem(name, value),
-  getItem: (name: string) => AsyncStorage.getItem(name),
-  removeItem: (name: string) => AsyncStorage.removeItem(name),
-};
+import { appStorage } from '@/shared/storage/mmkvStorage';
 
 export type DownloadStatus = 'idle' | 'downloading' | 'paused' | 'completed' | 'error';
 
@@ -275,7 +269,7 @@ export const useDownloadStore = create<DownloadState>()(
     }),
     {
       name: 'hifzhub-downloads',
-      storage: createJSONStorage(() => asyncStorage),
+      storage: createJSONStorage(() => appStorage),
     }
   )
 );

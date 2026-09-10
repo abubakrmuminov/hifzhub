@@ -1,7 +1,7 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Tabs, usePathname } from 'expo-router';
 import { BottomTabBar, type BottomTabBarProps } from 'expo-router/tabs';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -25,11 +25,24 @@ const TabBarBackground = React.memo<{ isDark: boolean }>(({ isDark }) => (
       { borderRadius: 32, overflow: 'hidden' },
     ]}
   >
-    <BlurView
-      intensity={85}
-      tint={isDark ? 'dark' : 'light'}
-      style={StyleSheet.absoluteFill}
-    />
+    {Platform.OS === 'android' ? (
+      <View
+        style={[
+          StyleSheet.absoluteFill,
+          {
+            backgroundColor: isDark
+              ? 'rgba(18, 18, 32, 0.94)'
+              : 'rgba(250, 252, 251, 0.94)',
+          },
+        ]}
+      />
+    ) : (
+      <BlurView
+        intensity={85}
+        tint={isDark ? 'dark' : 'light'}
+        style={StyleSheet.absoluteFill}
+      />
+    )}
     {/* Frosted glass diffusion layer */}
     <LinearGradient
       colors={
@@ -137,6 +150,9 @@ export function TabLayout({}: TabLayoutProps) {
       },
       tabBarBackground: () => <TabBarBackground isDark={isDark} />,
       headerShown: false,
+      lazy: true,
+      freezeOnBlur: true,
+      detachInactiveScreens: true,
     }),
     [colors.primary, isDark, insets.bottom]
   );

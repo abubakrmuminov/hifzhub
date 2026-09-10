@@ -149,27 +149,19 @@ export function ProgressScreen({}: ProgressScreenProps) {
           })}
         </View>
 
-        {/* Tab Content: Preserved mounted views for 0ms instant tab switching */}
-        <View style={{ display: activeTab === 'hifz' ? 'flex' : 'none' }}>
-          {/* Activity Tracker: 7-day Weekly Bar Chart & 28-day Matrix */}
-          <ActivityTracker />
+        {activeTab === 'hifz' ? (
+          <View>
+            <ActivityTracker />
+            <MemorizationStatsCard />
+            <JuzProgressList />
+          </View>
+        ) : null}
 
-          {/* Memorization Stats Card: Ring Progress & FSRS stages */}
-          <MemorizationStatsCard />
+        {activeTab === 'lessons' ? <LessonProgressCard /> : null}
 
-          {/* Juz Progress List: 30 Juz with filters and expandable surahs */}
-          <JuzProgressList />
-        </View>
-
-        <View style={{ display: activeTab === 'lessons' ? 'flex' : 'none' }}>
-          {/* Alphabet & Tajweed 5 Modules Progress */}
-          <LessonProgressCard />
-        </View>
-
-        <View style={{ display: activeTab === 'achievements' ? 'flex' : 'none' }}>
-          {/* Achievements Grid with filter tabs */}
+        {activeTab === 'achievements' ? (
           <AchievementsSection onSelectAchievement={handleOpenAchievement} />
-        </View>
+        ) : null}
       </ScrollView>
 
       {/* Screen-level Achievement Detail Sheet outside ScrollView for 0ms delay and buttery smooth animation */}
