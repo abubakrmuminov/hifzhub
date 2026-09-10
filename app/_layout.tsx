@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { InteractionManager, StyleSheet } from 'react-native';
 import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -8,11 +8,21 @@ import { useTranslation } from 'react-i18next';
 import '@/i18n';
 import { initializeDatabase } from '@/db/init';
 import { FullScreenPlayer } from '@/features/audio';
+import { useAudioStore } from '@/stores/audioStore';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { preloadTajweedDataset } from '@/features/quran/services/tajweedParser';
 
 export interface RootLayoutProps {}
 
 SplashScreen.preventAutoHideAsync();
+
+function LazyFullScreenPlayer() {
+  const visible = useAudioStore(
+    (s) => s.isFullScreenPlayerVisible || s.isFullPlayerVisible
+  );
+  if (!visible) return null;
+  return <FullScreenPlayer />;
+}
 
 export function RootLayout({}: RootLayoutProps) {
   const { t } = useTranslation();
@@ -42,6 +52,10 @@ export function RootLayout({}: RootLayoutProps) {
       if (!hasCompletedOnboarding) {
         router.replace('/onboarding');
       }
+      const handle = InteractionManager.runAfterInteractions(() => {
+        preloadTajweedDataset();
+      });
+      return () => handle.cancel();
     }
   }, [loaded, error, dbReady, hasCompletedOnboarding]);
 
@@ -64,14 +78,14 @@ export function RootLayout({}: RootLayoutProps) {
         <Stack.Screen
           name="surah/[id]"
           options={{
-            headerShown: true,
-            headerTintColor: '#0D6B4E',
-            headerStyle: { backgroundColor: '#FFFFFF' },
+            headerShown: false,
+            animation: 'slide_from_right',
+            freezeOnBlur: true,
             title: 'Surah',
           }}
         />
       </Stack>
-      <FullScreenPlayer />
+      <LazyFullScreenPlayer />
     </GestureHandlerRootView>
   );
 }

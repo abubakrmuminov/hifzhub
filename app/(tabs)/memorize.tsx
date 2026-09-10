@@ -9,7 +9,6 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 
 import { useTheme } from '@/shared/theme';
@@ -117,10 +116,7 @@ export default function MemorizeScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Screen Header */}
-        <Animated.View
-          entering={FadeInDown.duration(400)}
-          style={[styles.header, { marginBottom: spacing.lg }]}
-        >
+        <View style={[styles.header, { marginBottom: spacing.lg }]}>
           <View style={styles.headerTextGroup}>
             <Text style={[styles.screenTitle, { color: colors.text }]}>
               {t('hifz.title', { defaultValue: 'Хифз' })}
@@ -150,7 +146,7 @@ export default function MemorizeScreen() {
               {totalMemorized} {t('hifz.memorized', { defaultValue: 'выучено' })}
             </Text>
           </View>
-        </Animated.View>
+        </View>
 
         {/* If user has cards in plan, show the Daily Dashboard */}
         {totalCardsCount > 0 ? (
@@ -168,31 +164,31 @@ export default function MemorizeScreen() {
             </View>
 
             {/* Section: "Мой прогресс" */}
-            <Animated.View entering={FadeInDown.delay(100).duration(450)} style={{ marginBottom: spacing.xl }}>
+            <View style={{ marginBottom: spacing.xl }}>
               <HifzCategories
                 sabaqCount={sabaqCount}
                 sabqiCount={sabqiCount}
                 manzilCount={manzilCount}
                 onCategoryPress={handleCategoryPress}
               />
-            </Animated.View>
+            </View>
 
             {/* Recommendations to add more surahs */}
-            <Animated.View entering={FadeInDown.delay(150).duration(450)}>
+            <View>
               <HifzQuickStart
                 onSelectQuickSurah={handleQuickStartSelect}
                 onOpenCustomPicker={() => setPickerVisible(true)}
               />
-            </Animated.View>
+            </View>
           </>
         ) : (
           /* If collection is empty, show QuickStart as the primary hero! */
-          <Animated.View entering={FadeInDown.delay(100).duration(450)}>
+          <View>
             <HifzQuickStart
               onSelectQuickSurah={handleQuickStartSelect}
               onOpenCustomPicker={() => setPickerVisible(true)}
             />
-          </Animated.View>
+          </View>
         )}
       </ScrollView>
 
@@ -218,13 +214,15 @@ export default function MemorizeScreen() {
       </AnimatedPressable>
 
       {/* Surah & Ayah Range Picker Sheet */}
-      <SurahPickerSheet
-        visible={pickerVisible}
-        onClose={() => setPickerVisible(false)}
-        onConfirm={handleConfirmAyahs}
-        surahs={SURAH_LIST}
-        alreadyMemorized={memorizedCardIds}
-      />
+      {pickerVisible ? (
+        <SurahPickerSheet
+          visible
+          onClose={() => setPickerVisible(false)}
+          onConfirm={handleConfirmAyahs}
+          surahs={SURAH_LIST}
+          alreadyMemorized={memorizedCardIds}
+        />
+      ) : null}
     </View>
   );
 }

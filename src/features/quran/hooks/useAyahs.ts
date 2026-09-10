@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { InteractionManager } from 'react-native';
 import { getSqliteDb } from '@/db/client';
 import type { Ayah, Translation } from '@/db/schema';
 
@@ -26,6 +27,12 @@ const ayahsDataCache = new Map<string, CachedAyahData>();
 
 let fallbackAyahsCache: Ayah[] | null = null;
 let fallbackTranslationsCache: Translation[] | null = null;
+
+const EMPTY_DATA: CachedAyahData = {
+  ayahs: [],
+  translations: [],
+  translationsMap: {},
+};
 
 const getFallbackAyahs = (): Ayah[] => {
   if (!fallbackAyahsCache) {
@@ -67,7 +74,6 @@ const fetchAyahsSync = (surahId: number): Ayah[] => {
     console.warn('SQLite fetchAyahsSync error:', err);
   }
 
-  // Lazy memoized fallback only if SQLite returned empty
   try {
     const allAyahs = getFallbackAyahs();
     return allAyahs.filter((a) => a.surahId === surahId);
@@ -104,7 +110,6 @@ const fetchTranslationsSync = (
     console.warn('SQLite fetchTranslationsSync error:', err);
   }
 
-  // Lazy memoized fallback only if SQLite returned empty
   try {
     const allAyahs = getFallbackAyahs();
     const allTrans = getFallbackTranslations();
@@ -119,48 +124,76 @@ const fetchTranslationsSync = (
   }
 };
 
+const loadDataSync = (surahId: number, language?: 'ru' | 'uz'): CachedAyahData => {
+  if (!surahId) return EMPTY_DATA;
+  const ayahs = fetchAyahsSync(surahId);
+  const translations = fetchTranslationsSync(surahId, language);
+  const translationsMap: Record<number, Translation> = {};
+  for (const t of translations) {
+    translationsMap[t.ayahId] = t;
+  }
+  return { ayahs, translations, translationsMap };
+};
+
 export const useAyahs = ({
   surahId,
   language,
 }: UseAyahsParams): UseAyahsResult => {
   const cacheKey = `${surahId}_${language || 'all'}`;
+  const cached = ayahsDataCache.get(cacheKey);
 
-  const loadData = useCallback((): CachedAyahData => {
-    if (!surahId) {
-      return { ayahs: [], translations: [], translationsMap: {} };
-    }
-    const cached = ayahsDataCache.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
-    const ayahs = fetchAyahsSync(surahId);
-    const translations = fetchTranslationsSync(surahId, language);
-    const translationsMap: Record<number, Translation> = {};
-    for (const t of translations) {
-      translationsMap[t.ayahId] = t;
-    }
-    const result: CachedAyahData = { ayahs, translations, translationsMap };
-    ayahsDataCache.set(cacheKey, result);
-    return result;
-  }, [surahId, language, cacheKey]);
-
-  const [data, setData] = useState<CachedAyahData>(loadData);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [data, setData] = useState<CachedAyahData>(cached ?? EMPTY_DATA);
+  const [isLoading, setIsLoading] = useState<boolean>(!cached && Boolean(surahId));
   const [error, setError] = useState<Error | null>(null);
-
-  const prevKeyRef = useRef(cacheKey);
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
-    if (prevKeyRef.current === cacheKey) {
-      return; // Already initialized with loadData in useState! No double query on mount!
+    if (!surahId) {
+      setData(EMPTY_DATA);
+      setIsLoading(false);
+      return;
     }
-    prevKeyRef.current = cacheKey;
-    try {
-      setData(loadData());
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error(String(err)));
+
+    const hit = ayahsDataCache.get(cacheKey);
+    if (hit) {
+      setData(hit);
+      setIsLoading(false);
+      setError(null);
+      return;
     }
-  }, [cacheKey, loadData]);
+
+    let cancelled = false;
+    const requestId = ++requestIdRef.current;
+    setIsLoading(true);
+
+    const load = () => {
+      if (cancelled || requestId !== requestIdRef.current) return;
+      try {
+        const result = loadDataSync(surahId, language);
+        ayahsDataCache.set(cacheKey, result);
+        if (cancelled || requestId !== requestIdRef.current) return;
+        setData(result);
+        setError(null);
+      } catch (err) {
+        if (cancelled || requestId !== requestIdRef.current) return;
+        setError(err instanceof Error ? err : new Error(String(err)));
+      } finally {
+        if (!cancelled && requestId === requestIdRef.current) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    // Let the navigation animation paint a skeleton first, then query SQLite.
+    const handle = InteractionManager.runAfterInteractions(load);
+    const fallbackTimer = setTimeout(load, 48);
+
+    return () => {
+      cancelled = true;
+      handle.cancel();
+      clearTimeout(fallbackTimer);
+    };
+  }, [cacheKey, surahId, language]);
 
   const refetch = useCallback(async () => {
     if (!surahId) return;
@@ -168,13 +201,15 @@ export const useAyahs = ({
       setIsLoading(true);
       setError(null);
       ayahsDataCache.delete(cacheKey);
-      setData(loadData());
+      const result = loadDataSync(surahId, language);
+      ayahsDataCache.set(cacheKey, result);
+      setData(result);
     } catch (err) {
       setError(err instanceof Error ? err : new Error(String(err)));
     } finally {
       setIsLoading(false);
     }
-  }, [surahId, cacheKey, loadData]);
+  }, [surahId, language, cacheKey]);
 
   return {
     ayahs: data.ayahs,

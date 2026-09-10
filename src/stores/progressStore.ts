@@ -1,12 +1,6 @@
 import { create } from 'zustand';
-import { createJSONStorage, persist, type StateStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const asyncStorage: StateStorage = {
-  setItem: (name: string, value: string) => AsyncStorage.setItem(name, value),
-  getItem: (name: string) => AsyncStorage.getItem(name),
-  removeItem: (name: string) => AsyncStorage.removeItem(name),
-};
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { appStorage } from '@/shared/storage/mmkvStorage';
 
 export const getTodayDateString = (d = new Date()): string => {
   const year = d.getFullYear();
@@ -270,7 +264,7 @@ export const useProgressStore = create<ProgressState>()(
     }),
     {
       name: 'hifzhub-user-progress',
-      storage: createJSONStorage(() => asyncStorage),
+      storage: createJSONStorage(() => appStorage),
     }
   )
 );

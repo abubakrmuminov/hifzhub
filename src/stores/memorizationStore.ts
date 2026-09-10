@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { createJSONStorage, persist, type StateStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { appStorage } from '@/shared/storage/mmkvStorage';
 import type {
   MemorizationCard,
   MemorizationCategory,
@@ -11,12 +11,6 @@ import type {
 } from '@/features/memorization/types';
 import { createNewCard, reviewCard, isDue } from '@/features/memorization/services/fsrsService';
 import { getTodayDateString } from '@/stores/progressStore';
-
-const asyncStorage: StateStorage = {
-  setItem: (name: string, value: string) => AsyncStorage.setItem(name, value),
-  getItem: (name: string) => AsyncStorage.getItem(name),
-  removeItem: (name: string) => AsyncStorage.removeItem(name),
-};
 
 export interface MemorizationState {
   // State
@@ -411,7 +405,7 @@ export const useMemorizationStore = create<MemorizationState>()(
     }),
     {
       name: 'hifzhub-memorization-v1',
-      storage: createJSONStorage(() => asyncStorage),
+      storage: createJSONStorage(() => appStorage),
     }
   )
 );

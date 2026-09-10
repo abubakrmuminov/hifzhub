@@ -1,5 +1,9 @@
 import { InteractionManager } from 'react-native';
-import { getAyahTajweedSegments } from './tajweedParser';
+import {
+  getAyahTajweedSegments,
+  getPageTajweedSegments,
+  preloadTajweedDataset,
+} from './tajweedParser';
 import type { Ayah } from '@/db/schema';
 
 export interface PreloadQueueItem {
@@ -12,7 +16,7 @@ let deferredPreloadHandle: { cancel: () => void } | null = null;
 
 /**
  * Pre-warms Tajweed parser memory cache for all ayahs in the given list.
- * Synchronous and instant (pure in-memory string parsing, < 1ms per ayah).
+ * Synchronous and instant once the dataset JSON is already loaded.
  */
 export function warmupPagesTajweed(ayahs: Ayah[]): void {
   for (let i = 0; i < ayahs.length; i++) {
@@ -27,7 +31,7 @@ export function warmupPagesTajweed(ayahs: Ayah[]): void {
 
 /**
  * Pre-warms Tajweed parser memory cache for current and nearby pages.
- * Rolling window: current, previous, next, next+1 (Quran.com-style forward bias).
+ * Rolling window: current, previous, next, next+1, next+2 (forward bias).
  */
 export function preloadMushafPages(
   pages: { pageNumber: number; ayahs: Ayah[] }[],
@@ -40,6 +44,7 @@ export function preloadMushafPages(
     currentPageIndex - 1,
     currentPageIndex + 1,
     currentPageIndex + 2,
+    currentPageIndex + 3,
   ];
 
   const seen = new Set<number>();
@@ -48,7 +53,11 @@ export function preloadMushafPages(
     seen.add(pageIdx);
     const page = pages[pageIdx];
     if (page?.ayahs) {
-      warmupPagesTajweed(page.ayahs);
+      try {
+        getPageTajweedSegments(page.pageNumber, page.ayahs, true);
+      } catch {
+        warmupPagesTajweed(page.ayahs);
+      }
     }
   }
 }
@@ -64,6 +73,7 @@ export function preloadMushafPagesDeferred(
   deferredPreloadHandle?.cancel();
   deferredPreloadHandle = InteractionManager.runAfterInteractions(() => {
     deferredPreloadHandle = null;
+    preloadTajweedDataset();
     preloadMushafPages(pages, currentPageIndex);
   });
 }

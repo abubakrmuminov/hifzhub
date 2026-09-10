@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+
 import * as Haptics from 'expo-haptics';
 
 import { useTheme } from '@/shared/theme';
@@ -116,16 +116,15 @@ export default function LearnScreen() {
 
         {/* Module Cards */}
         <View style={styles.modulesList}>
-          {modules.map((module, index) => {
+          {modules.map((module) => {
             const isUnlocked = isModuleUnlocked(module.moduleId);
             const progress = getModuleProgress(module.moduleId, module.lessonsCount);
             const completedCount = progress?.completed ?? 0;
             const percentage = progress?.percentage ?? 0;
 
             return (
-              <Animated.View
+              <View
                 key={module.moduleId}
-                entering={FadeInDown.delay(index * 90).duration(450).springify()}
                 style={styles.cardWrapper}
               >
                 <AnimatedPressable
@@ -267,7 +266,7 @@ export default function LearnScreen() {
                     )}
                   </GlassView>
                 </AnimatedPressable>
-              </Animated.View>
+              </View>
             );
           })}
         </View>

@@ -3,17 +3,15 @@ import {
   View,
   Text,
   StyleSheet,
-  Platform,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/shared/theme';
 import { toArabicDigits } from '@/features/quran/utils/quranUtils';
 import { SURAHS_DATA } from '@/features/quran/data/surahsData';
 import type { Ayah } from '@/db/schema';
 import {
-  getAyahTajweedSegments,
+  getPageTajweedSegments,
   type TajweedRuleInfo,
   type TajweedSegment,
 } from '../services/tajweedParser';
@@ -85,19 +83,19 @@ export const MushafView = React.memo<MushafViewProps>(
         };
       }, [ayahs, surahId]);
 
-    // Precompute and memoize Tajweed segments for all ayahs on this page
-    const ayahSegmentsMap = useMemo(() => {
-      const map = new Map<number, TajweedSegment[]>();
-      for (const a of ayahs) {
-        map.set(
-          a.id,
-          showTajweed
-            ? getAyahTajweedSegments(a.surahId, a.ayahNumber, a.textUthmani)
-            : [{ text: a.textUthmani }]
-        );
-      }
-      return map;
-    }, [ayahs, showTajweed]);
+    // Page-level cache lives in tajweedParser — this is a Map hit after preload.
+    const ayahSegmentsMap = useMemo(
+      () => getPageTajweedSegments(pageNumber, ayahs, showTajweed),
+      [ayahs, pageNumber, showTajweed]
+    );
+
+    const plainPageText = useCallback(
+      (list: Ayah[]) =>
+        list
+          .map((a) => `${a.textUthmani} ﴿${toArabicDigits(a.ayahNumber)}﴾ `)
+          .join(''),
+      []
+    );
 
     const renderAyahText = useCallback(
       (ayah: Ayah) => {
@@ -111,6 +109,7 @@ export const MushafView = React.memo<MushafViewProps>(
         return (
           <Text
             key={ayah.id}
+            maxFontSizeMultiplier={1}
             style={[
               styles.ayahSpan,
               (isSelected || isActive) && [
@@ -133,18 +132,15 @@ export const MushafView = React.memo<MushafViewProps>(
           >
             {segments.map((seg, sIdx) => {
               const isRule = showTajweed && seg.rule != null;
-              const ruleColor = isRule
-                ? isDark
-                  ? seg.rule!.darkColor
-                  : seg.rule!.lightColor
-                : colors.quranText;
-
+              if (!isRule) {
+                return seg.text;
+              }
               return (
                 <Text
                   key={sIdx}
                   suppressHighlighting={true}
                   style={{
-                    color: ruleColor,
+                    color: isDark ? seg.rule!.darkColor : seg.rule!.lightColor,
                     fontFamily: fontFamilies.quran,
                   }}
                 >
@@ -242,6 +238,7 @@ export const MushafView = React.memo<MushafViewProps>(
             {/* Any ayahs before new Surah starts */}
             {ayahsBeforeStart.length > 0 ? (
               <Text
+                maxFontSizeMultiplier={1}
                 style={[
                   styles.continuousText,
                   {
@@ -252,7 +249,9 @@ export const MushafView = React.memo<MushafViewProps>(
                   },
                 ]}
               >
-                {ayahsBeforeStart.map(renderAyahText)}
+                {showTajweed
+                  ? ayahsBeforeStart.map(renderAyahText)
+                  : plainPageText(ayahsBeforeStart)}
               </Text>
             ) : null}
 
@@ -302,6 +301,7 @@ export const MushafView = React.memo<MushafViewProps>(
 
             {/* Main continuous text of the page */}
             <Text
+              maxFontSizeMultiplier={1}
               style={[
                 styles.continuousText,
                 {
@@ -312,7 +312,9 @@ export const MushafView = React.memo<MushafViewProps>(
                 },
               ]}
             >
-              {ayahsFromStart.map(renderAyahText)}
+              {showTajweed
+                ? ayahsFromStart.map(renderAyahText)
+                : plainPageText(ayahsFromStart)}
             </Text>
           </View>
 
@@ -388,7 +390,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   continuousText: {
-    textAlign: Platform.OS === 'ios' ? 'justify' : 'right',
+    textAlign: 'right',
     writingDirection: 'rtl',
   },
   ayahSpan: {},
